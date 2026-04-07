@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Source Preview -->
-    <div v-if="gifUrl && isValidGifUrl(gifUrl)" class="space-y-3">
+    <div v-if="gifUrl && isValidMediaUrl(gifUrl)" class="space-y-3">
       <h3 class="text-sm font-semibold text-surface-700">Source Preview</h3>
       <div class="rounded-xl overflow-hidden bg-surface-100 border border-surface-200/50">
         <img
@@ -235,6 +235,7 @@
 <script setup lang="ts">
 import type { DecodedFrame } from 'modern-gif'
 import type { Platform, OptimizationResult, ResizeMode } from '~/types/optimizer'
+import { isValidMediaUrl } from '~/utils/url'
 
 const props = defineProps<{
   gifUrl: string
@@ -346,17 +347,6 @@ const resizeNote = computed(() => {
 
   return null
 })
-
-/** Only render images served over HTTPS (or blob: URLs from local uploads) to prevent XSS. */
-function isValidGifUrl(url: string): boolean {
-  if (url.startsWith('blob:')) return true
-  try {
-    const parsed = new URL(url)
-    return parsed.protocol === 'https:'
-  } catch {
-    return false
-  }
-}
 
 function handleImageLoad(e: Event) {
   const img = e.target as HTMLImageElement

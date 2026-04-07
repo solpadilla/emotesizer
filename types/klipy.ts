@@ -11,6 +11,7 @@ export interface KlipyGifFile {
   jpg: KlipyMediaFile
   mp4: KlipyMediaFile
   webm: KlipyMediaFile
+  png?: KlipyMediaFile
 }
 
 export interface KlipyGif {

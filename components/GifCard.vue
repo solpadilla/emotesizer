@@ -2,11 +2,12 @@
   <!-- Compact variant: fixed-size card for trending strip -->
   <NuxtLink
     v-if="variant === 'compact'"
-    :to="`/search?q=${encodeURIComponent(gif.tags?.[0] || gif.title)}`"
-    class="w-44 md:w-48 h-32 md:h-36 flex-shrink-0 rounded-xl overflow-hidden relative bg-surface-200 block"
+    :to="detailUrl"
+    class="w-44 md:w-48 h-32 md:h-36 flex-shrink-0 rounded-xl overflow-hidden relative block"
+    :class="isSticker ? 'checkerboard' : 'bg-surface-200'"
   >
     <img
-      v-if="gif.blur_preview && isValidGifUrl(gif.blur_preview)"
+      v-if="!isSticker && gif.blur_preview && isValidMediaUrl(gif.blur_preview)"
       :src="gif.blur_preview"
       class="absolute inset-0 w-full h-full object-cover"
       alt=""
@@ -14,10 +15,11 @@
       draggable="false"
     />
     <img
-      v-if="isValidGifUrl(gif.file.sm.gif.url)"
-      :src="gif.file.sm.gif.url"
+      v-if="isValidMediaUrl(compactImgSrc)"
+      :src="compactImgSrc"
       :alt="gif.title"
-      class="relative w-full h-full object-cover"
+      class="relative w-full h-full"
+      :class="isSticker ? 'object-contain p-2' : 'object-cover'"
       loading="lazy"
       crossorigin="anonymous"
       draggable="false"
@@ -33,25 +35,28 @@
   </NuxtLink>
 
   <!-- Default variant: uniform grid card with hover overlay -->
-  <div
+  <NuxtLink
     v-else
-    class="rounded-xl overflow-hidden relative group bg-surface-200 aspect-[4/3]"
+    :to="detailUrl"
+    class="rounded-xl overflow-hidden relative group aspect-[4/3] block"
+    :class="isSticker ? 'checkerboard' : 'bg-surface-200'"
   >
-    <!-- Blur placeholder -->
+    <!-- Blur placeholder (GIFs only — stickers have transparent backgrounds) -->
     <img
-      v-if="gif.blur_preview && isValidGifUrl(gif.blur_preview)"
+      v-if="!isSticker && gif.blur_preview && isValidMediaUrl(gif.blur_preview)"
       :src="gif.blur_preview"
       class="absolute inset-0 w-full h-full object-cover"
       alt=""
       aria-hidden="true"
     />
 
-    <!-- Actual GIF -->
+    <!-- Actual image -->
     <img
-      v-if="isValidGifUrl(gif.file.md.gif.url)"
-      :src="gif.file.md.gif.url"
+      v-if="isValidMediaUrl(defaultImgSrc)"
+      :src="defaultImgSrc"
       :alt="gif.title"
-      class="w-full h-full object-cover"
+      class="w-full h-full"
+      :class="isSticker ? 'object-contain p-2' : 'object-cover'"
       loading="lazy"
       crossorigin="anonymous"
     />
@@ -73,19 +78,19 @@
           class="gif-action-btn"
           title="View"
           aria-label="View ad"
-          @click="openAd"
+          @click.prevent.stop="openAd"
         >
           <IconExternalLink :size="16" />
         </button>
 
-        <!-- Optimize button for regular GIFs -->
+        <!-- Optimize button for regular content -->
         <NuxtLink
           v-else
-          :to="`/optimizer?gif=${encodeURIComponent(gif.file.hd.gif.url)}&title=${encodeURIComponent(gif.slug)}`"
+          :to="`/optimizer?gif=${encodeURIComponent(optimizeUrl)}&title=${encodeURIComponent(gif.slug)}`"
           class="gif-action-btn"
           title="Optimize"
           aria-label="Optimize for streaming"
-          @click="trackInteraction"
+          @click.stop="trackInteraction"
         >
           <IconSparkle :size="16" />
         </NuxtLink>
@@ -94,8 +99,8 @@
         <button
           class="gif-action-btn"
           title="Download"
-          aria-label="Download GIF"
-          @click="downloadGif"
+          :aria-label="isSticker ? 'Download sticker' : 'Download GIF'"
+          @click.prevent.stop="downloadGif"
         >
           <IconDownload :size="16" />
         </button>
@@ -105,7 +110,7 @@
           class="gif-action-btn"
           title="Copy link"
           aria-label="Copy link"
-          @click="copyLink"
+          @click.prevent.stop="copyLink"
         >
           <IconLink :size="16" />
         </button>
@@ -118,53 +123,61 @@
       alt="Powered by KLIPY"
       class="absolute bottom-2 right-2 h-4 opacity-60 pointer-events-none"
     />
-  </div>
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">
 import type { KlipyGif } from '~/types/klipy'
+import { isValidMediaUrl } from '~/utils/url'
 
 const props = withDefaults(defineProps<{
   gif: KlipyGif
   variant?: 'default' | 'compact'
+  contentType?: 'gifs' | 'stickers'
 }>(), {
   variant: 'default',
+  contentType: 'gifs',
 })
 
 const { success, error: toastError } = useToast()
 const { downloadUrl } = useDownload()
-const { shareGif } = useKlipy()
+const { share } = useKlipy()
+
+const isSticker = computed(() => props.contentType === 'stickers')
+
+// Detail page URL for this item
+const detailUrl = computed(() => `/${props.contentType}/${props.gif.slug}`)
+
+// Display URLs — always use animated GIF so users see the animation
+const defaultImgSrc = computed(() => props.gif.file.md.gif.url)
+const compactImgSrc = computed(() => props.gif.file.sm.gif.url)
+
+// HD URL — always use the GIF regardless of content type
+const hdUrl = computed(() => props.gif.file.hd.gif.url)
+
+// The URL sent to the optimizer page
+const optimizeUrl = computed(() => hdUrl.value)
 
 /** Fire-and-forget revenue share tracking — failures must never break UX. */
 function trackInteraction() {
-  shareGif(props.gif.slug).catch(() => {})
+  share(props.contentType, props.gif.slug).catch(() => {})
 }
 
-/** Only render images served over HTTPS to prevent mixed-content XSS vectors. */
-function isValidGifUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url)
-    return parsed.protocol === 'https:'
-  } catch {
-    return false
-  }
-}
-
-/** Open ad GIF in a new tab instead of sending it to the optimizer. */
+/** Open ad content in a new tab instead of sending it to the optimizer. */
 function openAd() {
   trackInteraction()
-  window.open(props.gif.file.hd.gif.url, '_blank', 'noopener')
+  window.open(hdUrl.value, '_blank', 'noopener')
 }
 
 function downloadGif() {
   trackInteraction()
-  downloadUrl(props.gif.file.hd.gif.url, `${props.gif.slug}.gif`)
+  downloadUrl(hdUrl.value, `${props.gif.slug}.gif`)
 }
 
 async function copyLink() {
   trackInteraction()
   try {
-    await navigator.clipboard.writeText(props.gif.file.hd.gif.url)
+    await navigator.clipboard.writeText(hdUrl.value)
     success('Link copied to clipboard')
   } catch {
     toastError('Failed to copy link')

@@ -7,7 +7,7 @@
           <span class="text-surface-900">Twitch Emote Resizer & GIF Optimizer</span>
         </h1>
         <p class="mt-4 md:mt-6 text-surface-500 text-base md:text-lg max-w-xl mx-auto">
-          Search thousands of GIFs and resize them into emotes for Twitch, Discord, Kick, 7TV, and BTTV — free, in your browser.
+          Search thousands of GIFs <strong>and stickers</strong> and resize them into emotes for Twitch, Discord, Kick, 7TV, and BTTV — free, in your browser.
         </p>
 
         <!-- Search Bar -->
@@ -23,7 +23,7 @@
         <!-- CTA Buttons -->
         <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
           <NuxtLink to="/search" class="btn btn-secondary">
-            Search GIFs for Emotes
+            Browse GIFs & Stickers
           </NuxtLink>
           <NuxtLink to="/optimizer" class="btn btn-primary">
             Resize a GIF for Twitch
@@ -41,9 +41,9 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-500">
               <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
             </svg>
-            Trending Now
+            Trending GIFs
           </h2>
-          <NuxtLink to="/search" class="link text-sm">
+          <NuxtLink to="/search?type=gifs" class="link text-sm">
             See All
           </NuxtLink>
         </div>
@@ -71,6 +71,56 @@
               :key="gif.id"
               :gif="gif"
               variant="compact"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trending Stickers Section -->
+    <section class="py-10 md:py-16 px-4">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-lg md:text-xl font-bold text-surface-900 flex items-center gap-2">
+            <!-- Sparkle icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-500">
+              <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+              <path d="M5 3v4" />
+              <path d="M19 17v4" />
+              <path d="M3 5h4" />
+              <path d="M17 19h4" />
+            </svg>
+            Trending Stickers
+          </h2>
+          <NuxtLink to="/search?type=stickers" class="link text-sm">
+            See All
+          </NuxtLink>
+        </div>
+
+        <!-- Horizontal scroll strip with gradient fades -->
+        <div class="relative">
+          <div class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-surface-50 to-transparent z-10 pointer-events-none" />
+          <div class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-surface-50 to-transparent z-10 pointer-events-none" />
+
+          <div v-if="stickersLoading" class="flex gap-3 overflow-hidden">
+            <div v-for="i in 8" :key="i" class="w-44 md:w-48 h-32 md:h-36 flex-shrink-0 rounded-xl bg-surface-200 animate-pulse" />
+          </div>
+
+          <div
+            v-else
+            ref="stickerScrollRef"
+            class="flex gap-3 overflow-x-auto no-scrollbar pb-2 cursor-grab select-none"
+            @pointerdown="onStickerPointerDown"
+            @pointermove="onStickerPointerMove"
+            @pointerup="onStickerPointerUp"
+            @pointerleave="onStickerPointerUp"
+          >
+            <GifCard
+              v-for="sticker in trendingStickers"
+              :key="sticker.id"
+              :gif="sticker"
+              variant="compact"
+              content-type="stickers"
             />
           </div>
         </div>
@@ -198,6 +248,10 @@
             <h3 class="text-sm font-bold text-surface-900">Can I trim a GIF before converting to an emote?</h3>
             <p class="text-sm text-surface-500 mt-1">Yes. Use the Trim Animation slider to select which frames to keep, reducing file size.</p>
           </div>
+          <div>
+            <h3 class="text-sm font-bold text-surface-900">Can I use stickers as emotes?</h3>
+            <p class="text-sm text-surface-500 mt-1">Yes. EmoteSizer supports both GIFs and stickers. Stickers often have transparent backgrounds, making them ideal for static emotes on Twitch, Discord, and Kick.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -208,11 +262,11 @@
 import type { KlipyGif } from '~/types/klipy'
 
 useHead({
-  title: 'EmoteSizer — Free Twitch Emote Resizer & GIF Optimizer',
+  title: 'EmoteSizer — Free Twitch Emote Resizer, GIF & Sticker Optimizer',
   meta: [
-    { name: 'description', content: 'Resize and compress GIFs into emotes for Twitch, Discord, Kick, 7TV, and BTTV. Free browser-based emote resizer — no signup, no download required.' },
-    { property: 'og:title', content: 'EmoteSizer — Free Twitch Emote Resizer & GIF Optimizer' },
-    { property: 'og:description', content: 'Resize and compress GIFs into emotes for Twitch, Discord, Kick, 7TV, and BTTV. Free browser-based emote resizer.' },
+    { name: 'description', content: 'Search thousands of GIFs and stickers, then resize them into emotes for Twitch, Discord, Kick, 7TV, and BTTV. Free browser-based emote optimizer — no signup required.' },
+    { property: 'og:title', content: 'EmoteSizer — Free Twitch Emote Resizer, GIF & Sticker Optimizer' },
+    { property: 'og:description', content: 'Search GIFs and stickers, then resize them into emotes for Twitch, Discord, Kick, 7TV, and BTTV. Free browser-based emote optimizer.' },
     { property: 'og:url', content: 'https://emotesizer.com' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com' }],
@@ -224,11 +278,11 @@ useHead({
         "@type": "WebApplication",
         "name": "EmoteSizer",
         "url": "https://emotesizer.com",
-        "description": "Free browser-based tool to resize and compress GIFs into emotes for Twitch, Discord, Kick, 7TV, and BTTV.",
+        "description": "Free browser-based tool to search GIFs and stickers, then resize and compress them into emotes for Twitch, Discord, Kick, 7TV, and BTTV.",
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "Any (browser-based)",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "featureList": ["GIF search", "Twitch emote resizer", "Discord emoji resizer", "Kick emote optimizer", "Smart compression", "GIF trimmer", "No signup required"]
+        "featureList": ["GIF search", "Sticker search", "Twitch emote resizer", "Discord emoji resizer", "Kick emote optimizer", "Smart compression", "GIF trimmer", "No signup required"]
       }),
     },
     {
@@ -242,7 +296,8 @@ useHead({
           { "@type": "Question", "name": "What is the maximum file size for Discord emoji?", "acceptedAnswer": { "@type": "Answer", "text": "Discord emoji must be 128x128px and under 256 KB for both static and animated." }},
           { "@type": "Question", "name": "Does EmoteSizer work with 7TV and BTTV?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Use the Twitch animated emote preset for 7TV and BTTV compatibility." }},
           { "@type": "Question", "name": "Is EmoteSizer free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, completely free. All processing happens in your browser — no account, no uploads to servers, no watermarks." }},
-          { "@type": "Question", "name": "Can I trim a GIF before converting to an emote?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Use the Trim Animation slider to select which frames to keep, reducing file size." }}
+          { "@type": "Question", "name": "Can I trim a GIF before converting to an emote?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Use the Trim Animation slider to select which frames to keep, reducing file size." }},
+          { "@type": "Question", "name": "Can I use stickers as emotes?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. EmoteSizer supports both GIFs and stickers. Stickers often have transparent backgrounds, making them ideal for static emotes on Twitch, Discord, and Kick." }}
         ]
       }),
     },
@@ -250,58 +305,29 @@ useHead({
 })
 
 const router = useRouter()
-const { getTrending } = useKlipy()
+const { trending } = useKlipy()
 
 const searchQuery = ref('')
 const trendingGifs = ref<KlipyGif[]>([])
 const trendingLoading = ref(true)
+const trendingStickers = ref<KlipyGif[]>([])
+const stickersLoading = ref(true)
 
-// --- Drag-to-scroll for the trending GIF strip ---
-const scrollRef = ref<HTMLElement | null>(null)
-const isDragging = ref(false)
-let dragStartX = 0
-let dragScrollLeft = 0
-let hasDragged = false
+// GIF strip drag-to-scroll
+const {
+  scrollEl: scrollRef,
+  onDown: onPointerDown,
+  onMove: onPointerMove,
+  onUp: onPointerUp,
+} = useDragScroll()
 
-function onPointerDown(e: PointerEvent) {
-  // Only enable drag-to-scroll for mouse; touch devices use native momentum scrolling
-  if (e.pointerType !== 'mouse' || !scrollRef.value) return
-  e.preventDefault() // Prevent native image drag from hijacking the pointer
-  isDragging.value = true
-  hasDragged = false
-  dragStartX = e.pageX - scrollRef.value.offsetLeft
-  dragScrollLeft = scrollRef.value.scrollLeft
-  scrollRef.value.style.cursor = 'grabbing'
-  scrollRef.value.style.userSelect = 'none'
-}
-
-function onPointerMove(e: PointerEvent) {
-  if (!isDragging.value || !scrollRef.value) return
-  e.preventDefault()
-  const x = e.pageX - scrollRef.value.offsetLeft
-  // Mark as a real drag once the pointer moves more than 5px from the start
-  if (Math.abs(x - dragStartX) > 5) hasDragged = true
-  const walk = (x - dragStartX) * 1.5
-  scrollRef.value.scrollLeft = dragScrollLeft - walk
-}
-
-function onPointerUp() {
-  if (!isDragging.value) return
-  isDragging.value = false
-  if (scrollRef.value) {
-    scrollRef.value.style.cursor = 'grab'
-    scrollRef.value.style.removeProperty('user-select')
-    // If the user dragged, suppress the next click so GIF cards aren't accidentally opened
-    if (hasDragged) {
-      scrollRef.value.addEventListener('click', preventClick, { capture: true, once: true })
-    }
-  }
-}
-
-function preventClick(e: Event) {
-  e.stopPropagation()
-  e.preventDefault()
-}
+// Sticker strip drag-to-scroll
+const {
+  scrollEl: stickerScrollRef,
+  onDown: onStickerPointerDown,
+  onMove: onStickerPointerMove,
+  onUp: onStickerPointerUp,
+} = useDragScroll()
 
 function handleSearch(query: string) {
   if (query.trim()) {
@@ -310,14 +336,29 @@ function handleSearch(query: string) {
 }
 
 onMounted(async () => {
-  try {
-    const response = await getTrending(1, 12)
-    trendingGifs.value = response.data.data
-  } catch (e: unknown) {
-    if (import.meta.dev) console.error('Failed to load trending GIFs:', e)
-    // Trending is non-critical, fail silently in production
-  } finally {
-    trendingLoading.value = false
-  }
+  // Fetch trending GIFs and stickers in parallel
+  const gifsPromise = trending('gifs', 1, 12)
+    .then(response => {
+      trendingGifs.value = response.data.data
+    })
+    .catch((e: unknown) => {
+      if (import.meta.dev) console.error('Failed to load trending GIFs:', e)
+    })
+    .finally(() => {
+      trendingLoading.value = false
+    })
+
+  const stickersPromise = trending('stickers', 1, 12)
+    .then(response => {
+      trendingStickers.value = response.data.data
+    })
+    .catch((e: unknown) => {
+      if (import.meta.dev) console.error('Failed to load trending stickers:', e)
+    })
+    .finally(() => {
+      stickersLoading.value = false
+    })
+
+  await Promise.all([gifsPromise, stickersPromise])
 })
 </script>

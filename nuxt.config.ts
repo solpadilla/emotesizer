@@ -21,21 +21,21 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'EmoteSizer — GIF Search & Emote Optimizer for Streamers',
+      title: 'EmoteSizer — GIF & Sticker Search + Emote Optimizer for Streamers',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Search thousands of GIFs and instantly resize them as emotes for Twitch, Discord, and Kick. Free browser-based emote optimizer — no signup required.' },
+        { name: 'description', content: 'Search thousands of GIFs and stickers, then resize them as emotes for Twitch, Discord, and Kick. Free browser-based emote optimizer — no signup required.' },
         { name: 'theme-color', content: '#3B82F6' },
         // Open Graph
-        { property: 'og:title', content: 'EmoteSizer — GIF Search & Emote Optimizer' },
-        { property: 'og:description', content: 'Find the perfect GIF and resize it as an emote for Twitch, Discord, or Kick. Optimized sizes, one click.' },
+        { property: 'og:title', content: 'EmoteSizer — GIF & Sticker Search + Emote Optimizer' },
+        { property: 'og:description', content: 'Find the perfect GIF or sticker and resize it as an emote for Twitch, Discord, or Kick. Optimized sizes, one click.' },
         { property: 'og:type', content: 'website' },
         { property: 'og:site_name', content: 'EmoteSizer' },
         // Twitter
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'EmoteSizer — GIF Search & Emote Optimizer' },
-        { name: 'twitter:description', content: 'Find the perfect GIF and resize it as an emote for Twitch, Discord, or Kick. Optimized sizes, one click.' },
+        { name: 'twitter:title', content: 'EmoteSizer — GIF & Sticker Search + Emote Optimizer' },
+        { name: 'twitter:description', content: 'Find the perfect GIF or sticker and resize it as an emote for Twitch, Discord, or Kick. Optimized sizes, one click.' },
         { name: 'robots', content: 'index, follow' },
         { name: 'google-site-verification', content: '20jUiCMXIyvTrhO64y3O_irxwdikeqSwoH9hWHoixjs' },
         { property: 'og:url', content: 'https://emotesizer.com' },

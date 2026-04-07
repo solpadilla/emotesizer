@@ -32,7 +32,10 @@ export function useKlipy() {
     }
   }
 
-  async function searchGifs(
+  type ContentType = 'gifs' | 'stickers'
+
+  async function search(
+    type: ContentType,
     query: string,
     page = 1,
     perPage = 24,
@@ -47,13 +50,14 @@ export function useKlipy() {
       content_filter: 'medium',
     })
     const response = await $fetch<KlipySearchResponse>(
-      `${baseUrl}/${appKey}/gifs/search?${params}`,
+      `${baseUrl}/${appKey}/${type}/search?${params}`,
       { signal: options?.signal }
     )
     return response
   }
 
-  async function getTrending(
+  async function trending(
+    type: ContentType,
     page = 1,
     perPage = 24,
     options?: { signal?: AbortSignal }
@@ -66,16 +70,16 @@ export function useKlipy() {
       content_filter: 'medium',
     })
     const response = await $fetch<KlipySearchResponse>(
-      `${baseUrl}/${appKey}/gifs/trending?${params}`,
+      `${baseUrl}/${appKey}/${type}/trending?${params}`,
       { signal: options?.signal }
     )
     return response
   }
 
-  async function getCategories(): Promise<KlipyCategory[]> {
+  async function categories(type: ContentType): Promise<KlipyCategory[]> {
     assertApiKey()
     const response = await $fetch<KlipyCategoriesResponse>(
-      `${baseUrl}/${appKey}/gifs/categories?customer_id=${customerId.value}`
+      `${baseUrl}/${appKey}/${type}/categories?customer_id=${customerId.value}`
     )
     return response.data
   }
@@ -89,13 +93,26 @@ export function useKlipy() {
     return response.data
   }
 
-  async function shareGif(slug: string): Promise<void> {
+  async function getItemBySlug(
+    type: ContentType,
+    slug: string,
+    options?: { signal?: AbortSignal }
+  ): Promise<KlipyGif | null> {
     assertApiKey()
-    await $fetch(`${baseUrl}/${appKey}/gifs/share/${slug}`, {
+    const response = await $fetch<KlipySearchResponse>(
+      `${baseUrl}/${appKey}/${type}/items?slugs=${encodeURIComponent(slug)}&customer_id=${customerId.value}`,
+      { signal: options?.signal }
+    )
+    return response.data.data[0] || null
+  }
+
+  async function share(type: ContentType, slug: string): Promise<void> {
+    assertApiKey()
+    await $fetch(`${baseUrl}/${appKey}/${type}/share/${slug}`, {
       method: 'POST',
       body: { customer_id: customerId.value },
     })
   }
 
-  return { searchGifs, getTrending, getCategories, getAutocomplete, shareGif }
+  return { search, trending, categories, getAutocomplete, getItemBySlug, share }
 }

@@ -9,6 +9,28 @@
           @search="handleSearch"
         />
 
+        <!-- Content Type Toggle -->
+        <div class="segmented-control mt-3" role="radiogroup" aria-label="Content type">
+          <button
+            class="segmented-control-item"
+            :class="{ 'segmented-control-item-active': store.contentType === 'gifs' }"
+            role="radio"
+            :aria-checked="store.contentType === 'gifs'"
+            @click="switchContentType('gifs')"
+          >
+            GIFs
+          </button>
+          <button
+            class="segmented-control-item"
+            :class="{ 'segmented-control-item-active': store.contentType === 'stickers' }"
+            role="radio"
+            :aria-checked="store.contentType === 'stickers'"
+            @click="switchContentType('stickers')"
+          >
+            Stickers
+          </button>
+        </div>
+
         <!-- Category Pills -->
         <div v-if="store.categories.length > 0" class="mt-3">
           <CategoryPills
@@ -22,16 +44,16 @@
 
     <!-- Results Area -->
     <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
-      <h1 class="sr-only">Search GIFs for Streaming Emotes</h1>
+      <h1 class="sr-only">Search {{ store.contentType === 'stickers' ? 'Stickers' : 'GIFs' }} for Streaming Emotes</h1>
 
       <!-- Results Header -->
       <div class="mb-4">
         <h2 class="text-base font-bold text-surface-900">
           <template v-if="store.query">
-            Results for "{{ store.query }}"
+            Results for "{{ store.query }}" in {{ store.contentType === 'stickers' ? 'Stickers' : 'GIFs' }}
           </template>
           <template v-else>
-            Trending
+            Trending {{ store.contentType === 'stickers' ? 'Stickers' : 'GIFs' }}
           </template>
         </h2>
       </div>
@@ -60,7 +82,7 @@
       <!-- Empty State -->
       <div v-else-if="!store.isLoading && store.gifs.length === 0 && (store.query || store.selectedCategory)" class="text-center py-20">
         <p class="text-4xl mb-3">&#xAF;\_(&#x30C4;)_/&#xAF;</p>
-        <p class="text-sm text-surface-500">No GIFs found. Try a different search term.</p>
+        <p class="text-sm text-surface-500">No {{ store.contentType === 'stickers' ? 'stickers' : 'GIFs' }} found. Try a different search term.</p>
       </div>
 
       <!-- Results Grid -->
@@ -72,6 +94,7 @@
           v-for="gif in store.gifs"
           :key="gif.id"
           :gif="gif"
+          :content-type="store.contentType"
         />
       </div>
 
@@ -107,38 +130,61 @@
 </template>
 
 <script setup lang="ts">
-useHead({
-  title: 'Search GIFs for Twitch, Discord & Kick Emotes — EmoteSizer',
-  meta: [
-    { name: 'description', content: 'Search thousands of trending GIFs to use as Twitch emotes, Discord emoji, or Kick emotes. Find the perfect GIF and resize it instantly.' },
-    { property: 'og:title', content: 'Search GIFs for Streaming Emotes — EmoteSizer' },
-    { property: 'og:description', content: 'Search thousands of GIFs and convert them into emotes for Twitch, Discord, and Kick.' },
-    { property: 'og:url', content: 'https://emotesizer.com/search' },
-  ],
-  link: [{ rel: 'canonical', href: 'https://emotesizer.com/search' }],
-  script: [{
-    type: 'application/ld+json',
-    innerHTML: JSON.stringify({
-      "@context": "https://schema.org", "@type": "BreadcrumbList",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://emotesizer.com" },
-        { "@type": "ListItem", "position": 2, "name": "Search GIFs", "item": "https://emotesizer.com/search" }
-      ]
-    }),
-  }],
-})
-
 const route = useRoute()
 const router = useRouter()
 const store = useSearchStore()
+
+// Reactive SEO: title, description, canonical, and OG tags adapt to the
+// active content type so search-engine crawlers and social previews
+// always reflect whether the user is browsing GIFs or Stickers.
+useHead(computed(() => {
+  const isStickers = store.contentType === 'stickers'
+  const typeLabel = isStickers ? 'Stickers' : 'GIFs'
+  const canonicalUrl = isStickers ? 'https://emotesizer.com/search?type=stickers' : 'https://emotesizer.com/search'
+  return {
+    title: `Search ${typeLabel} for Twitch, Discord & Kick Emotes — EmoteSizer`,
+    meta: [
+      { name: 'description', content: `Search thousands of trending ${typeLabel.toLowerCase()} to use as Twitch emotes, Discord emoji, or Kick emotes. Find the perfect ${isStickers ? 'sticker' : 'GIF'} and resize it instantly.` },
+      { property: 'og:title', content: `Search ${typeLabel} for Streaming Emotes — EmoteSizer` },
+      { property: 'og:description', content: `Search thousands of ${typeLabel.toLowerCase()} and convert them into emotes for Twitch, Discord, and Kick.` },
+      { property: 'og:url', content: canonicalUrl },
+    ],
+    link: [
+      { rel: 'canonical', href: canonicalUrl },
+    ],
+    script: [{
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        "@context": "https://schema.org", "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://emotesizer.com" },
+          { "@type": "ListItem", "position": 2, "name": `Search ${typeLabel}`, "item": canonicalUrl }
+        ]
+      }),
+    }],
+  }
+}))
 const klipy = useKlipy()
 
 let abortController: AbortController | null = null
 
+/** Build a clean URL query object reflecting the current search state. */
+function buildRouteQuery(overrides?: Record<string, string | undefined>): Record<string, string> {
+  const q: Record<string, string> = {}
+  const query = overrides?.q ?? store.query
+  const type = overrides?.type ?? store.contentType
+  const page = overrides?.page ?? (store.currentPage > 1 ? String(store.currentPage) : undefined)
+
+  if (query) q.q = query
+  if (type === 'stickers') q.type = 'stickers'
+  if (page && page !== '1') q.page = page
+  return q
+}
+
 async function handleSearch(query: string) {
-  router.replace({ query: query ? { q: query } : {} })
   store.query = query
   store.selectedCategory = null
+  router.replace({ query: buildRouteQuery({ q: query || undefined, page: undefined }) })
   await fetchGifs()
 }
 
@@ -147,12 +193,40 @@ async function handleCategoryChange(slug: string | null) {
   // selecting a category triggers a search for that category's name
   if (slug) {
     store.query = slug
-    router.replace({ query: { q: slug } })
   } else {
     store.query = ''
-    router.replace({ query: {} })
   }
+  router.replace({ query: buildRouteQuery({ q: store.query || undefined, page: undefined }) })
   await fetchGifs()
+}
+
+async function switchContentType(type: 'gifs' | 'stickers') {
+  if (store.contentType === type) return
+  store.contentType = type
+  store.reset()
+
+  // Update URL to reflect the new content type
+  router.replace({ query: buildRouteQuery({ page: undefined }) })
+
+  // Re-fetch categories for the new content type
+  klipy.categories(type).then(cats => {
+    store.categories = cats
+  }).catch(() => {
+    // Categories are non-critical
+  })
+
+  await fetchGifs()
+}
+
+/**
+ * Shared error handler for fetch operations. Returns true when the error
+ * is an AbortError (i.e. the caller should bail out silently).
+ */
+function handleFetchError(e: unknown, context: string): boolean {
+  if (e instanceof DOMException && e.name === 'AbortError') return true
+  if (import.meta.dev) console.error(`${context}:`, e)
+  store.error = e instanceof Error ? e.message : 'An unexpected error occurred'
+  return false
 }
 
 async function fetchGifs() {
@@ -160,22 +234,19 @@ async function fetchGifs() {
   abortController?.abort()
   abortController = new AbortController()
 
-  store.reset()
   store.isLoading = true
+  store.reset()
 
   try {
     const response = store.query
-      ? await klipy.searchGifs(store.query, 1, 24, { signal: abortController.signal })
-      : await klipy.getTrending(1, 24, { signal: abortController.signal })
+      ? await klipy.search(store.contentType, store.query, 1, 24, { signal: abortController.signal })
+      : await klipy.trending(store.contentType, 1, 24, { signal: abortController.signal })
 
     store.gifs = response.data.data
     store.currentPage = response.data.current_page
     store.hasMore = response.data.has_next
   } catch (e: unknown) {
-    // Silently ignore aborted requests
-    if (e instanceof DOMException && e.name === 'AbortError') return
-    if (import.meta.dev) console.error('fetchGifs:', e)
-    store.error = e instanceof Error ? e.message : 'Failed to load GIFs'
+    if (handleFetchError(e, 'fetchGifs')) return
   } finally {
     store.isLoading = false
   }
@@ -191,24 +262,19 @@ async function goToPage(page: number) {
 
   try {
     const response = store.query
-      ? await klipy.searchGifs(store.query, page, 24, { signal: abortController.signal })
-      : await klipy.getTrending(page, 24, { signal: abortController.signal })
+      ? await klipy.search(store.contentType, store.query, page, 24, { signal: abortController.signal })
+      : await klipy.trending(store.contentType, page, 24, { signal: abortController.signal })
 
     store.gifs = response.data.data
     store.hasMore = response.data.has_next
 
     // Update URL -- omit page param when on page 1 for cleaner URLs
-    const query: Record<string, string> = {}
-    if (store.query) query.q = store.query
-    if (page > 1) query.page = String(page)
-    router.replace({ query })
+    router.replace({ query: buildRouteQuery({ page: page > 1 ? String(page) : undefined }) })
 
     // Scroll to top so the user sees the new page from the beginning
     window.scrollTo({ top: 0, behavior: 'smooth' })
   } catch (e: unknown) {
-    if (e instanceof DOMException && e.name === 'AbortError') return
-    if (import.meta.dev) console.error('goToPage:', e)
-    if (e instanceof Error) store.error = e.message
+    if (handleFetchError(e, 'goToPage')) return
   } finally {
     store.isPageTransitioning = false
   }
@@ -226,25 +292,31 @@ onMounted(async () => {
     store.query = q
   }
 
+  // Read content type from URL, default to 'gifs'
+  const typeParam = route.query.type as string | undefined
+  if (typeParam === 'stickers') {
+    store.contentType = 'stickers'
+  }
+
   const pageParam = route.query.page as string | undefined
   const initialPage = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1
 
-  // Fetch categories (non-blocking)
-  klipy.getCategories().then(cats => {
+  // Fetch categories for the active content type (non-blocking)
+  klipy.categories(store.contentType).then(cats => {
     store.categories = cats
   }).catch(() => {
     // Categories are non-critical
   })
 
-  // Fetch initial GIFs -- if a page param was provided, go directly to that page
+  // Fetch initial content -- if a page param was provided, go directly to that page
   if (initialPage > 1) {
     store.currentPage = initialPage
     abortController = new AbortController()
     store.isLoading = true
     try {
       const response = store.query
-        ? await klipy.searchGifs(store.query, initialPage, 24, { signal: abortController.signal })
-        : await klipy.getTrending(initialPage, 24, { signal: abortController.signal })
+        ? await klipy.search(store.contentType, store.query, initialPage, 24, { signal: abortController.signal })
+        : await klipy.trending(store.contentType, initialPage, 24, { signal: abortController.signal })
 
       store.gifs = response.data.data
       store.currentPage = response.data.current_page
@@ -252,7 +324,7 @@ onMounted(async () => {
     } catch (e: unknown) {
       if (e instanceof DOMException && e.name === 'AbortError') return
       if (import.meta.dev) console.error('fetchGifs:', e)
-      store.error = e instanceof Error ? e.message : 'Failed to load GIFs'
+      store.error = e instanceof Error ? e.message : 'Failed to load content'
     } finally {
       store.isLoading = false
     }

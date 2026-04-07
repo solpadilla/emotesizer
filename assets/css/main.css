@@ -549,11 +549,6 @@ html[data-theme="midnight"] {
     color: var(--badge-error-text);
   }
 
-  .badge-danger {
-    background: var(--badge-error-bg);
-    color: var(--badge-error-text);
-  }
-
   .badge-info {
     background: var(--badge-info-bg);
     color: var(--badge-info-text);
@@ -677,6 +672,25 @@ html[data-theme="midnight"] {
       linear-gradient(-45deg, transparent 75%, rgba(var(--color-surface-200), 0.5) 75%);
     background-size: 8px 8px;
     background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+  }
+
+  /* === Segmented Control === */
+  .segmented-control {
+    @apply inline-flex p-1 rounded-xl relative;
+    background: rgba(var(--color-surface-200), 0.5);
+  }
+
+  .segmented-control-item {
+    @apply relative z-10 px-4 py-2 rounded-lg text-sm font-medium
+           transition-colors duration-200 inline-flex items-center gap-2 cursor-pointer;
+    color: rgb(var(--color-surface-500));
+    min-height: 40px;
+  }
+
+  .segmented-control-item-active {
+    color: rgb(var(--color-surface-900));
+    background: rgb(var(--color-surface-50));
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   /* === Frosted Glass === */

@@ -33,8 +33,9 @@
           </button>
         </div>
 
-        <!-- Trim Animation (shown when animated GIF with >1 frame is loaded) -->
+        <!-- Trimmer / Frame Picker swap: out-in prevents overlap during transitions -->
         <Transition
+          mode="out-in"
           enter-active-class="transition duration-200 ease-out"
           enter-from-class="opacity-0 -translate-y-2"
           enter-to-class="opacity-100 translate-y-0"
@@ -42,11 +43,22 @@
           leave-from-class="opacity-100 translate-y-0"
           leave-to-class="opacity-0 -translate-y-2"
         >
-          <div v-if="needsTrimmer" :class="{ 'pointer-events-none opacity-60': optimizer.isProcessing.value }">
+          <!-- Trim Animation (shown when animated GIF with >1 frame is loaded) -->
+          <div v-if="needsTrimmer" key="trimmer" :class="{ 'pointer-events-none opacity-60': optimizer.isProcessing.value }">
             <h3 class="label mb-2">Trim Animation</h3>
             <GifTrimmer
               v-model="trimRange"
               :frames="decodedFrames"
+              :is-loading="isDecodingFrames"
+            />
+          </div>
+
+          <!-- Frame Picker (shown when a GIF is loaded and a static platform is selected) -->
+          <div v-else-if="needsFramePicker" key="framepicker" :class="{ 'pointer-events-none opacity-60': optimizer.isProcessing.value }">
+            <h3 class="label mb-2">Select Frame</h3>
+            <FramePicker
+              v-model="selectedFrameIndex"
+              :frames="sampledFrames"
               :is-loading="isDecodingFrames"
             />
           </div>
@@ -61,25 +73,6 @@
             :disabled-platforms="disabledPlatformIds"
           />
         </div>
-
-        <!-- Frame Picker (shown when a GIF is loaded and a static platform is selected) -->
-        <Transition
-          enter-active-class="transition duration-200 ease-out"
-          enter-from-class="opacity-0 -translate-y-2"
-          enter-to-class="opacity-100 translate-y-0"
-          leave-active-class="transition duration-150 ease-in"
-          leave-from-class="opacity-100 translate-y-0"
-          leave-to-class="opacity-0 -translate-y-2"
-        >
-          <div v-if="needsFramePicker" :class="{ 'pointer-events-none opacity-60': optimizer.isProcessing.value }">
-            <h3 class="label mb-2">Select Frame</h3>
-            <FramePicker
-              v-model="selectedFrameIndex"
-              :frames="sampledFrames"
-              :is-loading="isDecodingFrames"
-            />
-          </div>
-        </Transition>
 
         <!-- Resize Mode Selector (shown only for non-square GIFs) -->
         <div v-if="gifUrl && isNonSquare" :class="{ 'pointer-events-none opacity-60': optimizer.isProcessing.value }">
@@ -309,6 +302,7 @@ useHead({
 import type { DecodedFrame } from 'modern-gif'
 import { decodeFrames } from 'modern-gif'
 import type { Platform, ResizeMode, OptimizationResult } from '~/types/optimizer'
+import { isValidMediaUrl } from '~/utils/url'
 
 const route = useRoute()
 const { error: toastError, success: toastSuccess } = useToast()
@@ -411,20 +405,31 @@ function autoSelectResizeMode(width: number, height: number) {
 function detectSourceDimensions(url: string) {
   const img = new Image()
   img.crossOrigin = 'anonymous'
+
+  // Prevent the Image element from holding references after it has served its purpose
+  const cleanup = () => {
+    img.onload = null
+    img.onerror = null
+    img.src = ''
+  }
+
   img.onload = () => {
     // Guard against broken or zero-dimension images (can occur with corrupt files or SVGs without intrinsic size)
     if (!(img.naturalWidth > 0 && img.naturalHeight > 0)) {
       sourceWidth.value = null
       sourceHeight.value = null
+      cleanup()
       return
     }
     sourceWidth.value = img.naturalWidth
     sourceHeight.value = img.naturalHeight
     autoSelectResizeMode(img.naturalWidth, img.naturalHeight)
+    cleanup()
   }
   img.onerror = () => {
     sourceWidth.value = null
     sourceHeight.value = null
+    cleanup()
   }
   img.src = url
 }
@@ -465,9 +470,12 @@ const needsFramePicker = computed(() => {
     && decodedFrames.value.length > 1
 })
 
-/** Whether the GIF trimmer should be shown (animated GIF with more than 1 frame) */
+/** Whether the GIF trimmer should be shown (animated GIF with more than 1 frame, excluding static platforms) */
 const needsTrimmer = computed(() => {
-  return gifUrl.value && !isDecodingFrames.value && decodedFrames.value.length > 1
+  return gifUrl.value
+    && !isDecodingFrames.value
+    && decodedFrames.value.length > 1
+    && selectedPlatform.value?.maxFrames !== 1
 })
 
 /** The subset of decoded frames within the user's trim range */
@@ -529,23 +537,12 @@ async function decodeGifFrames() {
   }
 }
 
-/** Validates that a string is a well-formed URL (https: or blob:) */
-function isValidUrl(str: string): boolean {
-  if (str.startsWith('blob:')) return true
-  try {
-    const parsed = new URL(str)
-    return parsed.protocol === 'https:'
-  } catch {
-    return false
-  }
-}
-
 // Read query params to pre-load from search
 onMounted(() => {
   const gifParam = route.query.gif as string | undefined
   const titleParam = route.query.title as string | undefined
 
-  if (gifParam && isValidUrl(gifParam)) {
+  if (gifParam && isValidMediaUrl(gifParam)) {
     gifUrl.value = gifParam
     detectSourceDimensions(gifParam)
 
@@ -565,6 +562,16 @@ onMounted(() => {
   if (titleParam) {
     gifTitle.value = titleParam
   }
+})
+
+onUnmounted(() => {
+  if (gifUrl.value && gifUrl.value.startsWith('blob:')) {
+    URL.revokeObjectURL(gifUrl.value)
+  }
+  if (previewOverrideUrl.value) {
+    URL.revokeObjectURL(previewOverrideUrl.value)
+  }
+  smartCompressAbort?.abort()
 })
 
 // Reset frame picker selection whenever the trim range changes so the
