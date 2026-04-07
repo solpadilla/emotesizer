@@ -111,6 +111,13 @@
         </button>
       </div>
     </div>
+
+    <!-- KLIPY attribution — always visible, non-interactive -->
+    <img
+      src="/KLIPY.png"
+      alt="Powered by KLIPY"
+      class="absolute bottom-2 right-2 h-4 opacity-60 pointer-events-none"
+    />
   </div>
 </template>
 
