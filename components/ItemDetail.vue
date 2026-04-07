@@ -223,15 +223,22 @@ import { isValidMediaUrl } from '~/utils/url'
 
 const props = defineProps<{
   contentType: 'gifs' | 'stickers'
+  item: KlipyGif | null
+  isLoading: boolean
 }>()
 
-const route = useRoute()
 const klipy = useKlipy()
 const { success, error: toastError } = useToast()
 const { downloadUrl } = useDownload()
 
 const isSticker = computed(() => props.contentType === 'stickers')
 const typeLabel = computed(() => isSticker.value ? 'Sticker' : 'GIF')
+
+// Item and loading state come from the parent page via props.
+// useAsyncData and useHead live in the page files so Nuxt's SSR
+// properly awaits the data fetch and renders OG tags in the HTML.
+const item = computed(() => props.item)
+const notFound = computed(() => !props.isLoading && !props.item)
 
 /** Stop-words excluded from auto-generated tags. */
 const TAG_STOP_WORDS = new Set([
@@ -277,12 +284,7 @@ const displayTags = computed<string[]>(() => {
   return Array.from(tags).slice(0, 10)
 })
 
-// Item state
-const item = ref<KlipyGif | null>(null)
-const isLoading = ref(true)
-const notFound = ref(false)
-
-// Related content state
+// Related content state (loaded client-side only — not needed for OG tags)
 const relatedItems = ref<KlipyGif[]>([])
 const relatedLoading = ref(false)
 const relatedSearchQuery = ref('')
@@ -373,102 +375,11 @@ async function fetchRelated(currentItem: KlipyGif) {
   }
 }
 
-// Set SEO head tags reactively based on the loaded item
-watch(item, (currentItem) => {
-  if (!currentItem) return
-
-  const canonicalUrl = `https://emotesizer.com/${props.contentType}/${currentItem.slug}`
-  const ogImage = currentItem.file.md.gif.url
-  const seoTitle = `${currentItem.title} — Free ${typeLabel.value} for Twitch & Discord Emotes | EmoteSizer`
-  const seoDescription = `Download and optimize "${currentItem.title}" as a ${typeLabel.value.toLowerCase()} emote for Twitch, Discord, or Kick. Free resize and compression — no signup required.`
-
-  useHead({
-    title: seoTitle,
-    meta: [
-      { name: 'description', content: seoDescription },
-      { property: 'og:title', content: `${currentItem.title} — ${typeLabel.value} for Streaming Emotes` },
-      { property: 'og:description', content: `Optimize "${currentItem.title}" for Twitch, Discord, or Kick emotes. Free browser-based ${typeLabel.value.toLowerCase()} resizer.` },
-      { property: 'og:image', content: ogImage },
-      { property: 'og:url', content: canonicalUrl },
-      { property: 'og:type', content: 'article' },
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: `${currentItem.title} — ${typeLabel.value} for Streaming Emotes` },
-      { name: 'twitter:description', content: seoDescription },
-      { name: 'twitter:image', content: ogImage },
-    ],
-    link: [{ rel: 'canonical', href: canonicalUrl }],
-    script: [
-      {
-        type: 'application/ld+json',
-        innerHTML: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://emotesizer.com" },
-            { "@type": "ListItem", "position": 2, "name": `Search ${typeLabel.value}s`, "item": `https://emotesizer.com/search${props.contentType === 'stickers' ? '?type=stickers' : ''}` },
-            { "@type": "ListItem", "position": 3, "name": currentItem.title, "item": canonicalUrl },
-          ],
-        }),
-      },
-      {
-        type: 'application/ld+json',
-        innerHTML: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "ImageObject",
-          "name": currentItem.title,
-          "contentUrl": currentItem.file.hd.gif.url,
-          "thumbnailUrl": ogImage,
-          "description": `${currentItem.title} — ${typeLabel.value.toLowerCase()} for use as a Twitch, Discord, or Kick emote.`,
-          "width": currentItem.file.hd.gif.width,
-          "height": currentItem.file.hd.gif.height,
-        }),
-      },
-    ],
-  })
-}, { immediate: true })
-
-onMounted(async () => {
+// Related content is non-critical — fetch client-side only after mount
+onMounted(() => {
   abortController = new AbortController()
-  const slug = route.params.slug as string
-
-  if (!slug) {
-    notFound.value = true
-    isLoading.value = false
-    return
-  }
-
-  try {
-    // First, try the items API endpoint (by slug)
-    let fetchedItem = await klipy.getItemBySlug(props.contentType, slug, { signal: abortController?.signal })
-
-    // Fallback: search by slug as query and find an exact match
-    if (!fetchedItem) {
-      const searchResponse = await klipy.search(
-        props.contentType,
-        slug.replace(/-/g, ' '),
-        1,
-        24,
-        { signal: abortController?.signal }
-      )
-      fetchedItem = searchResponse.data.data.find(g => g.slug === slug) || null
-    }
-
-    if (!fetchedItem) {
-      notFound.value = true
-      isLoading.value = false
-      return
-    }
-
-    item.value = fetchedItem
-    isLoading.value = false
-
-    // Fetch related content in the background
-    fetchRelated(fetchedItem)
-  } catch (e: unknown) {
-    if (e instanceof DOMException && e.name === 'AbortError') return
-    if (import.meta.dev) console.error('ItemDetail fetch:', e)
-    notFound.value = true
-    isLoading.value = false
+  if (item.value) {
+    fetchRelated(item.value)
   }
 })
 
