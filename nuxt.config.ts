@@ -25,22 +25,22 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Search thousands of GIFs and stickers, then resize them as emotes for Twitch, Discord, and Kick. Free browser-based emote optimizer — no signup required.' },
+        { key: 'description', name: 'description', content: 'Search thousands of GIFs and stickers, then resize them as emotes for Twitch, Discord, and Kick. Free browser-based emote optimizer — no signup required.' },
         { name: 'theme-color', content: '#3B82F6' },
-        // Open Graph
-        { property: 'og:title', content: 'EmoteSizer — GIF & Sticker Search + Emote Optimizer' },
-        { property: 'og:description', content: 'Find the perfect GIF or sticker and resize it as an emote for Twitch, Discord, or Kick. Optimized sizes, one click.' },
-        { property: 'og:type', content: 'website' },
+        // Open Graph — keys allow page-level useHead to override these defaults
+        { key: 'og:title', property: 'og:title', content: 'EmoteSizer — GIF & Sticker Search + Emote Optimizer' },
+        { key: 'og:description', property: 'og:description', content: 'Find the perfect GIF or sticker and resize it as an emote for Twitch, Discord, or Kick. Optimized sizes, one click.' },
+        { key: 'og:type', property: 'og:type', content: 'website' },
         { property: 'og:site_name', content: 'EmoteSizer' },
-        // Twitter
-        { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'EmoteSizer — GIF & Sticker Search + Emote Optimizer' },
-        { name: 'twitter:description', content: 'Find the perfect GIF or sticker and resize it as an emote for Twitch, Discord, or Kick. Optimized sizes, one click.' },
+        // Twitter — keys allow page-level useHead to override these defaults
+        { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
+        { key: 'twitter:title', name: 'twitter:title', content: 'EmoteSizer — GIF & Sticker Search + Emote Optimizer' },
+        { key: 'twitter:description', name: 'twitter:description', content: 'Find the perfect GIF or sticker and resize it as an emote for Twitch, Discord, or Kick. Optimized sizes, one click.' },
         { name: 'robots', content: 'index, follow' },
         { name: 'google-site-verification', content: '20jUiCMXIyvTrhO64y3O_irxwdikeqSwoH9hWHoixjs' },
-        { property: 'og:url', content: 'https://emotesizer.com' },
-        { property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
-        { name: 'twitter:image', content: 'https://emotesizer.com/og-image.png' },
+        { key: 'og:url', property: 'og:url', content: 'https://emotesizer.com' },
+        { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
+        { key: 'twitter:image', name: 'twitter:image', content: 'https://emotesizer.com/og-image.png' },
       ],
       link: [
         {
