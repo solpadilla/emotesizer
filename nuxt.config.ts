@@ -25,17 +25,17 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { key: 'description', name: 'description', content: 'Search thousands of GIFs and stickers, then resize them as emotes for Twitch, Discord, and Kick. Free browser-based emote optimizer — no signup required.' },
+        { key: 'description', name: 'description', content: 'Free emote maker — search GIFs and stickers, then resize them as emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ. No signup required.' },
         { name: 'theme-color', content: '#3B82F6' },
         // Open Graph — keys allow page-level useHead to override these defaults
         { key: 'og:title', property: 'og:title', content: 'EmoteSizer — GIF & Sticker Search + Emote Optimizer' },
-        { key: 'og:description', property: 'og:description', content: 'Find the perfect GIF or sticker and resize it as an emote for Twitch, Discord, or Kick. Optimized sizes, one click.' },
+        { key: 'og:description', property: 'og:description', content: 'Free emote maker — find the perfect GIF or sticker and resize it as an emote for Twitch, Discord, Kick, 7TV, BTTV, and FFZ.' },
         { key: 'og:type', property: 'og:type', content: 'website' },
         { property: 'og:site_name', content: 'EmoteSizer' },
         // Twitter — keys allow page-level useHead to override these defaults
         { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
         { key: 'twitter:title', name: 'twitter:title', content: 'EmoteSizer — GIF & Sticker Search + Emote Optimizer' },
-        { key: 'twitter:description', name: 'twitter:description', content: 'Find the perfect GIF or sticker and resize it as an emote for Twitch, Discord, or Kick. Optimized sizes, one click.' },
+        { key: 'twitter:description', name: 'twitter:description', content: 'Free emote maker — find the perfect GIF or sticker and resize it as an emote for Twitch, Discord, Kick, 7TV, BTTV, and FFZ.' },
         { name: 'robots', content: 'index, follow' },
         { name: 'google-site-verification', content: '20jUiCMXIyvTrhO64y3O_irxwdikeqSwoH9hWHoixjs' },
         { key: 'og:url', property: 'og:url', content: 'https://emotesizer.com' },
@@ -59,6 +59,11 @@ export default defineNuxtConfig({
         },
       ],
       script: [
+        {
+          src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5451666136881781',
+          async: true,
+          crossorigin: 'anonymous',
+        },
         {
           innerHTML: `
             (function() {
