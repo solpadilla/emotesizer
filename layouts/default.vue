@@ -21,6 +21,10 @@
           <NuxtLink to="/" class="hover:text-surface-600 transition-colors">Emote Resizer</NuxtLink>
           <NuxtLink to="/search" class="hover:text-surface-600 transition-colors">Search GIFs</NuxtLink>
           <NuxtLink to="/optimizer" class="hover:text-surface-600 transition-colors">GIF Optimizer</NuxtLink>
+          <NuxtLink to="/about" class="hover:text-surface-600 transition-colors">About</NuxtLink>
+          <NuxtLink to="/privacy" class="hover:text-surface-600 transition-colors">Privacy</NuxtLink>
+          <NuxtLink to="/terms" class="hover:text-surface-600 transition-colors">Terms</NuxtLink>
+          <NuxtLink to="/contact" class="hover:text-surface-600 transition-colors">Contact</NuxtLink>
         </div>
         <p class="text-xs text-surface-400">
           <span class="font-semibold">EmoteSizer</span> — Free emote resizer for Twitch, Discord, and Kick.

@@ -7,7 +7,7 @@
           <span class="text-surface-900">Twitch Emote Resizer & GIF Optimizer</span>
         </h1>
         <p class="mt-4 md:mt-6 text-surface-500 text-base md:text-lg max-w-xl mx-auto">
-          Search thousands of GIFs <strong>and stickers</strong> and resize them into emotes for Twitch, Discord, Kick, 7TV, and BTTV — free, in your browser.
+          A free emote maker for streamers — search thousands of GIFs <strong>and stickers</strong> and resize them into emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ. No signup required.
         </p>
 
         <!-- Search Bar -->
@@ -131,7 +131,7 @@
     <section class="py-10 md:py-16 px-4">
       <div class="max-w-5xl mx-auto">
         <h2 class="text-lg md:text-xl font-bold text-surface-900 text-center mb-8">
-          Emote Size Requirements by Platform
+          Free Emote Tool — Size Requirements by Platform
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           <!-- Twitch -->
@@ -142,7 +142,7 @@
               </svg>
             </div>
             <h3 class="text-base font-bold text-surface-900">Twitch Emote Sizes</h3>
-            <p class="text-xs text-surface-500 mt-1">Resize animated GIFs to 28px, 56px, and 112px for Twitch emotes. Compress to under 1 MB.</p>
+            <p class="text-xs text-surface-500 mt-1">Use our Twitch emote creator to resize animated GIFs to 28px, 56px, and 112px. Compress to under 1 MB.</p>
             <p class="text-xs text-surface-400 mt-2">28, 56, 112px &middot; Up to 1 MB</p>
             <NuxtLink to="/optimizer" class="link text-sm mt-3 inline-block">Resize Twitch Emotes</NuxtLink>
           </div>
@@ -180,7 +180,7 @@
     <section class="py-10 md:py-16 px-4">
       <div class="max-w-4xl mx-auto">
         <h2 class="text-lg md:text-xl font-bold text-surface-900 text-center mb-10">
-          How to Resize GIFs Into Emotes
+          How the Emote Creator Works
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 relative">
           <!-- Dashed connectors (desktop only) -->
@@ -252,6 +252,14 @@
             <h3 class="text-sm font-bold text-surface-900">Can I use stickers as emotes?</h3>
             <p class="text-sm text-surface-500 mt-1">Yes. EmoteSizer supports both GIFs and stickers. Stickers often have transparent backgrounds, making them ideal for static emotes on Twitch, Discord, and Kick.</p>
           </div>
+          <div>
+            <h3 class="text-sm font-bold text-surface-900">Can I use EmoteSizer as a Twitch emote maker?</h3>
+            <p class="text-sm text-surface-500 mt-1">Yes. EmoteSizer works as a free emote maker and creator for Twitch. Upload or search for a GIF, resize it to Twitch's required dimensions, and download — all in your browser with no signup.</p>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-surface-900">Does EmoteSizer support FFZ (FrankerFaceZ) emotes?</h3>
+            <p class="text-sm text-surface-500 mt-1">Yes. The recommended FFZ emote size is 128x128 pixels, similar to BTTV. Use the Twitch animated emote preset to resize your GIF for FFZ compatibility.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -264,9 +272,9 @@ import type { KlipyGif } from '~/types/klipy'
 useHead({
   title: 'EmoteSizer — Free Twitch Emote Resizer, GIF & Sticker Optimizer',
   meta: [
-    { name: 'description', content: 'Search thousands of GIFs and stickers, then resize them into emotes for Twitch, Discord, Kick, 7TV, and BTTV. Free browser-based emote optimizer — no signup required.' },
+    { name: 'description', content: 'Free emote maker — search thousands of GIFs and stickers, then resize them into emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ. Browser-based animated emote maker — no signup required.' },
     { property: 'og:title', content: 'EmoteSizer — Free Twitch Emote Resizer, GIF & Sticker Optimizer' },
-    { property: 'og:description', content: 'Search GIFs and stickers, then resize them into emotes for Twitch, Discord, Kick, 7TV, and BTTV. Free browser-based emote optimizer.' },
+    { property: 'og:description', content: 'Free emote maker — search GIFs and stickers, then resize them into emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ.' },
     { property: 'og:url', content: 'https://emotesizer.com' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com' }],
@@ -278,11 +286,11 @@ useHead({
         "@type": "WebApplication",
         "name": "EmoteSizer",
         "url": "https://emotesizer.com",
-        "description": "Free browser-based tool to search GIFs and stickers, then resize and compress them into emotes for Twitch, Discord, Kick, 7TV, and BTTV.",
+        "description": "Free emote maker and GIF optimizer — search GIFs and stickers, then resize and compress them into emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ.",
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "Any (browser-based)",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "featureList": ["GIF search", "Sticker search", "Twitch emote resizer", "Discord emoji resizer", "Kick emote optimizer", "Smart compression", "GIF trimmer", "No signup required"]
+        "featureList": ["GIF search", "Sticker search", "Twitch emote creator", "Animated emote maker", "Discord emoji resizer", "Kick emote optimizer", "FFZ emote resizer", "Smart compression", "GIF to PNG converter", "GIF trimmer", "No signup required"]
       }),
     },
     {
@@ -297,7 +305,9 @@ useHead({
           { "@type": "Question", "name": "Does EmoteSizer work with 7TV and BTTV?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Use the Twitch animated emote preset for 7TV and BTTV compatibility." }},
           { "@type": "Question", "name": "Is EmoteSizer free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, completely free. All processing happens in your browser — no account, no uploads to servers, no watermarks." }},
           { "@type": "Question", "name": "Can I trim a GIF before converting to an emote?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Use the Trim Animation slider to select which frames to keep, reducing file size." }},
-          { "@type": "Question", "name": "Can I use stickers as emotes?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. EmoteSizer supports both GIFs and stickers. Stickers often have transparent backgrounds, making them ideal for static emotes on Twitch, Discord, and Kick." }}
+          { "@type": "Question", "name": "Can I use stickers as emotes?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. EmoteSizer supports both GIFs and stickers. Stickers often have transparent backgrounds, making them ideal for static emotes on Twitch, Discord, and Kick." }},
+          { "@type": "Question", "name": "Can I use EmoteSizer as a Twitch emote maker?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. EmoteSizer works as a free emote maker and creator for Twitch. Upload or search for a GIF, resize it to Twitch's required dimensions, and download — all in your browser with no signup." }},
+          { "@type": "Question", "name": "Does EmoteSizer support FFZ (FrankerFaceZ) emotes?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The recommended FFZ emote size is 128x128 pixels, similar to BTTV. Use the Twitch animated emote preset to resize your GIF for FFZ compatibility." }}
         ]
       }),
     },

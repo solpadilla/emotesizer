@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
     <div class="mb-6">
       <h1 class="page-title">GIF to Emote Converter</h1>
-      <p class="page-subtitle mt-1">Resize, compress, and convert GIFs into emotes for Twitch, Discord, Kick, 7TV, and BTTV</p>
+      <p class="page-subtitle mt-1">Free emote maker — resize, compress, and convert GIFs into emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -266,7 +266,8 @@
             <tr class="border-b border-surface-100"><td class="py-2 pr-4">Discord</td><td class="py-2 pr-4">128px</td><td class="py-2 pr-4">256 KB</td><td class="py-2">GIF / PNG</td></tr>
             <tr class="border-b border-surface-100"><td class="py-2 pr-4">Kick</td><td class="py-2 pr-4">500px (auto-resizes)</td><td class="py-2 pr-4">1 MB</td><td class="py-2">GIF / PNG</td></tr>
             <tr class="border-b border-surface-100"><td class="py-2 pr-4">7TV</td><td class="py-2 pr-4">128px (recommended)</td><td class="py-2 pr-4">Varies</td><td class="py-2">GIF, AVIF, WebP</td></tr>
-            <tr><td class="py-2 pr-4">BTTV</td><td class="py-2 pr-4">112-128px</td><td class="py-2 pr-4">1 MB</td><td class="py-2">GIF / PNG</td></tr>
+            <tr class="border-b border-surface-100"><td class="py-2 pr-4">BTTV</td><td class="py-2 pr-4">112-128px</td><td class="py-2 pr-4">1 MB</td><td class="py-2">GIF / PNG</td></tr>
+            <tr><td class="py-2 pr-4">FFZ</td><td class="py-2 pr-4">128x128px (recommended)</td><td class="py-2 pr-4">Varies</td><td class="py-2">GIF / PNG</td></tr>
           </tbody>
         </table>
       </div>
@@ -281,9 +282,9 @@
 useHead({
   title: 'GIF to Emote Converter — Resize for Twitch, Discord & Kick',
   meta: [
-    { name: 'description', content: 'Convert and resize GIFs into emotes for Twitch, Discord, and Kick. Compress animated emotes to meet file size limits. Free browser-based tool, no signup.' },
+    { name: 'description', content: 'Free emote maker and GIF to emote converter. Resize and compress GIFs and PNGs for Twitch emotes, sub badges, Discord emoji, Kick, 7TV, BTTV, and FFZ. Also works as a gif to png converter and Twitch sub badge resizer.' },
     { property: 'og:title', content: 'GIF to Emote Converter — EmoteSizer' },
-    { property: 'og:description', content: 'Resize and compress GIFs for Twitch emotes, Discord emoji, and Kick emotes.' },
+    { property: 'og:description', content: 'Free animated emote maker — resize and compress GIFs for Twitch emotes, sub badges, Discord emoji, Kick, 7TV, BTTV, and FFZ.' },
     { property: 'og:url', content: 'https://emotesizer.com/optimizer' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com/optimizer' }],
@@ -300,7 +301,7 @@ useHead({
 })
 
 import type { DecodedFrame } from 'modern-gif'
-import { decodeFrames } from 'modern-gif'
+import { decodeFrames, encode } from 'modern-gif'
 import type { Platform, ResizeMode, OptimizationResult } from '~/types/optimizer'
 import { isValidMediaUrl } from '~/utils/url'
 
@@ -342,6 +343,7 @@ const padColorPreset = ref<'transparent' | 'white' | 'black' | 'custom'>('transp
 const previewOverrideUrl = ref<string | null>(null)
 /** Active AbortController for the currently-running smart compression, if any */
 let smartCompressAbort: AbortController | null = null
+let trimPreviewTimeout: ReturnType<typeof setTimeout> | null = null
 /** Stores the original blob before smart compression so Undo can restore it */
 const originalBlobs = new Map<number, { blob: Blob; fileSize: number }>()
 /** Whether any smart compression is currently in progress (disables the Optimize button) */
@@ -571,14 +573,78 @@ onUnmounted(() => {
   if (previewOverrideUrl.value) {
     URL.revokeObjectURL(previewOverrideUrl.value)
   }
+  if (trimPreviewTimeout) {
+    clearTimeout(trimPreviewTimeout)
+    trimPreviewTimeout = null
+  }
   smartCompressAbort?.abort()
 })
 
 // Reset frame picker selection whenever the trim range changes so the
 // index doesn't point outside the new trimmed subset.
+// Also update the source preview to reflect the trimmed content: when the
+// user has trimmed to a sub-range, re-encode the trimmed frames into an
+// animated GIF so the preview plays the trimmed animation (not a still).
+// The re-encode is debounced (500ms) to avoid expensive work on every
+// slider tick while the user is still dragging.
 watch(trimRange, () => {
   selectedFrameIndex.value = 0
-})
+
+  // Don't override the preview when optimization results already exist
+  // (smart compress sets its own preview URL that should take priority)
+  if (optimizer.results.value.length) return
+
+  // When the trimmer isn't active or there are no decoded frames, clear any
+  // existing trim preview so the original animated GIF shows again
+  if (!needsTrimmer.value || !decodedFrames.value.length) {
+    if (previewOverrideUrl.value) {
+      URL.revokeObjectURL(previewOverrideUrl.value)
+      previewOverrideUrl.value = null
+    }
+    return
+  }
+
+  const [start, end] = trimRange.value
+  const fullRange = start === 0 && end === decodedFrames.value.length - 1
+
+  if (fullRange) {
+    // Full range selected — show the original animated GIF
+    if (previewOverrideUrl.value) {
+      URL.revokeObjectURL(previewOverrideUrl.value)
+      previewOverrideUrl.value = null
+    }
+    return
+  }
+
+  // Debounce the re-encode — wait for user to stop dragging
+  if (trimPreviewTimeout) clearTimeout(trimPreviewTimeout)
+  trimPreviewTimeout = setTimeout(async () => {
+    try {
+      const frames = trimmedFrames.value
+      if (!frames.length) return
+
+      // Encode trimmed frames into an animated GIF for a live preview
+      const encodedGif = await encode({
+        width: frames[0].width,
+        height: frames[0].height,
+        frames: frames.map(f => ({
+          data: f.data,
+          delay: f.delay || 100,
+        })),
+      })
+
+      const blob = new Blob([encodedGif], { type: 'image/gif' })
+
+      // Revoke the previous override URL to prevent memory leaks
+      if (previewOverrideUrl.value) {
+        URL.revokeObjectURL(previewOverrideUrl.value)
+      }
+      previewOverrideUrl.value = URL.createObjectURL(blob)
+    } catch (e) {
+      if (import.meta.dev) console.error('Trim preview encode failed:', e)
+    }
+  }, 500)
+}, { deep: true })
 
 // Clear optimization results and smart compress state when the user
 // switches platforms so stale previews from the previous platform
@@ -638,6 +704,11 @@ function clearGif() {
   if (smartCompressAbort) {
     smartCompressAbort.abort()
     smartCompressAbort = null
+  }
+  // Cancel any pending trim preview re-encode
+  if (trimPreviewTimeout) {
+    clearTimeout(trimPreviewTimeout)
+    trimPreviewTimeout = null
   }
   originalBlobs.clear()
 

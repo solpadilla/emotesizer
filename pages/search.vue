@@ -117,12 +117,12 @@
 
       <!-- SEO content (shown when no active search query) -->
       <section v-if="!store.query" class="mt-12 mb-8 max-w-3xl mx-auto text-center">
-        <h2 class="text-base font-bold text-surface-900 mb-3">Find the Perfect GIF for Your Emotes</h2>
+        <h2 class="text-base font-bold text-surface-900 mb-3">Free Emote Maker — Find the Perfect GIF</h2>
         <p class="text-sm text-surface-500 leading-relaxed">
           Browse thousands of trending GIFs or search for exactly what you need.
-          Found the perfect one? Click the optimize button to resize it for
+          Found the perfect one? Use our free emote tool to resize it for
           <NuxtLink to="/optimizer" class="text-primary-500 hover:underline">Twitch emotes</NuxtLink>,
-          Discord emoji, or Kick channel emotes. All processing happens in your browser — fast, free, and private.
+          Discord emoji, Kick channel emotes, 7TV, BTTV, or FFZ. EmoteSizer is the easiest emote creator for streamers — all processing happens in your browser, completely free and private.
         </p>
       </section>
     </div>
