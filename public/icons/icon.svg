@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <!-- Dark slate background gradient -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <!-- Blue-to-teal gradient for the "E" letter -->
+    <linearGradient id="letter" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#14B8A6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded rectangle background -->
+  <rect width="32" height="32" rx="7" fill="url(#bg)"/>
+
+  <!-- Bold geometric "E" constructed as a single path
+       The letter sits within a 16x20 bounding box, centered in the 32x32 canvas.
+       Origin at (8, 6). Three horizontal bars connected by a vertical spine.
+
+       Vertical spine: x=8, y=6, width=4.5, height=20
+       Top bar:        x=8, y=6, width=16, height=4.5
+       Middle bar:     x=8, y=13.75, width=13, height=4.5
+       Bottom bar:     x=8, y=21.5, width=16, height=4.5
+  -->
+  <path d="
+    M 8 6
+    L 24 6
+    L 24 10.5
+    L 12.5 10.5
+    L 12.5 13.75
+    L 21 13.75
+    L 21 18.25
+    L 12.5 18.25
+    L 12.5 21.5
+    L 24 21.5
+    L 24 26
+    L 8 26
+    Z
+  " fill="url(#letter)"/>
+</svg>

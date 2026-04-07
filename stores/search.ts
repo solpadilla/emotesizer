@@ -1,0 +1,27 @@
+import { defineStore } from 'pinia'
+import type { KlipyGif, KlipyCategory } from '~/types/klipy'
+
+export const useSearchStore = defineStore('search', () => {
+  const query = ref('')
+  const gifs = ref<KlipyGif[]>([])
+  const categories = ref<KlipyCategory[]>([])
+  const selectedCategory = ref<string | null>(null)
+  const currentPage = ref(1)
+  const hasMore = ref(true)
+  const isLoading = ref(false)
+  const isPageTransitioning = ref(false)
+  const error = ref<string | null>(null)
+
+  function reset() {
+    gifs.value = []
+    currentPage.value = 1
+    hasMore.value = true
+    error.value = null
+  }
+
+  return {
+    query, gifs, categories, selectedCategory,
+    currentPage, hasMore, isLoading, isPageTransitioning, error,
+    reset,
+  }
+})
