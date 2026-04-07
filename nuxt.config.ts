@@ -37,6 +37,7 @@ export default defineNuxtConfig({
         { name: 'twitter:title', content: 'EmoteSizer — GIF Search & Emote Optimizer' },
         { name: 'twitter:description', content: 'Find the perfect GIF and resize it as an emote for Twitch, Discord, or Kick. Optimized sizes, one click.' },
         { name: 'robots', content: 'index, follow' },
+        { name: 'google-site-verification', content: '20jUiCMXIyvTrhO64y3O_irxwdikeqSwoH9hWHoixjs' },
         { property: 'og:url', content: 'https://emotesizer.com' },
         { property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
         { name: 'twitter:image', content: 'https://emotesizer.com/og-image.png' },
