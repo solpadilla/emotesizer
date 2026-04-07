@@ -1,4 +1,3 @@
-# KLIPY Start
 inventorypartnerdomain=klipy.com
 klipy.com, 7115583, DIRECT
 admixer.net, 191fda99-2fb4-452b-a444-db82b2817832, RESELLER
@@ -305,4 +304,3 @@ video.unrulymedia.com, 5921144960123684292, RESELLER
 onetag.com, 87f80e5d9d55274, RESELLER
 smilewanted.com, 5314, RESELLER
 lijit.com, 402418, RESELLER, fafdf38b16bf6b2b
-# KLIPY End
