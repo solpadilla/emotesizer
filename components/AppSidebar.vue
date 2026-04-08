@@ -143,6 +143,18 @@ const toolsNav = computed(() => [
     icon: resolveComponent('IconFrame'),
     isActive: route.path === '/tools/gif-to-png',
   },
+  {
+    to: '/tools/speed',
+    label: 'GIF Speed',
+    icon: resolveComponent('IconGauge'),
+    isActive: route.path === '/tools/speed',
+  },
+  {
+    to: '/tools/reverse',
+    label: 'GIF Reverse',
+    icon: resolveComponent('IconReverse'),
+    isActive: route.path === '/tools/reverse',
+  },
 ])
 
 const secondaryNav = [
