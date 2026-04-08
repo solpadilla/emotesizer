@@ -1,5 +1,8 @@
 import type { KlipyGif, KlipySearchResponse, KlipyCategoriesResponse, KlipyAutocompleteResponse, KlipyCategory } from '~/types/klipy'
 
+// Klipy only serves ads to mobile devices, so a mobile User-Agent is required
+const MOBILE_USER_AGENT = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+
 export function useKlipy() {
   const config = useRuntimeConfig()
   const baseUrl = config.public.klipyApiBaseUrl || 'https://api.klipy.com/api/v1'
@@ -49,9 +52,19 @@ export function useKlipy() {
       customer_id: customerId.value,
       content_filter: 'medium',
     })
+    // Ad params — Klipy only serves ads on page 1
+    if (page === 1) {
+      params.set('ad-min-width', '200')
+      params.set('ad-max-width', '400')
+      params.set('ad-min-height', '150')
+      params.set('ad-max-height', '300')
+    }
     const response = await $fetch<KlipySearchResponse>(
       `${baseUrl}/${appKey}/${type}/search?${params}`,
-      { signal: options?.signal }
+      {
+        signal: options?.signal,
+        headers: { 'User-Agent': MOBILE_USER_AGENT },
+      }
     )
     return response
   }
@@ -69,9 +82,19 @@ export function useKlipy() {
       customer_id: customerId.value,
       content_filter: 'medium',
     })
+    // Ad params — Klipy only serves ads on page 1
+    if (page === 1) {
+      params.set('ad-min-width', '200')
+      params.set('ad-max-width', '400')
+      params.set('ad-min-height', '150')
+      params.set('ad-max-height', '300')
+    }
     const response = await $fetch<KlipySearchResponse>(
       `${baseUrl}/${appKey}/${type}/trending?${params}`,
-      { signal: options?.signal }
+      {
+        signal: options?.signal,
+        headers: { 'User-Agent': MOBILE_USER_AGENT },
+      }
     )
     return response
   }
