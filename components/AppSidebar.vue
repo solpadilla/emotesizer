@@ -137,6 +137,12 @@ const toolsNav = computed(() => [
     icon: resolveComponent('IconCompress'),
     isActive: route.path === '/tools/compress',
   },
+  {
+    to: '/tools/gif-to-png',
+    label: 'GIF to PNG',
+    icon: resolveComponent('IconFrame'),
+    isActive: route.path === '/tools/gif-to-png',
+  },
 ])
 
 const secondaryNav = [

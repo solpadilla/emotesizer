@@ -64,7 +64,7 @@
                   v-model.number="outputWidth"
                   type="number"
                   min="1"
-                  max="4096"
+                  :max="MAX_OUTPUT_SIZE"
                   class="input text-center"
                   :disabled="selectedPreset !== 'custom'"
                   @input="handleWidthChange"
@@ -97,7 +97,7 @@
                   v-model.number="outputHeight"
                   type="number"
                   min="1"
-                  max="4096"
+                  :max="MAX_OUTPUT_SIZE"
                   class="input text-center"
                   :disabled="selectedPreset !== 'custom'"
                   @input="handleHeightChange"
@@ -108,6 +108,131 @@
             <p v-if="selectedPreset === 'custom'" class="text-xs text-surface-400 mt-1.5 text-center">
               {{ aspectLocked ? 'Aspect ratio locked' : 'Freeform dimensions' }}
             </p>
+          </div>
+
+          <!-- Resize Mode (shown when aspect ratio changes) -->
+          <div v-if="gifUrl && aspectRatioDiffers" :class="{ 'pointer-events-none opacity-60': isProcessing }">
+            <h3 class="label">Resize Mode</h3>
+            <div class="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Resize mode">
+              <!-- Fill & Crop -->
+              <button
+                class="platform-card text-center"
+                :class="{ 'platform-card-active': resizeMode === 'crop' }"
+                role="radio"
+                :aria-checked="resizeMode === 'crop'"
+                aria-label="Fill and crop"
+                title="Scale to cover the target and center-crop overflow"
+                @click="selectResizeMode('crop')"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32" fill="none" class="mx-auto mb-1.5">
+                  <rect x="2" y="6" width="28" height="20" rx="2" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 2" class="text-surface-300" />
+                  <rect x="6" y="4" width="20" height="24" rx="1" fill="none" stroke="currentColor" stroke-width="2" class="text-primary-500" />
+                </svg>
+                <div class="text-xs font-semibold text-surface-700">Fill & Crop</div>
+                <span class="badge badge-primary text-[10px] mt-1">Recommended</span>
+              </button>
+
+              <!-- Fit & Pad -->
+              <button
+                class="platform-card text-center"
+                :class="{ 'platform-card-active': resizeMode === 'pad' }"
+                role="radio"
+                :aria-checked="resizeMode === 'pad'"
+                aria-label="Fit and pad"
+                title="Scale to fit within the target with padding"
+                @click="selectResizeMode('pad')"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32" fill="none" class="mx-auto mb-1.5">
+                  <rect x="4" y="4" width="24" height="24" rx="2" stroke="currentColor" stroke-width="2" class="text-surface-300" />
+                  <rect x="9" y="7" width="14" height="18" rx="1" fill="none" stroke="currentColor" stroke-width="2" class="text-primary-500" />
+                </svg>
+                <div class="text-xs font-semibold text-surface-700">Fit & Pad</div>
+              </button>
+
+              <!-- Stretch -->
+              <button
+                class="platform-card text-center"
+                :class="{ 'platform-card-active': resizeMode === 'stretch' }"
+                role="radio"
+                :aria-checked="resizeMode === 'stretch'"
+                aria-label="Stretch to fill"
+                title="Stretch to fill, may distort non-square images"
+                @click="selectResizeMode('stretch')"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32" fill="none" class="mx-auto mb-1.5">
+                  <rect x="4" y="4" width="24" height="24" rx="2" stroke="currentColor" stroke-width="2" class="text-surface-300" />
+                  <rect x="4" y="4" width="24" height="24" rx="2" fill="none" stroke="currentColor" stroke-width="2" class="text-primary-500" />
+                  <!-- Horizontal squeeze arrows -->
+                  <path d="M8 16H2M24 16H30" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="text-warning-500" />
+                  <path d="M4 14L2 16L4 18M28 14L30 16L28 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-warning-500" />
+                </svg>
+                <div class="text-xs font-semibold text-surface-700">Stretch</div>
+                <span class="badge badge-warning text-[10px] mt-1">Distorts</span>
+              </button>
+            </div>
+
+            <!-- Padding Color Presets (shown only in pad mode) -->
+            <Transition
+              enter-active-class="transition duration-200 ease-out"
+              enter-from-class="opacity-0 -translate-y-2"
+              enter-to-class="opacity-100 translate-y-0"
+              leave-active-class="transition duration-150 ease-in"
+              leave-from-class="opacity-100 translate-y-0"
+              leave-to-class="opacity-0 -translate-y-2"
+            >
+              <div v-if="resizeMode === 'pad'" class="mt-3">
+                <label class="label">Padding Color</label>
+                <div class="flex gap-2 flex-wrap">
+                  <!-- Transparent -->
+                  <button
+                    class="pill flex items-center gap-1.5 !px-3 !py-1.5"
+                    :class="{ 'pill-active': padColorPreset === 'transparent' }"
+                    @click="selectPadColor('transparent')"
+                  >
+                    <span class="inline-block w-4 h-4 rounded-sm checkerboard border border-surface-200/50" />
+                    <span class="text-xs">Transparent</span>
+                  </button>
+
+                  <!-- White -->
+                  <button
+                    class="pill flex items-center gap-1.5 !px-3 !py-1.5"
+                    :class="{ 'pill-active': padColorPreset === 'white' }"
+                    @click="selectPadColor('white')"
+                  >
+                    <span class="inline-block w-4 h-4 rounded-sm border border-surface-300" style="background: #ffffff;" />
+                    <span class="text-xs">White</span>
+                  </button>
+
+                  <!-- Black -->
+                  <button
+                    class="pill flex items-center gap-1.5 !px-3 !py-1.5"
+                    :class="{ 'pill-active': padColorPreset === 'black' }"
+                    @click="selectPadColor('black')"
+                  >
+                    <span class="inline-block w-4 h-4 rounded-sm" style="background: #000000;" />
+                    <span class="text-xs">Black</span>
+                  </button>
+
+                  <!-- Custom -->
+                  <label
+                    class="pill flex items-center gap-1.5 !px-3 !py-1.5 cursor-pointer"
+                    :class="{ 'pill-active': padColorPreset === 'custom' }"
+                  >
+                    <span
+                      class="inline-block w-4 h-4 rounded-sm border border-surface-200/50"
+                      :style="{ background: padColorPreset === 'custom' ? padColor : '#cccccc' }"
+                    />
+                    <span class="text-xs">Custom</span>
+                    <input
+                      type="color"
+                      class="w-4 h-4 rounded cursor-pointer border border-surface-200"
+                      :value="padColor === 'transparent' ? '#cccccc' : padColor"
+                      @input="handleCustomColor"
+                    />
+                  </label>
+                </div>
+              </div>
+            </Transition>
           </div>
 
           <!-- Download button -->
@@ -299,6 +424,7 @@
 <script setup lang="ts">
 import { decodeFrames, encode } from 'modern-gif'
 import type { DecodedFrame, UnencodedFrame } from 'modern-gif'
+import type { ResizeMode } from '~/types/optimizer'
 
 useHead({
   title: 'Free GIF Resizer — Resize Animated GIFs Online | EmoteSizer',
@@ -457,24 +583,54 @@ const decodedFrames = ref<DecodedFrame[]>([])
 const sourceWidth = ref(0)
 const sourceHeight = ref(0)
 const originalFileSize = ref(0)
-const selectedPreset = ref('twitch')
-const outputWidth = ref(112)
-const outputHeight = ref(112)
+const selectedPreset = ref('custom')
+const outputWidth = ref(128)
+const outputHeight = ref(128)
 const aspectLocked = ref(true)
 const isProcessing = ref(false)
 const isDecoding = ref(false)
 const previewUrl = ref<string | null>(null)
 const resizedFileSize = ref(0)
+const resizeMode = ref<ResizeMode>('stretch')
+const padColor = ref('transparent')
+const padColorPreset = ref<'transparent' | 'white' | 'black' | 'custom'>('transparent')
+
+const MAX_OUTPUT_SIZE = 2048
+
+/** Maximum dimension (width or height) for preview encoding. The preview image
+ *  is displayed at max 400px CSS, so encoding at larger resolutions wastes
+ *  GPU/memory. Full resolution is only used for downloads. */
+const MAX_PREVIEW_DIM = 400
+
+let previewAbortController: AbortController | null = null
+/** Tracks the last successfully rendered preview parameters to skip redundant re-encodes */
+let lastPreviewKey = ''
+
+const aspectRatioDiffers = computed(() => {
+  if (!sourceWidth.value || !sourceHeight.value || !outputWidth.value || !outputHeight.value) return false
+  const sourceRatio = sourceWidth.value / sourceHeight.value
+  const targetRatio = outputWidth.value / outputHeight.value
+  return Math.abs(sourceRatio - targetRatio) > 0.01
+})
+
+function getPreviewDimensions(w: number, h: number): { pw: number; ph: number } {
+  if (w <= MAX_PREVIEW_DIM && h <= MAX_PREVIEW_DIM) return { pw: w, ph: h }
+  const scale = Math.min(MAX_PREVIEW_DIM / w, MAX_PREVIEW_DIM / h)
+  return {
+    pw: Math.round(w * scale),
+    ph: Math.round(h * scale),
+  }
+}
 
 let previewTimeout: ReturnType<typeof setTimeout> | null = null
 
 const presets = [
+  { key: 'custom', label: 'Custom', width: null, height: null },
   { key: 'twitch', label: 'Twitch', width: 112, height: 112 },
   { key: 'discord', label: 'Discord', width: 128, height: 128 },
   { key: 'kick', label: 'Kick', width: 128, height: 128 },
   { key: '7tv', label: '7TV / BTTV', width: 128, height: 128 },
   { key: 'youtube', label: 'YouTube', width: 128, height: 128 },
-  { key: 'custom', label: 'Custom', width: null, height: null },
 ]
 
 // -- Preset selection --
@@ -494,18 +650,88 @@ function selectPreset(key: string) {
 
 function handleWidthChange() {
   selectedPreset.value = 'custom'
+  outputWidth.value = Math.min(Math.max(1, outputWidth.value || 1), MAX_OUTPUT_SIZE)
   if (aspectLocked.value && sourceWidth.value) {
-    outputHeight.value = Math.round(outputWidth.value * (sourceHeight.value / sourceWidth.value))
+    outputHeight.value = Math.min(
+      Math.round(outputWidth.value * (sourceHeight.value / sourceWidth.value)),
+      MAX_OUTPUT_SIZE,
+    )
   }
   debouncedPreview()
 }
 
 function handleHeightChange() {
   selectedPreset.value = 'custom'
+  outputHeight.value = Math.min(Math.max(1, outputHeight.value || 1), MAX_OUTPUT_SIZE)
   if (aspectLocked.value && sourceHeight.value) {
-    outputWidth.value = Math.round(outputHeight.value * (sourceWidth.value / sourceHeight.value))
+    outputWidth.value = Math.min(
+      Math.round(outputHeight.value * (sourceWidth.value / sourceHeight.value)),
+      MAX_OUTPUT_SIZE,
+    )
   }
   debouncedPreview()
+}
+
+// -- Resize mode & pad color --
+
+function selectResizeMode(mode: ResizeMode) {
+  resizeMode.value = mode
+  debouncedPreview()
+}
+
+function selectPadColor(preset: 'transparent' | 'white' | 'black' | 'custom', color?: string) {
+  padColorPreset.value = preset
+  if (preset === 'transparent') padColor.value = 'transparent'
+  else if (preset === 'white') padColor.value = '#ffffff'
+  else if (preset === 'black') padColor.value = '#000000'
+  else if (color) padColor.value = color
+  debouncedPreview()
+}
+
+function handleCustomColor(event: Event) {
+  const input = event.target as HTMLInputElement
+  padColor.value = input.value
+  padColorPreset.value = 'custom'
+  debouncedPreview()
+}
+
+/**
+ * Draws a source image onto a target canvas using the specified resize mode.
+ * Supports crop (fill & center-crop), pad (fit & letterbox), and stretch modes.
+ */
+function drawResizedRect(
+  ctx: OffscreenCanvasRenderingContext2D,
+  source: CanvasImageSource,
+  srcW: number,
+  srcH: number,
+  targetW: number,
+  targetH: number,
+  mode: ResizeMode,
+  color: string,
+): void {
+  ctx.clearRect(0, 0, targetW, targetH)
+
+  if (mode === 'crop') {
+    const scale = Math.max(targetW / srcW, targetH / srcH)
+    const scaledW = srcW * scale
+    const scaledH = srcH * scale
+    const offsetX = (targetW - scaledW) / 2
+    const offsetY = (targetH - scaledH) / 2
+    ctx.drawImage(source, offsetX, offsetY, scaledW, scaledH)
+  } else if (mode === 'pad') {
+    if (color && color !== 'transparent') {
+      ctx.fillStyle = color
+      ctx.fillRect(0, 0, targetW, targetH)
+    }
+    const scale = Math.min(targetW / srcW, targetH / srcH)
+    const scaledW = srcW * scale
+    const scaledH = srcH * scale
+    const offsetX = (targetW - scaledW) / 2
+    const offsetY = (targetH - scaledH) / 2
+    ctx.drawImage(source, offsetX, offsetY, scaledW, scaledH)
+  } else {
+    ctx.drawImage(source, 0, 0, targetW, targetH)
+  }
 }
 
 // -- File handling --
@@ -557,13 +783,20 @@ async function decodeGifFrames() {
  * Creates the source and destination OffscreenCanvases once, reuses them for
  * every frame, then releases GPU/memory resources when done.
  *
+ * Yields to the browser event loop between frames to prevent UI freezes on
+ * large GIFs. Supports an optional AbortSignal to cancel in-flight work
+ * when the user changes dimensions before processing completes.
+ *
  * @returns Array of resized frame data with delays preserved
  */
-function resizeAllFrames(
+async function resizeAllFrames(
   frames: DecodedFrame[],
   w: number,
   h: number,
-): Array<{ data: Uint8ClampedArray; delay: number }> {
+  mode: ResizeMode,
+  color: string,
+  signal?: AbortSignal,
+): Promise<Array<{ data: Uint8ClampedArray; delay: number }>> {
   // Allocate canvases once for the entire batch
   const srcCanvas = new OffscreenCanvas(frames[0].width, frames[0].height)
   const srcCtx = srcCanvas.getContext('2d')!
@@ -590,11 +823,23 @@ function resizeAllFrames(
       0, 0,
     )
 
-    destCtx.clearRect(0, 0, w, h)
-    destCtx.drawImage(srcCanvas, 0, 0, w, h)
+    drawResizedRect(destCtx, srcCanvas, frame.width, frame.height, w, h, mode, color)
 
     const resized = destCtx.getImageData(0, 0, w, h)
     result.push({ data: resized.data, delay: frame.delay || 100 })
+
+    // Yield to browser every frame to prevent UI freeze
+    await new Promise(resolve => setTimeout(resolve, 0))
+
+    // Check for cancellation after yielding
+    if (signal?.aborted) {
+      // Release canvases before throwing
+      srcCanvas.width = 0
+      srcCanvas.height = 0
+      destCanvas.width = 0
+      destCanvas.height = 0
+      throw new DOMException('Aborted', 'AbortError')
+    }
   }
 
   // Release canvas GPU/memory resources
@@ -618,42 +863,58 @@ function debouncedPreview() {
 }
 
 async function generatePreview() {
+  if (previewAbortController) {
+    previewAbortController.abort()
+  }
+  previewAbortController = new AbortController()
+  const { signal } = previewAbortController
+
   if (!decodedFrames.value.length || !outputWidth.value || !outputHeight.value) return
 
-  try {
-    const w = outputWidth.value
-    const h = outputHeight.value
-    const frames = resizeAllFrames(decodedFrames.value, w, h)
+  // Cap preview encoding to MAX_PREVIEW_DIM — the preview img is displayed
+  // at max 400px CSS anyway, so full-resolution encoding is wasteful.
+  const { pw, ph } = getPreviewDimensions(outputWidth.value, outputHeight.value)
 
-    const encoded = await encode({ width: w, height: h, looped: true, frames: frames as UnencodedFrame[] })
+  // Skip re-encoding if the capped preview dimensions, resize mode, and pad
+  // color haven't changed — avoids redundant work when e.g. the user changes
+  // from 400px to 1000px (both cap to 400px preview).
+  const previewKey = `${pw}x${ph}_${resizeMode.value}_${padColor.value}`
+  if (previewKey === lastPreviewKey && previewUrl.value) {
+    previewAbortController = null
+    return
+  }
+
+  try {
+    const frames = await resizeAllFrames(decodedFrames.value, pw, ph, resizeMode.value, padColor.value, signal)
+
+    if (signal.aborted) return
+
+    const encoded = await encode({ width: pw, height: ph, looped: true, frames: frames as UnencodedFrame[] })
+
+    if (signal.aborted) return
+
     const blob = new Blob([encoded], { type: 'image/gif' })
 
     if (previewUrl.value) URL.revokeObjectURL(previewUrl.value)
     previewUrl.value = URL.createObjectURL(blob)
     resizedFileSize.value = blob.size
+    lastPreviewKey = previewKey
   } catch (e) {
+    if (e instanceof DOMException && e.name === 'AbortError') return
     if (import.meta.dev) console.error('Resize preview failed:', e)
+  } finally {
+    previewAbortController = null
   }
 }
 
 // -- Download --
 
 async function downloadResized() {
-  if (previewUrl.value) {
-    // Reuse the already-encoded preview blob for a fast download
-    const response = await fetch(previewUrl.value)
-    const blob = await response.blob()
-    downloadBlob(blob, `resized_${gifFileName.value || 'animation.gif'}`)
-    toastSuccess('Resized GIF downloaded!')
-    return
-  }
-
-  // No cached preview — encode fresh
   isProcessing.value = true
   try {
     const w = outputWidth.value
     const h = outputHeight.value
-    const frames = resizeAllFrames(decodedFrames.value, w, h)
+    const frames = await resizeAllFrames(decodedFrames.value, w, h, resizeMode.value, padColor.value)
 
     const encoded = await encode({ width: w, height: h, looped: true, frames: frames as UnencodedFrame[] })
     const blob = new Blob([encoded], { type: 'image/gif' })
@@ -669,6 +930,10 @@ async function downloadResized() {
 // -- Clear / cleanup --
 
 function clearGif() {
+  if (previewAbortController) {
+    previewAbortController.abort()
+    previewAbortController = null
+  }
   if (gifUrl.value) URL.revokeObjectURL(gifUrl.value)
   if (previewUrl.value) URL.revokeObjectURL(previewUrl.value)
   if (previewTimeout) {
@@ -681,12 +946,16 @@ function clearGif() {
   sourceWidth.value = 0
   sourceHeight.value = 0
   originalFileSize.value = 0
-  selectedPreset.value = 'twitch'
-  outputWidth.value = 112
-  outputHeight.value = 112
+  selectedPreset.value = 'custom'
+  outputWidth.value = 128
+  outputHeight.value = 128
   aspectLocked.value = true
   previewUrl.value = null
   resizedFileSize.value = 0
+  resizeMode.value = 'stretch'
+  padColor.value = 'transparent'
+  padColorPreset.value = 'transparent'
+  lastPreviewKey = ''
 }
 
 onUnmounted(() => {
