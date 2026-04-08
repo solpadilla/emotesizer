@@ -205,8 +205,8 @@
           class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3"
         >
           <GifCard
-            v-for="gif in relatedItems"
-            :key="gif.id"
+            v-for="(gif, idx) in relatedItems"
+            :key="gif.type === 'ad' ? `ad-related-${idx}` : gif.id"
             :gif="gif"
             :content-type="contentType"
           />
@@ -217,7 +217,7 @@
 </template>
 
 <script setup lang="ts">
-import type { KlipyGif } from '~/types/klipy'
+import type { KlipyGif, KlipyItem } from '~/types/klipy'
 import { formatFileSize } from '~/utils/format'
 import { isValidMediaUrl } from '~/utils/url'
 
@@ -285,7 +285,7 @@ const displayTags = computed<string[]>(() => {
 })
 
 // Related content state (loaded client-side only — not needed for OG tags)
-const relatedItems = ref<KlipyGif[]>([])
+const relatedItems = ref<KlipyItem[]>([])
 const relatedLoading = ref(false)
 const relatedSearchQuery = ref('')
 
@@ -362,9 +362,9 @@ async function fetchRelated(currentItem: KlipyGif) {
       8,
       { signal: abortController?.signal }
     )
-    // Filter out the current item from related results
+    // Filter out the current item from related results (ads don't have an id, so they pass through)
     relatedItems.value = response.data.data
-      .filter(g => g.id !== currentItem.id)
+      .filter(g => g.type === 'ad' || g.id !== currentItem.id)
       .slice(0, 8)
   } catch (e: unknown) {
     if (e instanceof DOMException && e.name === 'AbortError') return

@@ -1,4 +1,4 @@
-import type { KlipyGif, KlipySearchResponse, KlipyCategoriesResponse, KlipyAutocompleteResponse, KlipyCategory } from '~/types/klipy'
+import type { KlipyGif, KlipyGifItem, KlipySearchResponse, KlipyCategoriesResponse, KlipyAutocompleteResponse, KlipyCategory } from '~/types/klipy'
 
 // Klipy only serves ads to mobile devices, so a mobile User-Agent is required
 const MOBILE_USER_AGENT = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
@@ -120,13 +120,16 @@ export function useKlipy() {
     type: ContentType,
     slug: string,
     options?: { signal?: AbortSignal }
-  ): Promise<KlipyGif | null> {
+  ): Promise<KlipyGifItem | null> {
     assertApiKey()
     const response = await $fetch<KlipySearchResponse>(
       `${baseUrl}/${appKey}/${type}/items?slugs=${encodeURIComponent(slug)}&customer_id=${customerId.value}`,
       { signal: options?.signal }
     )
-    return response.data.data[0] || null
+    // Slug-based lookups only return real GIF items, never ads
+    const item = response.data.data[0]
+    if (!item || item.type === 'ad') return null
+    return item
   }
 
   async function share(type: ContentType, slug: string): Promise<void> {

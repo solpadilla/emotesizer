@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
-import type { KlipyGif, KlipyCategory } from '~/types/klipy'
+import type { KlipyItem, KlipyCategory } from '~/types/klipy'
 
 export const useSearchStore = defineStore('search', () => {
   const query = ref('')
-  const gifs = ref<KlipyGif[]>([])
+  const gifs = ref<KlipyItem[]>([])
   const categories = ref<KlipyCategory[]>([])
   const selectedCategory = ref<string | null>(null)
   const currentPage = ref(1)

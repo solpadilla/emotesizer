@@ -67,8 +67,8 @@
             @pointerleave="onPointerUp"
           >
             <GifCard
-              v-for="gif in trendingGifs"
-              :key="gif.id"
+              v-for="(gif, idx) in trendingGifs"
+              :key="gif.type === 'ad' ? `ad-${idx}` : gif.id"
               :gif="gif"
               variant="compact"
             />
@@ -116,8 +116,8 @@
             @pointerleave="onStickerPointerUp"
           >
             <GifCard
-              v-for="sticker in trendingStickers"
-              :key="sticker.id"
+              v-for="(sticker, idx) in trendingStickers"
+              :key="sticker.type === 'ad' ? `ad-sticker-${idx}` : sticker.id"
               :gif="sticker"
               variant="compact"
               content-type="stickers"
@@ -291,7 +291,7 @@
 </template>
 
 <script setup lang="ts">
-import type { KlipyGif } from '~/types/klipy'
+import type { KlipyItem } from '~/types/klipy'
 
 useHead({
   title: 'EmoteSizer — Free Twitch Emote Resizer, GIF & Sticker Optimizer',
@@ -348,9 +348,9 @@ const router = useRouter()
 const { trending } = useKlipy()
 
 const searchQuery = ref('')
-const trendingGifs = ref<KlipyGif[]>([])
+const trendingGifs = ref<KlipyItem[]>([])
 const trendingLoading = ref(true)
-const trendingStickers = ref<KlipyGif[]>([])
+const trendingStickers = ref<KlipyItem[]>([])
 const stickersLoading = ref(true)
 
 // GIF strip drag-to-scroll

@@ -3,6 +3,8 @@
 </template>
 
 <script setup lang="ts">
+import type { KlipyGifItem } from '~/types/klipy'
+
 const route = useRoute()
 const slug = route.params.slug as string
 const klipy = useKlipy()
@@ -20,7 +22,8 @@ const { data: item, pending } = await useAsyncData(
     // First, try the dedicated items-by-slug endpoint
     let fetchedItem = await klipy.getItemBySlug('stickers', slug)
 
-    // Fallback: search by slug words and find an exact slug match
+    // Fallback: search by slug words and find an exact slug match.
+    // Filter out ad items first (they have no slug), then match.
     if (!fetchedItem) {
       const searchResponse = await klipy.search(
         'stickers',
@@ -28,7 +31,10 @@ const { data: item, pending } = await useAsyncData(
         1,
         24,
       )
-      fetchedItem = searchResponse.data.data.find(g => g.slug === slug) || null
+      const match = searchResponse.data.data.find(
+        (g): g is KlipyGifItem => g.type !== 'ad' && g.slug === slug,
+      )
+      fetchedItem = match || null
     }
 
     return fetchedItem || null

@@ -91,8 +91,8 @@
                   transition-opacity duration-150"
            :class="{ 'opacity-40 pointer-events-none': store.isPageTransitioning }">
         <GifCard
-          v-for="gif in store.gifs"
-          :key="gif.id"
+          v-for="(gif, idx) in store.gifs"
+          :key="gif.type === 'ad' ? `ad-${idx}` : gif.id"
           :gif="gif"
           :content-type="store.contentType"
         />
