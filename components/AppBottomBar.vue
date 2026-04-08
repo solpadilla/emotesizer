@@ -1,5 +1,5 @@
 <template>
-  <div class="md:hidden fixed bottom-0 left-0 right-0 z-40 glass-surface border-t border-surface-200/50">
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 glass-surface border-t border-surface-200/50">
     <nav class="grid grid-cols-3 h-16 pb-[env(safe-area-inset-bottom)]">
       <!-- Home -->
       <NuxtLink

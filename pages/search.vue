@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen">
     <!-- Sticky Search Bar -->
-    <div class="sticky top-14 md:top-16 z-30 bg-surface-50 border-b border-surface-200/50">
+    <div class="sticky top-[56px] lg:top-0 z-30 bg-surface-50 border-b border-surface-200/50">
       <div class="max-w-7xl mx-auto px-4 md:px-6 py-3">
         <SearchBar
           v-model="store.query"
@@ -117,12 +117,12 @@
 
       <!-- SEO content (shown when no active search query) -->
       <section v-if="!store.query" class="mt-12 mb-8 max-w-3xl mx-auto text-center">
-        <h2 class="text-base font-bold text-surface-900 mb-3">Free Emote Maker — Find the Perfect GIF</h2>
+        <h2 class="text-base font-bold text-surface-900 mb-3">Free GIF Tools — Find and Resize Images for Twitch Emotes</h2>
         <p class="text-sm text-surface-500 leading-relaxed">
-          Browse thousands of trending GIFs or search for exactly what you need.
-          Found the perfect one? Use our free emote tool to resize it for
-          <NuxtLink to="/optimizer" class="text-primary-500 hover:underline">Twitch emotes</NuxtLink>,
-          Discord emoji, Kick channel emotes, 7TV, BTTV, or FFZ. EmoteSizer is the easiest emote creator for streamers — all processing happens in your browser, completely free and private.
+          Find GIFs for emotes by browsing thousands of trending animations, or search stickers for Discord, Twitch, and Kick.
+          Looking for animated emotes for Twitch? Search by keyword to discover the perfect clip, then use our
+          <NuxtLink to="/optimizer" class="text-primary-500 hover:underline">free online gif editor and emote resizer</NuxtLink>
+          to resize it for Twitch, Discord emoji, Kick channel emotes, 7TV, BTTV, or FFZ. EmoteSizer is the easiest emote creator for streamers — a free gif editor with gif tools that handle everything from search to compression, entirely in your browser with no signup required.
         </p>
       </section>
     </div>

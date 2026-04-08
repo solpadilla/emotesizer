@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "gifsicle-wasm-browser": "^1.5.19",
     "modern-gif": "^2.0.4",
     "nuxt": "^3.17.0",
     "pinia": "^3.0.0",

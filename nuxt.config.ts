@@ -25,7 +25,7 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { key: 'description', name: 'description', content: 'Free emote maker — search GIFs and stickers, then resize them as emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ. No signup required.' },
+        { key: 'description', name: 'description', content: 'Free emote maker, gif compressor, and gif editor — search GIFs and stickers, compress and resize them as emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ. No signup required.' },
         { name: 'theme-color', content: '#3B82F6' },
         // Open Graph — keys allow page-level useHead to override these defaults
         { key: 'og:title', property: 'og:title', content: 'EmoteSizer — GIF & Sticker Search + Emote Optimizer' },

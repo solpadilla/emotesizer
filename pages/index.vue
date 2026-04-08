@@ -7,7 +7,7 @@
           <span class="text-surface-900">Twitch Emote Resizer & GIF Optimizer</span>
         </h1>
         <p class="mt-4 md:mt-6 text-surface-500 text-base md:text-lg max-w-xl mx-auto">
-          A free emote maker for streamers — search thousands of GIFs <strong>and stickers</strong> and resize them into emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ. No signup required.
+          A free emote maker for streamers — search thousands of GIFs <strong>and stickers</strong>, resize images for Twitch, Discord, and Kick, and compress them into emotes for 7TV, BTTV, and FFZ. Our emote size converter handles everything online — no signup required.
         </p>
 
         <!-- Search Bar -->
@@ -142,8 +142,8 @@
               </svg>
             </div>
             <h3 class="text-base font-bold text-surface-900">Twitch Emote Sizes</h3>
-            <p class="text-xs text-surface-500 mt-1">Use our Twitch emote creator to resize animated GIFs to 28px, 56px, and 112px. Compress to under 1 MB.</p>
-            <p class="text-xs text-surface-400 mt-2">28, 56, 112px &middot; Up to 1 MB</p>
+            <p class="text-xs text-surface-500 mt-1">Use our Twitch emote resizer to resize image for Twitch — convert any image to emote at 28x28, 56x56, and 112x112 pixels. Compress to under 1 MB so your emote is never too large.</p>
+            <p class="text-xs text-surface-400 mt-2">28x28, 56x56, 112x112 &middot; Under 1 MB</p>
             <NuxtLink to="/optimizer" class="link text-sm mt-3 inline-block">Resize Twitch Emotes</NuxtLink>
           </div>
 
@@ -155,8 +155,8 @@
               </svg>
             </div>
             <h3 class="text-base font-bold text-surface-900">Discord Emoji Sizes</h3>
-            <p class="text-xs text-surface-500 mt-1">Convert GIFs to 128px Discord emoji. Compress to under 256 KB.</p>
-            <p class="text-xs text-surface-400 mt-2">128px &middot; Up to 256 KB</p>
+            <p class="text-xs text-surface-500 mt-1">Resize image for Discord emoji at 128x128. If your Discord emoji is too big, our gif size reducer shrinks it under 256 KB automatically.</p>
+            <p class="text-xs text-surface-400 mt-2">128x128 &middot; Under 256 KB</p>
             <NuxtLink to="/optimizer" class="link text-sm mt-3 inline-block">Resize Discord Emoji</NuxtLink>
           </div>
 
@@ -168,8 +168,8 @@
               </svg>
             </div>
             <h3 class="text-base font-bold text-surface-900">Kick Emote Sizes</h3>
-            <p class="text-xs text-surface-500 mt-1">Optimize GIFs to 500px for Kick emotes. Compress to under 1 MB.</p>
-            <p class="text-xs text-surface-400 mt-2">128px &middot; Up to 256 KB</p>
+            <p class="text-xs text-surface-500 mt-1">Resize emotes for Kick emote upload at 500x500 pixels. Our Kick emote resizer compresses animated GIFs to under 1 MB.</p>
+            <p class="text-xs text-surface-400 mt-2">500x500 &middot; Under 1 MB</p>
             <NuxtLink to="/optimizer" class="link text-sm mt-3 inline-block">Resize Kick Emotes</NuxtLink>
           </div>
         </div>
@@ -260,6 +260,30 @@
             <h3 class="text-sm font-bold text-surface-900">Does EmoteSizer support FFZ (FrankerFaceZ) emotes?</h3>
             <p class="text-sm text-surface-500 mt-1">Yes. The recommended FFZ emote size is 128x128 pixels, similar to BTTV. Use the Twitch animated emote preset to resize your GIF for FFZ compatibility.</p>
           </div>
+          <div>
+            <h3 class="text-sm font-bold text-surface-900">What are the exact Twitch emote dimensions?</h3>
+            <p class="text-sm text-surface-500 mt-1">Twitch emote dimensions are 28x28, 56x56, and 112x112 pixels. You upload a single square GIF (between 112x112 and 4096x4096) and Twitch auto-resizes it to all three sizes. The emote file size must be under 1 MB. Our Twitch emote resizer handles the 28x28 56x56 112x112 sizing for you automatically.</p>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-surface-900">How do I reduce GIF file size?</h3>
+            <p class="text-sm text-surface-500 mt-1">To reduce GIF file size, use EmoteSizer as a free GIF compressor. Upload your GIF, select your target platform, and click Optimize. Our tool will compress the GIF online by reducing dimensions, trimming frames, and lowering color depth. If the result is still too large, use Smart Compress to shrink it further — perfect for getting animated emotes under 1 MB for Twitch or under 256 KB for Discord.</p>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-surface-900">How do I compress a GIF that's too large for Twitch?</h3>
+            <p class="text-sm text-surface-500 mt-1">If your Twitch emote is too large, use EmoteSizer as a gif compressor to make the gif smaller. Upload the GIF, select the Twitch preset, and click Optimize. If it still exceeds 1 MB, use Smart Compress to reduce gif size automatically by trimming frames and lowering quality until it meets Twitch's limit. The same approach works when a 7TV emote upload size is too large or BTTV emote dimensions need adjustment.</p>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-surface-900">How do I make Twitch emotes?</h3>
+            <p class="text-sm text-surface-500 mt-1">To make Twitch emotes, start by finding or uploading an image. Use our <NuxtLink to="/search" class="text-primary-500 hover:underline">GIF search</NuxtLink> to discover the perfect animation, or upload your own image to convert it into an emote. Next, use the <NuxtLink to="/optimizer" class="text-primary-500 hover:underline">emote optimizer</NuxtLink> to resize the image to Twitch emote dimensions (112x112), compress it under 1 MB, and download. Then upload the emotes to Twitch through your Creator Dashboard. EmoteSizer handles the full flow — from image to Twitch emote — entirely in your browser.</p>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-surface-900">How do I compress a GIF to make it smaller?</h3>
+            <p class="text-sm text-surface-500 mt-1">Use EmoteSizer as a free gif compressor to reduce gif size and make gif smaller instantly. Upload your GIF, choose a target platform, and click Optimize. The tool automatically trims frames, lowers color depth, and adjusts quality to shrink the file. If your GIF still exceeds file size limits (1 MB for Twitch, 256 KB for Discord), enable Smart Compress for aggressive reduction. It's the fastest way to compress a GIF online without installing anything.</p>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-surface-900">Can I use EmoteSizer as a Discord emoji maker or Kick emote maker?</h3>
+            <p class="text-sm text-surface-500 mt-1">Yes. EmoteSizer works as a Discord emoji maker, Kick emote maker, and BTTV emote maker all in one. Search for GIFs or upload your own image, then resize it to the correct dimensions for each platform — 128x128 for Discord emoji, 500x500 for Kick emotes, or 112-128px for BTTV. It also supports YouTube emotes at 128x128. Everything runs in your browser with no signup required.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -272,7 +296,7 @@ import type { KlipyGif } from '~/types/klipy'
 useHead({
   title: 'EmoteSizer — Free Twitch Emote Resizer, GIF & Sticker Optimizer',
   meta: [
-    { name: 'description', content: 'Free emote maker — search thousands of GIFs and stickers, then resize them into emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ. Browser-based animated emote maker — no signup required.' },
+    { name: 'description', content: 'Free emote maker, gif compressor, and gif tools — search thousands of GIFs and stickers, compress gif online, then resize them into emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ. Browser-based animated emote maker — no signup required.' },
     { property: 'og:title', content: 'EmoteSizer — Free Twitch Emote Resizer, GIF & Sticker Optimizer' },
     { property: 'og:description', content: 'Free emote maker — search GIFs and stickers, then resize them into emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ.' },
     { property: 'og:url', content: 'https://emotesizer.com' },
@@ -290,7 +314,7 @@ useHead({
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "Any (browser-based)",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "featureList": ["GIF search", "Sticker search", "Twitch emote creator", "Animated emote maker", "Discord emoji resizer", "Kick emote optimizer", "FFZ emote resizer", "Smart compression", "GIF to PNG converter", "GIF trimmer", "No signup required"]
+        "featureList": ["GIF search", "Sticker search", "Twitch emote resizer (28x28, 56x56, 112x112)", "Discord emoji resizer (128x128, under 256KB)", "Kick emote resizer (500x500, under 1MB)", "7TV emote resizer", "BTTV emote resizer", "FFZ emote resizer", "GIF compressor", "Compress animated GIF", "Animated GIF resizer", "GIF trimmer and cutter", "Reduce GIF file size", "GIF to PNG converter", "Twitch sub badge resizer", "Animated emote maker", "Smart compression", "Online GIF editor", "GIF size reducer", "Emote size converter", "Image to Twitch emote", "No signup required"]
       }),
     },
     {
@@ -307,7 +331,13 @@ useHead({
           { "@type": "Question", "name": "Can I trim a GIF before converting to an emote?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Use the Trim Animation slider to select which frames to keep, reducing file size." }},
           { "@type": "Question", "name": "Can I use stickers as emotes?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. EmoteSizer supports both GIFs and stickers. Stickers often have transparent backgrounds, making them ideal for static emotes on Twitch, Discord, and Kick." }},
           { "@type": "Question", "name": "Can I use EmoteSizer as a Twitch emote maker?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. EmoteSizer works as a free emote maker and creator for Twitch. Upload or search for a GIF, resize it to Twitch's required dimensions, and download — all in your browser with no signup." }},
-          { "@type": "Question", "name": "Does EmoteSizer support FFZ (FrankerFaceZ) emotes?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The recommended FFZ emote size is 128x128 pixels, similar to BTTV. Use the Twitch animated emote preset to resize your GIF for FFZ compatibility." }}
+          { "@type": "Question", "name": "Does EmoteSizer support FFZ (FrankerFaceZ) emotes?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The recommended FFZ emote size is 128x128 pixels, similar to BTTV. Use the Twitch animated emote preset to resize your GIF for FFZ compatibility." }},
+          { "@type": "Question", "name": "What are the exact Twitch emote dimensions?", "acceptedAnswer": { "@type": "Answer", "text": "Twitch emote dimensions are 28x28, 56x56, and 112x112 pixels. Upload a single square GIF (between 112x112 and 4096x4096) and Twitch auto-resizes to all three sizes. The file must be under 1 MB." }},
+          { "@type": "Question", "name": "How do I reduce GIF file size?", "acceptedAnswer": { "@type": "Answer", "text": "Use EmoteSizer as a free GIF compressor. Upload your GIF, select your target platform, and click Optimize. The tool compresses the GIF by reducing dimensions, trimming frames, and lowering color depth. Use Smart Compress to shrink it further for Twitch (under 1 MB) or Discord (under 256 KB)." }},
+          { "@type": "Question", "name": "How do I compress a GIF that's too large for Twitch?", "acceptedAnswer": { "@type": "Answer", "text": "If your Twitch emote is too large, use EmoteSizer as a gif compressor to make the gif smaller. Upload the GIF, select the Twitch preset, and click Optimize. If it still exceeds 1 MB, use Smart Compress to reduce gif size automatically by trimming frames and lowering quality until it meets Twitch's limit." }},
+          { "@type": "Question", "name": "How do I make Twitch emotes?", "acceptedAnswer": { "@type": "Answer", "text": "To make Twitch emotes, find or upload an image, use the emote optimizer to resize it to Twitch emote dimensions (112x112), compress it under 1 MB, and download. Then upload the emotes to Twitch through your Creator Dashboard. EmoteSizer handles the full flow from image to Twitch emote entirely in your browser." }},
+          { "@type": "Question", "name": "How do I compress a GIF to make it smaller?", "acceptedAnswer": { "@type": "Answer", "text": "Use EmoteSizer as a free gif compressor to reduce gif size and make gif smaller instantly. Upload your GIF, choose a target platform, and click Optimize. The tool automatically trims frames, lowers color depth, and adjusts quality to shrink the file. If your GIF still exceeds file size limits, enable Smart Compress for aggressive reduction." }},
+          { "@type": "Question", "name": "Can I use EmoteSizer as a Discord emoji maker or Kick emote maker?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. EmoteSizer works as a Discord emoji maker, Kick emote maker, and BTTV emote maker all in one. Search for GIFs or upload your own image, then resize it to the correct dimensions for each platform. It also supports YouTube emotes at 128x128. Everything runs in your browser with no signup required." }}
         ]
       }),
     },

@@ -2,6 +2,230 @@ import { decode, decodeFrames, encode } from 'modern-gif'
 import type { DecodedFrame, UnencodedFrame } from 'modern-gif'
 import type { Platform, OptimizationResult, ResizeMode } from '~/types/optimizer'
 
+// ---------------------------------------------------------------------------
+// Standalone, stateless exports — usable without instantiating the composable
+// ---------------------------------------------------------------------------
+
+/** Baseline gifsicle flags applied to every invocation — zero quality impact */
+export const GIFSICLE_BASE_FLAGS = ['--no-comments', '--no-names', '--no-interlace']
+
+/**
+ * Compares two RGBA pixel buffers and returns the fraction of pixels that are
+ * visually similar (0.0 = completely different, 1.0 = identical).
+ *
+ * For performance on large frames (> 256x256), only every 3rd pixel is sampled.
+ * This is a compression heuristic, not a scientific measurement — approximate
+ * is perfectly fine for deciding whether to drop a near-duplicate frame.
+ *
+ * @param a - RGBA pixel data of the first frame
+ * @param b - RGBA pixel data of the second frame
+ * @returns Similarity ratio between 0.0 and 1.0
+ */
+export function compareFrames(a: Uint8ClampedArray, b: Uint8ClampedArray): number {
+  if (a.length !== b.length) return 0 // Different dimensions = not similar
+
+  const totalPixels = a.length / 4 // RGBA = 4 bytes per pixel
+  // Sample every 3rd pixel for frames larger than 256x256 (65 536 pixels)
+  const step = totalPixels > 65536 ? 3 : 1
+  let matchingPixels = 0
+  const tolerance = 15 // Allow RGB channels to differ by up to 15 (out of 255)
+
+  for (let i = 0; i < a.length; i += 4 * step) {
+    const dr = Math.abs(a[i] - b[i])         // R
+    const dg = Math.abs(a[i + 1] - b[i + 1]) // G
+    const db = Math.abs(a[i + 2] - b[i + 2]) // B
+    // Skip alpha — focus on visible color difference
+
+    if (dr <= tolerance && dg <= tolerance && db <= tolerance) {
+      matchingPixels++
+    }
+  }
+
+  const sampledPixels = Math.ceil(totalPixels / step)
+  return matchingPixels / sampledPixels
+}
+
+/**
+ * Drops frames that are near-duplicates of the previous kept frame, absorbing
+ * their delay into the predecessor. This preserves animation timing while
+ * eliminating visually redundant frames that waste bytes.
+ *
+ * The first frame is always kept. The result is guaranteed to contain at
+ * least 2 frames (the minimum for a valid animated GIF).
+ *
+ * @param frames - Decoded GIF frames in display order
+ * @param similarityThreshold - Fraction of pixels that must match to consider
+ *   a frame a near-duplicate (e.g. 0.95 = 95% of pixels must be similar)
+ * @returns A new array of frames with near-duplicates removed
+ */
+export function dropNearDuplicateFrames(
+  frames: DecodedFrame[],
+  similarityThreshold: number,
+): DecodedFrame[] {
+  // Never drop below 2 frames — a 1-frame "animated" GIF is nonsensical
+  if (frames.length <= 2) return frames
+
+  const kept: DecodedFrame[] = [frames[0]] // Always keep the first frame
+
+  for (let i = 1; i < frames.length; i++) {
+    const prev = kept[kept.length - 1]
+    const curr = frames[i]
+
+    const similarity = compareFrames(
+      prev.data as Uint8ClampedArray,
+      curr.data as Uint8ClampedArray,
+    )
+
+    if (similarity >= similarityThreshold) {
+      // Near-duplicate — drop this frame, add its delay to the previous
+      kept[kept.length - 1] = {
+        ...prev,
+        delay: prev.delay + curr.delay,
+      }
+    } else {
+      kept.push(curr)
+    }
+  }
+
+  // Safety: ensure we never return fewer than 2 frames even if the threshold
+  // was extremely aggressive (shouldn't happen with reasonable thresholds)
+  if (kept.length < 2 && frames.length >= 2) {
+    return [frames[0], frames[frames.length - 1]]
+  }
+
+  return kept
+}
+
+/**
+ * Runs gifsicle (WASM) on an encoded GIF buffer with the given CLI arguments.
+ * Returns the optimized GIF as a Uint8Array.
+ *
+ * gifsicle-wasm-browser loads a ~150KB WASM binary on first use (then cached).
+ * It provides frame delta/transparency optimization, lossy compression, and
+ * color reduction — all in a single pass, far more effective than what
+ * modern-gif's encoder alone can achieve.
+ *
+ * @param gifBuffer - Raw bytes of a valid encoded GIF
+ * @param args - gifsicle CLI arguments (e.g. ['-O3', '--lossy=30'])
+ * @returns Optimized GIF bytes, or the original buffer if gifsicle fails
+ */
+export async function runGifsicle(gifBuffer: Uint8Array, args: string[]): Promise<Uint8Array> {
+  // Dynamic import keeps gifsicle out of the initial bundle; it's only
+  // loaded when Smart Compress actually needs it.
+  const gifsicle = (await import('gifsicle-wasm-browser')).default
+
+  const results = await gifsicle.run({
+    // The 'as unknown as BlobPart' cast works around TypeScript 5.7+ strictness
+    // where Uint8Array<ArrayBufferLike> is not directly assignable to BlobPart.
+    input: [{ file: new Blob([gifBuffer as unknown as BlobPart], { type: 'image/gif' }), name: 'input.gif' }],
+    command: [`gifsicle ${args.join(' ')} input.gif -o /out/output.gif`],
+  })
+
+  // gifsicle.run returns an array of File objects written to /out/
+  if (!results || results.length === 0) {
+    throw new Error('gifsicle produced no output')
+  }
+
+  const outputFile = results[0] as File
+  const outputBuffer = await outputFile.arrayBuffer()
+  return new Uint8Array(outputBuffer)
+}
+
+/**
+ * Safe wrapper around runGifsicle that returns null on failure instead of
+ * throwing. This ensures the Smart Compress pipeline never completely breaks
+ * just because WASM failed to load or gifsicle couldn't process a particular
+ * GIF (e.g. single-frame edge cases, corrupt metadata).
+ */
+export async function tryRunGifsicle(gifBuffer: Uint8Array, args: string[]): Promise<Uint8Array | null> {
+  try {
+    return await runGifsicle(gifBuffer, args)
+  } catch (_e) {
+    // WASM load failure, unsupported GIF structure, or other gifsicle error.
+    // Silently fall back — the caller will use the input buffer as-is.
+    return null
+  }
+}
+
+/**
+ * Re-encodes the given frames at the specified dimensions using modern-gif.
+ * When the target dimensions differ from the source frames, each frame is
+ * resized on an OffscreenCanvas with high-quality interpolation.
+ *
+ * Canvas resources are allocated once before the loop and cleaned up after
+ * encoding to minimise GPU/memory allocation overhead.
+ *
+ * @param frames - Decoded GIF frames to encode
+ * @param width - Target width in pixels
+ * @param height - Target height in pixels
+ * @returns Raw encoded GIF bytes
+ */
+export async function encodeFramesAtSize(frames: DecodedFrame[], width: number, height: number): Promise<Uint8Array> {
+  // If dimensions match the frame source, no canvas resize needed
+  const needsResize = frames[0].width !== width || frames[0].height !== height
+
+  const encodingFrames: Array<{ data: Uint8ClampedArray; delay: number }> = []
+
+  if (needsResize) {
+    // Create canvases once before the loop to avoid per-frame allocation overhead
+    const srcCanvas = new OffscreenCanvas(frames[0].width, frames[0].height)
+    const srcCtx = srcCanvas.getContext('2d')!
+    const destCanvas = new OffscreenCanvas(width, height)
+    const destCtx = destCanvas.getContext('2d', { willReadFrequently: true })!
+    destCtx.imageSmoothingEnabled = true
+    destCtx.imageSmoothingQuality = 'high'
+
+    for (const frame of frames) {
+      // Update source canvas dimensions if frames vary in size
+      if (srcCanvas.width !== frame.width || srcCanvas.height !== frame.height) {
+        srcCanvas.width = frame.width
+        srcCanvas.height = frame.height
+      }
+      srcCtx.putImageData(
+        new ImageData(new Uint8ClampedArray(frame.data), frame.width, frame.height),
+        0, 0,
+      )
+
+      destCtx.clearRect(0, 0, width, height)
+      destCtx.drawImage(srcCanvas, 0, 0, width, height)
+
+      const resizedData = destCtx.getImageData(0, 0, width, height)
+      encodingFrames.push({ data: resizedData.data, delay: frame.delay || 100 })
+
+      // Yield to browser
+      await new Promise(resolve => setTimeout(resolve, 0))
+    }
+
+    // Release canvas GPU/memory resources
+    srcCanvas.width = 0
+    srcCanvas.height = 0
+    destCanvas.width = 0
+    destCanvas.height = 0
+  } else {
+    for (const frame of frames) {
+      encodingFrames.push({
+        data: new Uint8ClampedArray(frame.data),
+        delay: frame.delay || 100,
+      })
+    }
+  }
+
+  // The UnencodedFrame[] cast works around TS 5.7+ strictness where
+  // Uint8ClampedArray<ArrayBufferLike> is not directly assignable to BufferSource
+  const encoded = await encode({
+    width,
+    height,
+    looped: true,
+    frames: encodingFrames.map(f => ({ data: f.data, delay: f.delay })) as UnencodedFrame[],
+  })
+
+  return new Uint8Array(encoded)
+}
+
+// ---------------------------------------------------------------------------
+// Composable — stateful per-instance
+// ---------------------------------------------------------------------------
+
 export function useGifOptimizer() {
   const isProcessing = ref(false)
   const progress = ref(0)
@@ -55,90 +279,42 @@ export function useGifOptimizer() {
   }
 
   /**
-   * Compares two RGBA pixel buffers and returns the fraction of pixels that are
-   * visually similar (0.0 = completely different, 1.0 = identical).
-   *
-   * For performance on large frames (> 256x256), only every 4th pixel is sampled.
-   * This is a compression heuristic, not a scientific measurement — approximate
-   * is perfectly fine for deciding whether to drop a near-duplicate frame.
-   *
-   * @param a - RGBA pixel data of the first frame
-   * @param b - RGBA pixel data of the second frame
-   * @returns Similarity ratio between 0.0 and 1.0
+   * Merges consecutive frames whose delays are below the browser's minimum
+   * clamp threshold (~20ms). Browsers display these at ~100ms anyway, so
+   * keeping every frame is wasteful. Keeps every Nth frame where N is
+   * chosen so the merged delay stays close to the original perceived timing.
+   * Always preserves at least 2 frames.
    */
-  function compareFrames(a: Uint8ClampedArray, b: Uint8ClampedArray): number {
-    if (a.length !== b.length) return 0 // Different dimensions = not similar
+  function mergeSubThresholdFrames(frames: DecodedFrame[]): DecodedFrame[] {
+    const BROWSER_CLAMP_MS = 20
 
-    const totalPixels = a.length / 4 // RGBA = 4 bytes per pixel
-    // Sample every 4th pixel for frames larger than 256x256 (65 536 pixels)
-    const step = totalPixels > 65536 ? 4 : 1
-    let matchingPixels = 0
-    const tolerance = 10 // Allow RGB channels to differ by up to 10 (out of 255)
+    // Only apply if ALL frames have delays below the threshold
+    // (mixed delays = intentional timing, don't touch)
+    const allBelowClamp = frames.every(f => (f.delay || 100) < BROWSER_CLAMP_MS)
+    if (!allBelowClamp || frames.length <= 2) return frames
 
-    for (let i = 0; i < a.length; i += 4 * step) {
-      const dr = Math.abs(a[i] - b[i])         // R
-      const dg = Math.abs(a[i + 1] - b[i + 1]) // G
-      const db = Math.abs(a[i + 2] - b[i + 2]) // B
-      // Skip alpha — focus on visible color difference
+    // Calculate how many frames to merge: if delay is 10ms and browser
+    // shows at ~100ms, every 2-3 frames are redundant
+    const avgDelay = frames.reduce((sum, f) => sum + (f.delay || 100), 0) / frames.length
+    const mergeCount = Math.max(2, Math.floor(BROWSER_CLAMP_MS / avgDelay))
 
-      if (dr <= tolerance && dg <= tolerance && db <= tolerance) {
-        matchingPixels++
+    const result: DecodedFrame[] = []
+    for (let i = 0; i < frames.length; i += mergeCount) {
+      const kept = frames[i]
+      // Sum up the delays of the merged frames
+      let totalDelay = 0
+      for (let j = i; j < Math.min(i + mergeCount, frames.length); j++) {
+        totalDelay += frames[j].delay || 100
       }
+      result.push({ ...kept, delay: totalDelay })
     }
 
-    const sampledPixels = Math.ceil(totalPixels / step)
-    return matchingPixels / sampledPixels
-  }
-
-  /**
-   * Drops frames that are near-duplicates of the previous kept frame, absorbing
-   * their delay into the predecessor. This preserves animation timing while
-   * eliminating visually redundant frames that waste bytes.
-   *
-   * The first frame is always kept. The result is guaranteed to contain at
-   * least 2 frames (the minimum for a valid animated GIF).
-   *
-   * @param frames - Decoded GIF frames in display order
-   * @param similarityThreshold - Fraction of pixels that must match to consider
-   *   a frame a near-duplicate (e.g. 0.95 = 95% of pixels must be similar)
-   * @returns A new array of frames with near-duplicates removed
-   */
-  function dropNearDuplicateFrames(
-    frames: DecodedFrame[],
-    similarityThreshold: number,
-  ): DecodedFrame[] {
-    // Never drop below 2 frames — a 1-frame "animated" GIF is nonsensical
-    if (frames.length <= 2) return frames
-
-    const kept: DecodedFrame[] = [frames[0]] // Always keep the first frame
-
-    for (let i = 1; i < frames.length; i++) {
-      const prev = kept[kept.length - 1]
-      const curr = frames[i]
-
-      const similarity = compareFrames(
-        prev.data as Uint8ClampedArray,
-        curr.data as Uint8ClampedArray,
-      )
-
-      if (similarity >= similarityThreshold) {
-        // Near-duplicate — drop this frame, add its delay to the previous
-        kept[kept.length - 1] = {
-          ...prev,
-          delay: prev.delay + curr.delay,
-        }
-      } else {
-        kept.push(curr)
-      }
+    // Ensure at least 2 frames
+    if (result.length < 2 && frames.length >= 2) {
+      return [frames[0], { ...frames[frames.length - 1], delay: frames[frames.length - 1].delay || 100 }]
     }
 
-    // Safety: ensure we never return fewer than 2 frames even if the threshold
-    // was extremely aggressive (shouldn't happen with reasonable thresholds)
-    if (kept.length < 2 && frames.length >= 2) {
-      return [frames[0], frames[frames.length - 1]]
-    }
-
-    return kept
+    return result
   }
 
   /**
@@ -295,8 +471,12 @@ export function useGifOptimizer() {
           // Frames in a GIF can have varying sizes (partial updates), but
           // decodeFrames composites them to the full GIF dimensions, so
           // frame.width/height equals the GIF's logical screen size.
-          srcCanvas.width = frame.width
-          srcCanvas.height = frame.height
+          // Only reassign when dimensions differ to avoid clearing and
+          // reallocating the canvas backing store on every frame.
+          if (srcCanvas.width !== frame.width || srcCanvas.height !== frame.height) {
+            srcCanvas.width = frame.width
+            srcCanvas.height = frame.height
+          }
 
           // Paint the decoded RGBA pixel data onto the source canvas
           const imageData = new ImageData(
@@ -522,9 +702,10 @@ export function useGifOptimizer() {
    * increasing aggressiveness; the first one that gets the blob under
    * `maxFileSize` wins.
    *
-   * The function works with already-decoded frame data so it never re-fetches
-   * or re-decodes the source GIF. Each strategy builds on the previous one
-   * (e.g. frame dropping operates on the already-color-reduced frames).
+   * The pipeline combines gifsicle (WASM) for lossless frame delta optimization,
+   * lossy compression, and color reduction with modern-gif for frame dropping
+   * and canvas-based resolution reduction. Each strategy builds on the previous
+   * best result, so improvements compound.
    *
    * @param gifUrl - URL of the source GIF (blob: or https:)
    * @param targetSize - Target pixel dimensions (e.g. 112)
@@ -582,25 +763,40 @@ export function useGifOptimizer() {
     let bestBlob: Blob | null = null
     let bestSize = Infinity
 
-    // Working copies that accumulate across strategies
+    // The current best encoded GIF bytes — strategies that use gifsicle
+    // operate directly on this buffer rather than re-encoding from frames.
+    let currentGifBytes: Uint8Array | null = null
+
+    // Working copies for frame-based strategies
     let currentFrames = frames
     let currentSize = targetSize
-    let currentMaxColors: number | undefined
+
+    // Pre-processing: merge frames with sub-threshold delays.
+    // Browsers clamp delays below ~20ms to ~100ms, so these extra frames are
+    // invisible to the viewer. Merging them is effectively lossless.
+    currentFrames = mergeSubThresholdFrames(currentFrames)
+
+    // Create canvases once and reuse across all encodeCurrentFrames() calls.
+    // smartCompressGif may invoke encodeCurrentFrames multiple times (initial
+    // encode + after each frame-drop or resolution strategy), so avoiding
+    // repeated canvas allocation saves GPU/memory overhead.
+    const srcCanvas = document.createElement('canvas')
+    const srcCtx = srcCanvas.getContext('2d')!
+    if (!srcCtx) throw new Error('Failed to create source canvas context.')
+
+    const destCanvas = document.createElement('canvas')
+    const destCtx = destCanvas.getContext('2d', { willReadFrequently: true })!
+    if (!destCtx) throw new Error('Failed to create canvas context.')
 
     /**
      * Helper: re-encode the current working frames at `currentSize` dimensions
-     * with optional maxColors. Returns the encoded blob.
+     * via modern-gif. Returns the raw encoded bytes (not a Blob) so they can
+     * be piped directly into gifsicle.
      */
-    async function encodeWithSettings(): Promise<Blob> {
-      const canvas = document.createElement('canvas')
-      canvas.width = currentSize
-      canvas.height = currentSize
-      const ctx = canvas.getContext('2d', { willReadFrequently: true })
-      if (!ctx) throw new Error('Failed to create canvas context.')
-
-      const srcCanvas = document.createElement('canvas')
-      const srcCtx = srcCanvas.getContext('2d')
-      if (!srcCtx) throw new Error('Failed to create source canvas context.')
+    async function encodeCurrentFrames(): Promise<Uint8Array> {
+      // Update destination canvas to match the (possibly changed) target size
+      destCanvas.width = currentSize
+      destCanvas.height = currentSize
 
       const encodingFrames: Array<{ data: Uint8ClampedArray; delay: number }> = []
 
@@ -608,30 +804,28 @@ export function useGifOptimizer() {
         // Check for cancellation between frames to stay responsive
         if (signal?.aborted) throw new DOMException('Aborted', 'AbortError')
 
-        srcCanvas.width = frame.width
-        srcCanvas.height = frame.height
+        // Only reassign when dimensions differ to avoid clearing and
+        // reallocating the canvas backing store on every frame.
+        if (srcCanvas.width !== frame.width || srcCanvas.height !== frame.height) {
+          srcCanvas.width = frame.width
+          srcCanvas.height = frame.height
+        }
         const imageData = new ImageData(
           new Uint8ClampedArray(frame.data),
           frame.width,
           frame.height,
         )
         srcCtx.putImageData(imageData, 0, 0)
-        drawResized(ctx, srcCanvas, frame.width, frame.height, currentSize, resizeMode, padColor)
+        drawResized(destCtx, srcCanvas, frame.width, frame.height, currentSize, resizeMode, padColor)
 
-        const resizedData = ctx.getImageData(0, 0, currentSize, currentSize)
+        const resizedData = destCtx.getImageData(0, 0, currentSize, currentSize)
         encodingFrames.push({ data: resizedData.data, delay: frame.delay })
 
         // Yield to the browser periodically
         await new Promise(resolve => setTimeout(resolve, 0))
       }
 
-      // Release temporary canvases
-      srcCanvas.width = 0
-      srcCanvas.height = 0
-      canvas.width = 0
-      canvas.height = 0
-
-      const encodeOptions: Parameters<typeof encode>[0] = {
+      const encodedBuffer = await encode({
         width: currentSize,
         height: currentSize,
         looped: gif.looped ?? true,
@@ -640,27 +834,24 @@ export function useGifOptimizer() {
           data: f.data,
           delay: f.delay,
         })) as UnencodedFrame[],
-      }
+      })
 
-      if (currentMaxColors !== undefined) {
-        encodeOptions.maxColors = currentMaxColors
-      }
-
-      const encodedBuffer = await encode(encodeOptions)
-      return new Blob([encodedBuffer], { type: 'image/gif' })
+      return new Uint8Array(encodedBuffer)
     }
 
     /**
-     * Helper: try encoding, track the best result, and return true if under limit.
+     * Helper: accept a GIF buffer (either from encoding or gifsicle), track
+     * it as the current best, update the pipeline state, and return true if
+     * the result is under the file size limit.
      */
-    async function tryStrategy(label: string): Promise<boolean> {
-      if (signal?.aborted) throw new DOMException('Aborted', 'AbortError')
-      onProgress(label)
-      // Small delay so the UI can paint the strategy label before heavy work starts
-      await new Promise(resolve => setTimeout(resolve, 16))
-
-      const blob = await encodeWithSettings()
+    function acceptResult(label: string, gifBytes: Uint8Array): boolean {
+      // Cast works around TS 5.7+ Uint8Array<ArrayBufferLike> / BlobPart incompatibility
+      const blob = new Blob([gifBytes as unknown as BlobPart], { type: 'image/gif' })
       strategiesApplied.push(label)
+
+      // Always update currentGifBytes so subsequent strategies build on the
+      // latest (and hopefully smallest) encoded GIF.
+      currentGifBytes = gifBytes
 
       if (blob.size < bestSize) {
         bestBlob = blob
@@ -670,77 +861,200 @@ export function useGifOptimizer() {
       return blob.size <= maxFileSize
     }
 
+    /**
+     * Helper: report a strategy to the UI, check for abort, and yield
+     * a frame so the browser can repaint before heavy work starts.
+     */
+    async function reportStrategy(label: string): Promise<void> {
+      if (signal?.aborted) throw new DOMException('Aborted', 'AbortError')
+      onProgress(label)
+      await new Promise(resolve => setTimeout(resolve, 16))
+    }
+
+    // ---------------------------------------------------------------
+    // Build the initial encoded GIF from the (potentially trimmed/
+    // frame-limited) decoded frames. This is the starting point for
+    // all strategies.
+    // ---------------------------------------------------------------
+    try {
+    const initialBytes = await encodeCurrentFrames()
+    currentGifBytes = initialBytes
+    // Cast works around TS 5.7+ Uint8Array<ArrayBufferLike> / BlobPart incompatibility
+    bestBlob = new Blob([initialBytes as unknown as BlobPart], { type: 'image/gif' })
+    bestSize = bestBlob.size
+
+    // If already under the limit before any strategy, return immediately
+    if (bestSize <= maxFileSize) {
+      return { blob: bestBlob, fileSize: bestSize, strategiesApplied, success: true }
+    }
+
     const isAnimated = currentFrames.length > 1
 
-    // --- Strategy 1: Smart frame drop at 95% similarity ---
-    // Near-zero quality loss — only truly duplicate frames are removed.
-    // Skipped entirely for single-frame (static) GIFs.
+    // --- Strategy 1: Lossless optimization (gifsicle -O3) ---
+    // Frame delta optimization, transparency optimization, and LZW re-encoding.
+    // Zero quality loss — this alone can reduce file size 30-70%.
+    {
+      const label = 'Lossless optimization'
+      await reportStrategy(label)
+
+      const optimized = await tryRunGifsicle(currentGifBytes, [...GIFSICLE_BASE_FLAGS, '-O3'])
+      if (optimized) {
+        if (acceptResult(label, optimized)) {
+          return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
+        }
+      }
+    }
+
+    // --- Strategy 2: Drop near-duplicate frames (95% similarity) ---
+    // Near-imperceptible quality loss — only truly duplicate frames removed.
     if (isAnimated) {
+      const label = 'Removing duplicate frames'
       const beforeCount = currentFrames.length
       const deduped95 = dropNearDuplicateFrames(currentFrames, 0.95)
 
       if (deduped95.length < beforeCount) {
-        // Frames were actually removed — re-encode and check
+        await reportStrategy(label)
         currentFrames = deduped95
-        if (await tryStrategy('Removing duplicate frames (95%)')) {
+
+        // Re-encode with modern-gif after dropping frames, then polish with gifsicle
+        const encoded = await encodeCurrentFrames()
+        const polished = await tryRunGifsicle(encoded, [...GIFSICLE_BASE_FLAGS, '-O3'])
+        if (acceptResult(label, polished ?? encoded)) {
           return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
         }
       }
-      // If no frames were dropped, skip straight to the next strategy
     }
 
-    // --- Strategy 2: Smart frame drop at 85% similarity ---
-    // More aggressive — drops frames that are very similar but not identical.
-    // Minimal quality loss for most animations.
+    // --- Strategy 3: Mild lossy compression (gifsicle --lossy=30) ---
+    // Barely visible artifacts at this level.
+    if (currentGifBytes) {
+      const label = 'Light lossy compression'
+      await reportStrategy(label)
+
+      const optimized = await tryRunGifsicle(currentGifBytes, [...GIFSICLE_BASE_FLAGS, '-O3', '--lossy=30'])
+      if (optimized) {
+        if (acceptResult(label, optimized)) {
+          return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
+        }
+      }
+    }
+
+    // --- Strategy 4: Drop near-duplicate frames (85% similarity) ---
+    // More aggressive frame dropping — drops frames that are very similar.
     if (isAnimated) {
+      const label = 'Removing similar frames'
       const beforeCount = currentFrames.length
       const deduped85 = dropNearDuplicateFrames(currentFrames, 0.85)
 
       if (deduped85.length < beforeCount) {
-        // Additional frames were removed beyond the 95% pass
+        await reportStrategy(label)
         currentFrames = deduped85
-        if (await tryStrategy('Removing duplicate frames (85%)')) {
+
+        const encoded = await encodeCurrentFrames()
+        const polished = await tryRunGifsicle(encoded, [...GIFSICLE_BASE_FLAGS, '-O3'])
+        if (acceptResult(label, polished ?? encoded)) {
           return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
         }
       }
-      // If no additional frames were dropped, skip to color reduction
     }
 
-    // --- Strategy 3: Reduce colors to 128 ---
-    currentMaxColors = 128
-    if (await tryStrategy('Reducing colors (128)')) {
-      return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
-    }
+    // --- Strategy 5: Moderate lossy compression (gifsicle --lossy=60) ---
+    // Some visible artifacts but still good quality.
+    if (currentGifBytes) {
+      const label = 'Moderate lossy compression'
+      await reportStrategy(label)
 
-    // --- Strategy 4: Reduce colors to 64 ---
-    currentMaxColors = 64
-    if (await tryStrategy('Reducing colors (64)')) {
-      return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
-    }
-
-    // --- Strategy 5: Reduce colors to 32 ---
-    currentMaxColors = 32
-    if (await tryStrategy('Reducing colors (32)')) {
-      return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
-    }
-
-    // --- Strategy 6: Reduce resolution to 75% ---
-    const size75 = Math.round(targetSize * 0.75)
-    if (size75 > 0 && size75 !== currentSize) {
-      currentSize = size75
-
-      if (await tryStrategy('Reducing resolution (75%)')) {
-        return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
+      const optimized = await tryRunGifsicle(currentGifBytes, [...GIFSICLE_BASE_FLAGS, '-O3', '--lossy=60'])
+      if (optimized) {
+        if (acceptResult(label, optimized)) {
+          return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
+        }
       }
     }
 
-    // --- Strategy 7: Reduce resolution to 60% ---
-    const size60 = Math.round(targetSize * 0.60)
-    if (size60 > 0 && size60 !== currentSize) {
-      currentSize = size60
+    // --- Strategy 6: Reduce colors to 128 + lossy ---
+    // Combines color reduction with mild lossy compression.
+    if (currentGifBytes) {
+      const label = 'Reducing colors (128)'
+      await reportStrategy(label)
 
-      if (await tryStrategy('Reducing resolution (60%)')) {
-        return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
+      const optimized = await tryRunGifsicle(currentGifBytes, [...GIFSICLE_BASE_FLAGS, '-O3', '--lossy=30', '--colors', '128'])
+      if (optimized) {
+        if (acceptResult(label, optimized)) {
+          return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
+        }
+      }
+    }
+
+    // --- Strategy 7: Reduce colors to 64 + lossy ---
+    if (currentGifBytes) {
+      const label = 'Reducing colors (64)'
+      await reportStrategy(label)
+
+      const optimized = await tryRunGifsicle(currentGifBytes, [...GIFSICLE_BASE_FLAGS, '-O3', '--lossy=50', '--colors', '64'])
+      if (optimized) {
+        if (acceptResult(label, optimized)) {
+          return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
+        }
+      }
+    }
+
+    // --- Strategy 8: Aggressive lossy compression ---
+    if (currentGifBytes) {
+      const label = 'Aggressive compression'
+      await reportStrategy(label)
+
+      const optimized = await tryRunGifsicle(currentGifBytes, [...GIFSICLE_BASE_FLAGS, '-O3', '--lossy=80', '--colors', '64'])
+      if (optimized) {
+        if (acceptResult(label, optimized)) {
+          return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
+        }
+      }
+    }
+
+    // --- Strategy 9: Heavy compression (colors 32 + lossy 100) ---
+    if (currentGifBytes) {
+      const label = 'Heavy compression'
+      await reportStrategy(label)
+
+      const optimized = await tryRunGifsicle(currentGifBytes, [...GIFSICLE_BASE_FLAGS, '-O3', '--lossy=100', '--colors', '32'])
+      if (optimized) {
+        if (acceptResult(label, optimized)) {
+          return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
+        }
+      }
+    }
+
+    // --- Strategy 10: Reduce resolution to 75% ---
+    // Canvas-based resize followed by gifsicle polish.
+    {
+      const size75 = Math.round(targetSize * 0.75)
+      if (size75 > 0 && size75 !== currentSize) {
+        const label = 'Reducing resolution (75%)'
+        await reportStrategy(label)
+
+        currentSize = size75
+        const encoded = await encodeCurrentFrames()
+        const polished = await tryRunGifsicle(encoded, [...GIFSICLE_BASE_FLAGS, '-O3'])
+        if (acceptResult(label, polished ?? encoded)) {
+          return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
+        }
+      }
+    }
+
+    // --- Strategy 11: Reduce resolution to 60% ---
+    {
+      const size60 = Math.round(targetSize * 0.60)
+      if (size60 > 0 && size60 !== currentSize) {
+        const label = 'Reducing resolution (60%)'
+        await reportStrategy(label)
+
+        currentSize = size60
+        const encoded = await encodeCurrentFrames()
+        const polished = await tryRunGifsicle(encoded, [...GIFSICLE_BASE_FLAGS, '-O3'])
+        if (acceptResult(label, polished ?? encoded)) {
+          return { blob: bestBlob!, fileSize: bestSize, strategiesApplied, success: true }
+        }
       }
     }
 
@@ -750,6 +1064,13 @@ export function useGifOptimizer() {
       fileSize: bestSize,
       strategiesApplied,
       success: false,
+    }
+    } finally {
+      // Release cached canvas GPU/memory resources
+      srcCanvas.width = 0
+      srcCanvas.height = 0
+      destCanvas.width = 0
+      destCanvas.height = 0
     }
   }
 

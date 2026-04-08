@@ -1,26 +1,26 @@
 <template>
   <div class="min-h-screen bg-surface-50">
-    <!-- Top Navigation -->
-    <AppNav />
+    <!-- Desktop Sidebar -->
+    <AppSidebar />
+
+    <!-- Mobile Top Bar -->
+    <AppMobileHeader />
 
     <!-- Main Content -->
-    <main class="pb-20 md:pb-0">
+    <main class="pb-20 lg:pb-0 lg:ml-[240px]">
       <slot />
     </main>
 
-    <!-- Bottom Tab Bar (mobile only) -->
+    <!-- Mobile Bottom Bar -->
     <AppBottomBar />
 
     <!-- Toast Notifications -->
     <ToastNotification />
 
     <!-- Footer -->
-    <footer class="border-t border-surface-200/50 py-8 pb-24 md:pb-8">
+    <footer class="lg:ml-[240px] border-t border-surface-200/50 py-8 pb-24 lg:pb-8">
       <div class="max-w-5xl mx-auto px-4 text-center">
         <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-surface-400 mb-4">
-          <NuxtLink to="/" class="hover:text-surface-600 transition-colors">Emote Resizer</NuxtLink>
-          <NuxtLink to="/search" class="hover:text-surface-600 transition-colors">Search GIFs</NuxtLink>
-          <NuxtLink to="/optimizer" class="hover:text-surface-600 transition-colors">GIF Optimizer</NuxtLink>
           <NuxtLink to="/about" class="hover:text-surface-600 transition-colors">About</NuxtLink>
           <NuxtLink to="/privacy" class="hover:text-surface-600 transition-colors">Privacy</NuxtLink>
           <NuxtLink to="/terms" class="hover:text-surface-600 transition-colors">Terms</NuxtLink>
