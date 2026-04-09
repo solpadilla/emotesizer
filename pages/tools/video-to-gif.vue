@@ -73,6 +73,22 @@
           <!-- Settings controls — disable interaction during conversion -->
           <div class="space-y-4" :class="{ 'pointer-events-none opacity-60': isConverting }">
 
+          <!-- Reset to defaults — only visible when settings have been changed -->
+          <div v-if="hasCustomSettings" class="flex justify-end">
+            <button
+              class="btn-ghost h-9 px-2 rounded-lg flex items-center gap-1.5 text-xs text-surface-500"
+              aria-label="Reset settings to defaults"
+              title="Reset to defaults"
+              @click="resetSettings"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="1 4 1 10 7 10" />
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+              </svg>
+              Reset to defaults
+            </button>
+          </div>
+
           <!-- Trim Range -->
           <div v-if="videoDuration > 0">
             <h3 class="label mb-2">Trim Range</h3>
@@ -917,6 +933,43 @@ const estimatedSize = computed(() => {
 })
 
 const estimatedSizeLabel = computed(() => formatFileSize(estimatedSize.value))
+
+/**
+ * True when any conversion setting differs from its default value.
+ * Used to conditionally show the "Reset to defaults" button.
+ * Defaults: trimRange = full duration, fps = 15, outputWidth = 480,
+ * quality = 'balanced', loopPreset = 'infinite', maxColors = 256.
+ */
+const hasCustomSettings = computed(() => {
+  const trimChanged = trimRange.value[0] !== 0 || trimRange.value[1] !== videoDuration.value
+  const fpsChanged = fps.value !== 15 || customFpsActive.value
+  const widthChanged = outputWidth.value !== 480 || customWidthActive.value
+  const qualityChanged = quality.value !== 'balanced'
+  const loopChanged = loopPreset.value !== 'infinite'
+  const colorsChanged = maxColors.value !== 256
+  return trimChanged || fpsChanged || widthChanged || qualityChanged || loopChanged || colorsChanged
+})
+
+/** Resets all conversion settings to defaults without clearing the video */
+function resetSettings() {
+  trimRange.value = [0, videoDuration.value]
+  fps.value = 15
+  customFpsActive.value = false
+  customFps.value = 15
+  outputWidth.value = 480
+  customWidthActive.value = false
+  customWidth.value = 480
+  quality.value = 'balanced'
+  loopPreset.value = 'infinite'
+  customLoopCount.value = 3
+  maxColors.value = 256
+
+  // Seek video player back to the start of the full range
+  const player = videoPlayerRef.value
+  if (player) {
+    player.currentTime = 0
+  }
+}
 
 // -- Format helpers --
 
