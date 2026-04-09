@@ -662,6 +662,7 @@ function animationLoop(timestamp: number) {
       if (loopCount !== 0 && completedLoops >= loopCount) {
         // Stay on the last frame and stop animating
         isAnimationComplete.value = true
+        animFrameId = null
         return
       }
 
