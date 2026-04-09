@@ -38,32 +38,66 @@
       </NuxtLink>
     </nav>
 
-    <!-- Tools Category -->
-    <div class="mt-6">
-      <h3 class="text-[11px] text-surface-400 uppercase tracking-wide font-medium px-3 mb-2">Tools</h3>
-      <nav class="space-y-1">
-        <NuxtLink
-          v-for="item in toolsNav"
-          :key="item.to"
-          :to="item.to"
-          class="relative h-11 px-3 rounded-xl flex items-center gap-3 text-sm font-medium transition-colors"
-          :class="item.isActive
-            ? 'bg-primary-500/10 text-primary-500'
-            : 'text-surface-500 hover:bg-surface-200/50 hover:text-surface-700'"
+    <!-- Scrollable Tools Section -->
+    <div class="overflow-y-auto flex-1 no-scrollbar mt-4">
+      <!-- Category Accordions -->
+      <div v-for="category in activeCategories" :key="category.key" class="mb-1">
+        <!-- Category Header -->
+        <button
+          class="w-full flex items-center gap-2 px-3 h-9 rounded-lg text-[11px] uppercase tracking-wide font-semibold text-surface-400 hover:text-surface-600 hover:bg-surface-200/30 transition-colors"
+          :aria-expanded="expandedCategory === category.key"
+          @click="toggleCategory(category.key)"
         >
-          <!-- Active accent pill -->
-          <span
-            v-if="item.isActive"
-            class="absolute left-0 w-[3px] h-5 bg-primary-500 rounded-full"
+          <IconChevronRight
+            :size="12"
+            class="transition-transform duration-200 flex-shrink-0"
+            :class="{ 'rotate-90': expandedCategory === category.key }"
           />
-          <component :is="item.icon" :size="20" />
-          {{ item.label }}
-        </NuxtLink>
-      </nav>
-    </div>
+          <span class="flex-1 text-left">{{ category.label }}</span>
+          <span class="text-[10px] bg-surface-200/50 text-surface-400 rounded-full px-1.5 min-w-[20px] text-center font-normal normal-case tracking-normal">
+            {{ category.tools.length }}
+          </span>
+        </button>
 
-    <!-- Spacer -->
-    <div class="flex-1" />
+        <!-- Collapsible Tool Links -->
+        <div
+          class="overflow-hidden transition-all duration-200 ease-in-out"
+          :style="{ maxHeight: expandedCategory === category.key ? (category.tools.length * 44 + 8) + 'px' : '0px' }"
+        >
+          <div class="pt-1 pb-1">
+            <NuxtLink
+              v-for="tool in category.tools"
+              :key="tool.to"
+              :to="tool.to"
+              class="relative h-10 pl-7 pr-3 rounded-xl flex items-center gap-3 text-sm font-medium transition-colors"
+              :class="isToolActive(tool.to)
+                ? 'bg-primary-500/10 text-primary-500'
+                : 'text-surface-500 hover:bg-surface-200/50 hover:text-surface-700'"
+            >
+              <!-- Active accent pill -->
+              <span
+                v-if="isToolActive(tool.to)"
+                class="absolute left-0 w-[3px] h-5 bg-primary-500 rounded-full"
+              />
+              <component :is="resolveComponent(tool.icon)" :size="18" />
+              {{ tool.label }}
+            </NuxtLink>
+          </div>
+        </div>
+      </div>
+
+      <!-- All Tools Link -->
+      <NuxtLink
+        to="/tools"
+        class="flex items-center gap-2 px-3 h-11 rounded-xl text-sm transition-colors mt-2"
+        :class="route.path === '/tools'
+          ? 'bg-primary-500/10 text-primary-500'
+          : 'text-surface-400 hover:text-primary-500 hover:bg-primary-500/5'"
+      >
+        <IconGrid :size="18" />
+        <span>All Tools</span>
+      </NuxtLink>
+    </div>
 
     <!-- Secondary Links -->
     <nav class="space-y-0.5">
@@ -96,6 +130,9 @@
 <script setup lang="ts">
 const route = useRoute()
 const { isDark, cycleTheme } = useTheme()
+const { activeCategories } = useToolsNav()
+
+const expandedCategory = ref<string | null>(null)
 
 const primaryNav = computed(() => [
   {
@@ -118,61 +155,36 @@ const primaryNav = computed(() => [
   },
 ])
 
-const toolsNav = computed(() => [
-  {
-    to: '/tools/trim',
-    label: 'GIF Trim',
-    icon: resolveComponent('IconScissors'),
-    isActive: route.path === '/tools/trim',
-  },
-  {
-    to: '/tools/resize',
-    label: 'GIF Resize',
-    icon: resolveComponent('IconResize'),
-    isActive: route.path === '/tools/resize',
-  },
-  {
-    to: '/tools/crop',
-    label: 'GIF Crop',
-    icon: resolveComponent('IconCrop'),
-    isActive: route.path === '/tools/crop',
-  },
-  {
-    to: '/tools/compress',
-    label: 'GIF Compress',
-    icon: resolveComponent('IconCompress'),
-    isActive: route.path === '/tools/compress',
-  },
-  {
-    to: '/tools/gif-to-png',
-    label: 'GIF to PNG',
-    icon: resolveComponent('IconFrame'),
-    isActive: route.path === '/tools/gif-to-png',
-  },
-  {
-    to: '/tools/speed',
-    label: 'GIF Speed',
-    icon: resolveComponent('IconGauge'),
-    isActive: route.path === '/tools/speed',
-  },
-  {
-    to: '/tools/reverse',
-    label: 'GIF Reverse',
-    icon: resolveComponent('IconReverse'),
-    isActive: route.path === '/tools/reverse',
-  },
-  {
-    to: '/tools/rotate',
-    label: 'GIF Rotate',
-    icon: resolveComponent('IconRotate'),
-    isActive: route.path === '/tools/rotate',
-  },
-])
-
 const secondaryNav = [
   { to: '/about', label: 'About' },
   { to: '/privacy', label: 'Privacy' },
   { to: '/terms', label: 'Terms' },
   { to: '/contact', label: 'Contact' },
 ]
+
+/** Check if a tool route is currently active */
+function isToolActive(toolPath: string): boolean {
+  return route.path === toolPath || route.path.startsWith(toolPath + '/')
+}
+
+/** Find which category contains the current route */
+function findCategoryForRoute(path: string): string | null {
+  for (const cat of activeCategories.value) {
+    if (cat.tools.some(t => path === t.to || path.startsWith(t.to + '/'))) {
+      return cat.key
+    }
+  }
+  return null
+}
+
+/** Toggle a category open/closed */
+function toggleCategory(key: string) {
+  expandedCategory.value = expandedCategory.value === key ? null : key
+}
+
+// Auto-expand the category containing the current tool page
+watch(() => route.path, (path) => {
+  const cat = findCategoryForRoute(path)
+  if (cat) expandedCategory.value = cat
+}, { immediate: true })
 </script>

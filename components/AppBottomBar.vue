@@ -1,6 +1,6 @@
 <template>
   <div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 glass-surface border-t border-surface-200/50">
-    <nav class="grid grid-cols-3 h-16 pb-[env(safe-area-inset-bottom)]">
+    <nav class="grid grid-cols-4 h-16 pb-[env(safe-area-inset-bottom)]">
       <!-- Home -->
       <NuxtLink
         to="/"
@@ -17,12 +17,24 @@
       <NuxtLink
         to="/search"
         class="flex flex-col items-center justify-center gap-1 transition-colors"
-        :class="route.path === '/search' ? 'text-primary-500' : 'text-surface-400'"
+        :class="route.path === '/search' || route.path.startsWith('/gifs/') || route.path.startsWith('/stickers/') ? 'text-primary-500' : 'text-surface-400'"
         aria-label="Search"
         title="Search GIFs for emotes"
       >
         <IconSearch />
         <span class="text-[10px] font-medium">Search</span>
+      </NuxtLink>
+
+      <!-- Tools -->
+      <NuxtLink
+        to="/tools"
+        class="flex flex-col items-center justify-center gap-1 transition-colors"
+        :class="route.path.startsWith('/tools') ? 'text-primary-500' : 'text-surface-400'"
+        aria-label="Tools"
+        title="GIF editing tools"
+      >
+        <IconGrid />
+        <span class="text-[10px] font-medium">Tools</span>
       </NuxtLink>
 
       <!-- Optimize -->

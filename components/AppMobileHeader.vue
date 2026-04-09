@@ -18,9 +18,21 @@
         <IconMoon v-else />
       </button>
     </div>
+
+    <!-- Breadcrumb on tool pages (not on /tools index) -->
+    <div
+      v-if="route.path.startsWith('/tools/') && route.path !== '/tools'"
+      class="h-10 flex items-center px-4 border-t border-surface-200/30"
+    >
+      <NuxtLink to="/tools" class="text-xs font-medium text-primary-500 flex items-center gap-1">
+        <IconChevronRight class="rotate-180" :size="12" />
+        All Tools
+      </NuxtLink>
+    </div>
   </header>
 </template>
 
 <script setup lang="ts">
+const route = useRoute()
 const { isDark, cycleTheme } = useTheme()
 </script>

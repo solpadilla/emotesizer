@@ -1,0 +1,66 @@
+export interface Tool {
+  to: string
+  label: string
+  icon: string
+  description: string
+}
+
+export interface ToolCategory {
+  key: string
+  label: string
+  icon: string
+  tools: Tool[]
+}
+
+export const useToolsNav = () => {
+  const categories: ToolCategory[] = [
+    {
+      key: 'edit',
+      label: 'Edit',
+      icon: 'IconScissors',
+      tools: [
+        { to: '/tools/trim', label: 'GIF Trim', icon: 'IconScissors', description: 'Cut and shorten GIFs by removing frames' },
+        { to: '/tools/resize', label: 'GIF Resize', icon: 'IconResize', description: 'Change GIF dimensions with crop, pad, or stretch' },
+        { to: '/tools/crop', label: 'GIF Crop', icon: 'IconCrop', description: 'Crop a specific region from animated GIFs' },
+        { to: '/tools/rotate', label: 'GIF Rotate', icon: 'IconRotate', description: 'Rotate or flip animated GIFs' },
+      ],
+    },
+    {
+      key: 'effects',
+      label: 'Effects',
+      icon: 'IconGauge',
+      tools: [
+        { to: '/tools/speed', label: 'GIF Speed', icon: 'IconGauge', description: 'Speed up or slow down GIF animation' },
+        { to: '/tools/reverse', label: 'GIF Reverse', icon: 'IconReverse', description: 'Play GIFs backwards or create boomerang loops' },
+      ],
+    },
+    {
+      key: 'convert',
+      label: 'Convert',
+      icon: 'IconFrame',
+      tools: [
+        { to: '/tools/gif-to-png', label: 'GIF to PNG', icon: 'IconFrame', description: 'Extract individual frames as PNG images' },
+      ],
+    },
+    {
+      key: 'optimize',
+      label: 'Optimize',
+      icon: 'IconCompress',
+      tools: [
+        { to: '/tools/compress', label: 'GIF Compress', icon: 'IconCompress', description: 'Reduce GIF file size while preserving quality' },
+      ],
+    },
+  ]
+
+  // Only return categories that have at least one tool
+  const activeCategories = computed(() => categories.filter(c => c.tools.length > 0))
+
+  // Flat list for search or all-tools page
+  const allTools = computed(() => categories.flatMap(c => c.tools.map(t => ({ ...t, category: c.label }))))
+
+  return {
+    categories,
+    activeCategories,
+    allTools,
+  }
+}
