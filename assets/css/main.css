@@ -674,6 +674,36 @@ html[data-theme="midnight"] {
     -webkit-backdrop-filter: blur(12px);
   }
 
+  /* === Frame Grid Thumbnails === */
+  .frame-thumb {
+    @apply relative aspect-square rounded-lg overflow-hidden cursor-pointer;
+    transition: transform 150ms ease, box-shadow 150ms ease;
+    border: 2px solid transparent;
+    background: rgba(var(--color-surface-200), 0.5);
+  }
+  .frame-thumb:hover {
+    @apply -translate-y-0.5;
+    border-color: rgba(var(--color-primary-400), 0.5);
+  }
+  .frame-thumb:focus-visible {
+    @apply outline-none;
+    border-color: rgb(var(--color-primary-500));
+  }
+  .frame-thumb-selected {
+    border-color: rgb(var(--color-primary-500));
+    box-shadow: 0 0 0 1px rgb(var(--color-primary-500));
+  }
+  .frame-thumb-check {
+    @apply absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center;
+    background: rgb(var(--color-primary-500));
+    color: white;
+  }
+  .frame-thumb-label {
+    @apply absolute bottom-0 left-0 right-0 text-center text-[10px] font-medium py-0.5;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+  }
+
   /* === Hide Scrollbar === */
   .no-scrollbar {
     -ms-overflow-style: none;

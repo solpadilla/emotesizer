@@ -38,12 +38,56 @@
 
           <!-- Frame picker (only for multi-frame GIFs) -->
           <div v-if="decodedFrames.length > 1">
-            <h3 class="label mb-2">Pick a Frame</h3>
+            <!-- Selection mode toggle -->
+            <h3 class="label mb-2">Pick Frames</h3>
+            <div class="segmented-control w-full mb-4" role="radiogroup" aria-label="Frame selection mode">
+              <button
+                role="radio"
+                :aria-checked="selectionMode === 'single'"
+                class="segmented-control-item flex-1 justify-center"
+                :class="{ 'segmented-control-item-active': selectionMode === 'single' }"
+                @click="setSelectionMode('single')"
+              >
+                Single Frame
+              </button>
+              <button
+                role="radio"
+                :aria-checked="selectionMode === 'multi'"
+                class="segmented-control-item flex-1 justify-center"
+                :class="{ 'segmented-control-item-active': selectionMode === 'multi' }"
+                @click="setSelectionMode('multi')"
+              >
+                Multiple Frames
+              </button>
+            </div>
+
+            <!-- Single-frame slider picker -->
             <FramePicker
+              v-if="selectionMode === 'single'"
               v-model="selectedFrameIndex"
               :frames="decodedFrames"
               :is-loading="isDecoding"
             />
+
+            <!-- Multi-frame thumbnail grid -->
+            <template v-else>
+              <FrameGrid
+                :frames="decodedFrames"
+                :selected-indices="selectedFrameIndices"
+                @toggle-frame="toggleFrame"
+              />
+
+              <!-- Bulk controls -->
+              <div class="flex items-center justify-between mt-3">
+                <p class="text-xs text-surface-500">
+                  {{ selectedFrameIndices.size }} of {{ decodedFrames.length }} frames selected
+                </p>
+                <div class="flex gap-2">
+                  <button class="btn btn-secondary btn-sm" @click="selectAllFrames">Select All</button>
+                  <button class="btn btn-secondary btn-sm" :disabled="selectedFrameIndices.size === 0" @click="deselectAllFrames">Deselect All</button>
+                </div>
+              </div>
+            </template>
           </div>
 
           <!-- Single-frame notice -->
@@ -51,14 +95,26 @@
             This GIF has only 1 frame. It will be exported as-is.
           </p>
 
-          <!-- Download button -->
+          <!-- Download button: single mode -->
           <button
+            v-if="selectionMode === 'single'"
             class="btn btn-primary btn-lg w-full"
             :disabled="isDecoding || !previewPngBlob"
             @click="downloadAsPng"
           >
             <IconDownload :size="18" />
             Download as PNG
+          </button>
+
+          <!-- Download button: multi mode -->
+          <button
+            v-else
+            class="btn btn-primary btn-lg w-full"
+            :disabled="isZipping || selectedFrameIndices.size === 0"
+            @click="downloadAsZip"
+          >
+            <IconDownload :size="18" />
+            {{ isZipping ? 'Creating ZIP...' : `Download ${selectedFrameIndices.size} PNG${selectedFrameIndices.size !== 1 ? 's' : ''} as ZIP` }}
           </button>
         </div>
       </div>
@@ -75,20 +131,42 @@
 
         <!-- PNG preview on checkerboard background -->
         <div v-else class="rounded-2xl overflow-hidden checkerboard flex items-center justify-center p-4 min-h-[200px]">
-          <img
-            v-if="previewPngUrl"
-            :src="previewPngUrl"
-            alt="Selected frame as PNG"
-            class="max-w-full max-h-[400px] object-contain"
-          />
-          <div v-else class="text-surface-400 text-sm">Decoding frames...</div>
+          <!-- Multi mode: prompt or preview last-clicked frame -->
+          <template v-if="selectionMode === 'multi'">
+            <div v-if="selectedFrameIndices.size === 0" class="text-surface-400 text-sm">
+              Select frames from the grid
+            </div>
+            <img
+              v-else-if="multiPreviewPngUrl"
+              :src="multiPreviewPngUrl"
+              alt="Selected frame as PNG"
+              class="max-w-full max-h-[400px] object-contain"
+            />
+            <div v-else class="text-surface-400 text-sm">Rendering preview...</div>
+          </template>
+
+          <!-- Single mode: standard preview -->
+          <template v-else>
+            <img
+              v-if="previewPngUrl"
+              :src="previewPngUrl"
+              alt="Selected frame as PNG"
+              class="max-w-full max-h-[400px] object-contain"
+            />
+            <div v-else class="text-surface-400 text-sm">Decoding frames...</div>
+          </template>
         </div>
 
         <!-- File info -->
         <div v-if="decodedFrames.length" class="mt-4 flex flex-wrap gap-4 text-xs text-surface-500">
           <span>{{ decodedFrames[0]?.width }}&times;{{ decodedFrames[0]?.height }}px</span>
           <span>{{ decodedFrames.length }} frames</span>
-          <span>Showing frame {{ selectedFrameIndex + 1 }}</span>
+          <template v-if="selectionMode === 'multi' && selectedFrameIndices.size > 0">
+            <span>Previewing frame {{ lastClickedIndex + 1 }} &mdash; {{ selectedFrameIndices.size }} frame{{ selectedFrameIndices.size !== 1 ? 's' : '' }} selected</span>
+          </template>
+          <template v-else-if="selectionMode === 'single'">
+            <span>Showing frame {{ selectedFrameIndex + 1 }}</span>
+          </template>
         </div>
       </div>
 
@@ -149,7 +227,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Does this extract all frames or just one?</h3>
-          <p class="text-sm text-surface-500 mt-1">One at a time. This gives you precise control over which frame you export. Use the slider to browse through every frame and pick exactly the one you want.</p>
+          <p class="text-sm text-surface-500 mt-1">Both. In Single Frame mode, use the slider to pick one frame. Switch to Multiple Frames mode to select any combination of frames and download them all as a ZIP file of PNGs.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is the PNG the same quality as the original GIF frame?</h3>
@@ -181,7 +259,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Can I use this as a GIF splitter to extract all frames?</h3>
-          <p class="text-sm text-surface-500 mt-1">This tool is designed to extract one specific frame at a time, giving you precise control over which moment you capture. For extracting all frames at once, use the frame picker to select and download each frame individually. A bulk export feature may be added in the future.</p>
+          <p class="text-sm text-surface-500 mt-1">Yes. Switch to Multiple Frames mode, click "Select All," and download every frame as a ZIP of PNGs. You can also pick specific frames if you only need a few. Each PNG is named with its frame number for easy sorting.</p>
         </div>
       </div>
     </section>
@@ -224,6 +302,8 @@ useHead({
           'GIF frame extractor online',
           'GIF frame picker with slider',
           'GIF splitter — extract individual frames',
+          'Extract all frames as ZIP',
+          'Multi-frame selection with ZIP download',
           'GIF to PNG lossless quality',
           'GIF to PNG with transparency preserved',
           'GIF to still image converter',
@@ -256,7 +336,7 @@ useHead({
             'name': 'Does this extract all frames or just one?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'One at a time. This gives you precise control over which frame you export. Use the slider to browse through every frame and pick exactly the one you want.',
+              'text': 'Both. In Single Frame mode, use the slider to pick one frame. Switch to Multiple Frames mode to select any combination of frames and download them all as a ZIP file of PNGs.',
             },
           },
           {
@@ -320,7 +400,7 @@ useHead({
             'name': 'Can I use this as a GIF splitter to extract all frames?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'This tool is designed to extract one specific frame at a time, giving you precise control over which moment you capture. For extracting all frames at once, use the frame picker to select and download each frame individually. A bulk export feature may be added in the future.',
+              'text': 'Yes. Switch to Multiple Frames mode, click "Select All," and download every frame as a ZIP of PNGs. You can also pick specific frames if you only need a few. Each PNG is named with its frame number for easy sorting.',
             },
           },
         ],
@@ -356,7 +436,7 @@ useHead({
   ],
 })
 
-const { error: toastError } = useToast()
+const { error: toastError, success: toastSuccess } = useToast()
 const { downloadBlob } = useDownload()
 
 let isMounted = true
@@ -370,6 +450,14 @@ const selectedFrameIndex = ref(0)
 const isDecoding = ref(false)
 const previewPngBlob = ref<Blob | null>(null)
 const previewPngUrl = ref<string | null>(null)
+
+// Multi-frame selection state
+type SelectionMode = 'single' | 'multi'
+const selectionMode = ref<SelectionMode>('single')
+const selectedFrameIndices = ref<Set<number>>(new Set())
+const isZipping = ref(false)
+const lastClickedIndex = ref(0)
+const multiPreviewPngUrl = ref<string | null>(null)
 
 // -- File handling --
 
@@ -470,6 +558,136 @@ function renderFrameAsPng() {
   }, 'image/png')
 }
 
+// -- Selection mode --
+
+function setSelectionMode(mode: SelectionMode) {
+  if (selectionMode.value === mode) return
+
+  if (mode === 'multi') {
+    // Pre-select the currently viewed single frame
+    selectedFrameIndices.value = new Set([selectedFrameIndex.value])
+    lastClickedIndex.value = selectedFrameIndex.value
+    renderMultiPreview(selectedFrameIndex.value)
+  } else {
+    // Switching to single: clear multi selection
+    selectedFrameIndices.value = new Set()
+    revokeMultiPreview()
+  }
+
+  selectionMode.value = mode
+}
+
+function toggleFrame(index: number) {
+  const next = new Set(selectedFrameIndices.value)
+  if (next.has(index)) {
+    next.delete(index)
+  } else {
+    next.add(index)
+  }
+  selectedFrameIndices.value = next
+  lastClickedIndex.value = index
+
+  // Update the multi-mode preview to show the last-clicked frame
+  if (next.size > 0) {
+    renderMultiPreview(index)
+  } else {
+    revokeMultiPreview()
+  }
+}
+
+function selectAllFrames() {
+  selectedFrameIndices.value = new Set(decodedFrames.value.map((_, i) => i))
+  // Keep the current preview as-is, or show frame 0 if none was shown
+  if (!multiPreviewPngUrl.value && decodedFrames.value.length > 0) {
+    renderMultiPreview(0)
+    lastClickedIndex.value = 0
+  }
+}
+
+function deselectAllFrames() {
+  selectedFrameIndices.value = new Set()
+  revokeMultiPreview()
+}
+
+// -- Multi-mode preview --
+
+// Version counter to guard against stale toBlob callbacks when the user
+// clicks frames faster than the async blob conversion can resolve.
+let multiPreviewVersion = 0
+
+function revokeMultiPreview() {
+  if (multiPreviewPngUrl.value) {
+    URL.revokeObjectURL(multiPreviewPngUrl.value)
+    multiPreviewPngUrl.value = null
+  }
+}
+
+/**
+ * Renders a specific frame as a PNG blob URL for the multi-mode preview.
+ * Reuses the same offscreen canvas infrastructure as single-mode rendering.
+ */
+function renderMultiPreview(index: number) {
+  const version = ++multiPreviewVersion
+
+  const frame = decodedFrames.value[index]
+  if (!frame) return
+
+  const result = getPngCanvas()
+  if (!result) return
+  const { canvas, ctx } = result
+
+  if (canvas.width !== frame.width || canvas.height !== frame.height) {
+    canvas.width = frame.width
+    canvas.height = frame.height
+  }
+
+  const imageData = new ImageData(
+    new Uint8ClampedArray(frame.data),
+    frame.width,
+    frame.height,
+  )
+  ctx.putImageData(imageData, 0, 0)
+
+  canvas.toBlob((blob) => {
+    // Discard stale renders: if a newer call has incremented the version
+    // since this blob started, this callback is outdated.
+    if (!isMounted || !blob || version !== multiPreviewVersion) return
+    revokeMultiPreview()
+    multiPreviewPngUrl.value = URL.createObjectURL(blob)
+  }, 'image/png')
+}
+
+// -- Helper: render any frame to a PNG blob --
+
+/**
+ * Renders a decoded frame to a PNG Blob. Used by both single download
+ * and batch ZIP creation to avoid duplicating canvas logic.
+ */
+function renderFrameToPngBlob(frame: DecodedFrame): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const result = getPngCanvas()
+    if (!result) return reject(new Error('Canvas unavailable'))
+    const { canvas, ctx } = result
+
+    if (canvas.width !== frame.width || canvas.height !== frame.height) {
+      canvas.width = frame.width
+      canvas.height = frame.height
+    }
+
+    const imageData = new ImageData(
+      new Uint8ClampedArray(frame.data),
+      frame.width,
+      frame.height,
+    )
+    ctx.putImageData(imageData, 0, 0)
+
+    canvas.toBlob((blob) => {
+      if (blob) resolve(blob)
+      else reject(new Error('Failed to create PNG blob'))
+    }, 'image/png')
+  })
+}
+
 // -- Download --
 
 function downloadAsPng() {
@@ -483,17 +701,51 @@ function downloadAsPng() {
   downloadBlob(previewPngBlob.value, filename)
 }
 
+async function downloadAsZip() {
+  if (selectedFrameIndices.value.size === 0) return
+  isZipping.value = true
+  try {
+    const JSZip = (await import('jszip')).default
+    const zip = new JSZip()
+    const baseName = gifFileName.value.replace(/\.gif$/i, '')
+    const sorted = [...selectedFrameIndices.value].sort((a, b) => a - b)
+    const padLength = String(decodedFrames.value.length).length
+
+    for (const idx of sorted) {
+      const frame = decodedFrames.value[idx]
+      if (!frame) continue
+      const blob = await renderFrameToPngBlob(frame)
+      const padded = String(idx + 1).padStart(padLength, '0')
+      zip.file(`${baseName}_frame${padded}.png`, blob)
+    }
+
+    const zipBlob = await zip.generateAsync({ type: 'blob' })
+    downloadBlob(zipBlob, `${baseName}_frames.zip`)
+    toastSuccess(`Downloaded ${sorted.length} frame${sorted.length !== 1 ? 's' : ''} as ZIP`)
+  } catch {
+    toastError('Failed to create ZIP file')
+  } finally {
+    isZipping.value = false
+  }
+}
+
 // -- Clear / cleanup --
 
 function clearGif() {
   if (gifUrl.value) URL.revokeObjectURL(gifUrl.value)
   if (previewPngUrl.value) URL.revokeObjectURL(previewPngUrl.value)
+  revokeMultiPreview()
+  multiPreviewVersion = 0
   gifUrl.value = ''
   gifFileName.value = ''
   decodedFrames.value = []
   selectedFrameIndex.value = 0
   previewPngBlob.value = null
   previewPngUrl.value = null
+  selectionMode.value = 'single'
+  selectedFrameIndices.value = new Set()
+  isZipping.value = false
+  lastClickedIndex.value = 0
 
   // Release the reusable canvas
   if (pngCanvas) {
