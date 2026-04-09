@@ -43,11 +43,11 @@ export default defineNuxtConfig({
         { key: 'twitter:image', name: 'twitter:image', content: 'https://emotesizer.com/og-image.png' },
       ],
       link: [
-        {
-          rel: 'icon',
-          type: 'image/svg+xml',
-          href: '/icons/favicon.svg',
-        },
+        // Google Search favicon: Google requires >= 48x48 px, PNG or ICO.
+        // The 96x96 PNG is the primary icon for Google (multiple of 48).
+        // The ICO at /favicon.ico is Google's ultimate fallback path.
+        // SVG is listed last — browsers that support it will prefer it,
+        // but Google's crawler ignores SVG favicons entirely.
         {
           rel: 'icon',
           type: 'image/png',
@@ -56,8 +56,19 @@ export default defineNuxtConfig({
         },
         {
           rel: 'icon',
-          type: 'image/x-icon',
+          type: 'image/png',
+          sizes: '48x48',
+          href: '/icons/favicon-48x48.png',
+        },
+        {
+          rel: 'icon',
+          sizes: '48x48',
           href: '/favicon.ico',
+        },
+        {
+          rel: 'icon',
+          type: 'image/svg+xml',
+          href: '/icons/favicon.svg',
         },
         {
           rel: 'apple-touch-icon',
