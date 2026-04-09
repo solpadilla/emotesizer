@@ -526,22 +526,12 @@ const maxPreviewHeight = computed(() => {
   return 300
 })
 
-const canvasDisplayWidth = computed(() => {
-  const w = sourceWidth.value
-  const h = sourceHeight.value
-  if (!w || !h) return 0
-  // Scale down to fit max height while preserving aspect ratio
-  const scale = Math.min(1, maxPreviewHeight.value / h)
-  return Math.round(w * scale)
+const canvasScale = computed(() => {
+  if (!sourceHeight.value) return 1
+  return Math.min(1, maxPreviewHeight.value / sourceHeight.value)
 })
-
-const canvasDisplayHeight = computed(() => {
-  const w = sourceWidth.value
-  const h = sourceHeight.value
-  if (!w || !h) return 0
-  const scale = Math.min(1, maxPreviewHeight.value / h)
-  return Math.round(h * scale)
-})
+const canvasDisplayWidth = computed(() => Math.round(sourceWidth.value * canvasScale.value))
+const canvasDisplayHeight = computed(() => Math.round(sourceHeight.value * canvasScale.value))
 
 // -- Canvas animation engine --
 
@@ -553,6 +543,7 @@ let srcCtx: CanvasRenderingContext2D | null = null
 let cachedImageData: ImageData | null = null
 
 let animFrameId: number | null = null
+let animationGeneration = 0
 let currentFrameIndex = 0
 let lastFrameTime = 0
 let accumulatedTime = 0
@@ -595,12 +586,18 @@ onBeforeUnmount(() => {
 
 function startAnimation() {
   stopAnimation()
+  const gen = ++animationGeneration
   currentFrameIndex = 0
   lastFrameTime = 0
   accumulatedTime = 0
   completedLoops = 0
   isAnimationComplete.value = false
-  animFrameId = requestAnimationFrame(animationLoop)
+
+  function loop(timestamp: number) {
+    if (gen !== animationGeneration) return // Stale generation, exit
+    animationLoop(timestamp)
+  }
+  animFrameId = requestAnimationFrame(loop)
 }
 
 function stopAnimation() {
@@ -615,6 +612,7 @@ function replayAnimation() {
 }
 
 function animationLoop(timestamp: number) {
+  const gen = animationGeneration
   const frames = decodedFrames.value
   if (!frames.length) return
 
@@ -634,7 +632,10 @@ function animationLoop(timestamp: number) {
   if (lastFrameTime === 0) {
     lastFrameTime = timestamp
     drawFrame(0)
-    animFrameId = requestAnimationFrame(animationLoop)
+    animFrameId = requestAnimationFrame((ts) => {
+      if (gen !== animationGeneration) return
+      animationLoop(ts)
+    })
     return
   }
 
@@ -673,7 +674,10 @@ function animationLoop(timestamp: number) {
     drawFrame(currentFrameIndex)
   }
 
-  animFrameId = requestAnimationFrame(animationLoop)
+  animFrameId = requestAnimationFrame((ts) => {
+    if (gen !== animationGeneration) return
+    animationLoop(ts)
+  })
 }
 
 function drawFrame(index: number) {
@@ -716,10 +720,13 @@ watch(decodedFrames, (frames) => {
   }
 })
 
-// Restart animation when the user changes the loop count preset
-// so they can see the new loop behavior immediately
+// When the user changes loop count, reset the loop counter without restarting from frame 0
+// to avoid a jarring jump. If animation was completed, restart it.
 watch(effectiveLoopCount, () => {
-  if (decodedFrames.value.length > 0) {
+  completedLoops = 0
+  isAnimationComplete.value = false
+  // If animation was stopped (completed), restart it
+  if (animFrameId === null && decodedFrames.value.length > 1) {
     startAnimation()
   }
 })
@@ -767,6 +774,8 @@ function resetState() {
 // -- File handling --
 
 function handleFileSelected(file: File) {
+  stopAnimation()
+  if (gifUrl.value) URL.revokeObjectURL(gifUrl.value)
   resetState()
   gifUrl.value = URL.createObjectURL(file)
   gifFileName.value = file.name
@@ -835,10 +844,10 @@ async function downloadGif() {
 
   // Re-encode with the new loop count
   const prefix = effectiveLoopCount.value === 0 ? 'loop-infinite_' : `loop-${effectiveLoopCount.value}x_`
+  const srcFrames = decodedFrames.value.slice() // Snapshot to avoid race with animation loop
 
   isEncoding.value = true
   try {
-    const srcFrames = decodedFrames.value
     const w = sourceWidth.value
     const h = sourceHeight.value
     const loopCount = effectiveLoopCount.value
