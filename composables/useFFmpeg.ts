@@ -142,6 +142,9 @@ export function useFFmpeg() {
   /** Terminates the FFmpeg instance, cancelling any in-progress operation */
   function cancelConversion() {
     ffmpeg.terminate()
+    // Reset the listener flag so it gets reattached on next load(),
+    // since terminate() destroys the FFmpeg instance and its listeners.
+    progressListenerAttached = false
     isReady.value = false
     conversionPhase.value = 'idle'
     conversionProgress.value = 0

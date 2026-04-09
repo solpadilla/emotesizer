@@ -70,6 +70,9 @@
             <p class="text-xs text-error-700">{{ ffmpeg.error.value }}</p>
           </div>
 
+          <!-- Settings controls — disable interaction during conversion -->
+          <div class="space-y-4" :class="{ 'pointer-events-none opacity-60': isConverting }">
+
           <!-- Trim Range -->
           <div v-if="videoDuration > 0">
             <h3 class="label mb-2">Trim Range</h3>
@@ -321,6 +324,8 @@
               the result afterwards.
             </p>
           </div>
+
+          </div><!-- /Settings controls wrapper -->
 
           <!-- Convert button -->
           <button
@@ -817,6 +822,7 @@ const fps = ref(15)
 const outputWidth = ref(480)
 const quality = ref<'small' | 'balanced' | 'best'>('balanced')
 const resultGifUrl = ref<string | null>(null)
+const resultGifBlob = ref<Blob | null>(null)
 const resultGifSize = ref(0)
 const isConverting = ref(false)
 const isPlaying = ref(false)
@@ -829,7 +835,6 @@ const customWidthActive = ref(false)
 const customWidth = ref(480)
 
 // Loop count state
-const loopCount = ref(0)              // 0 = infinite
 const loopPreset = ref<'infinite' | 'once' | '3x' | 'custom'>('infinite')
 const customLoopCount = ref(3)
 
@@ -1077,7 +1082,10 @@ function extractThumbnail(file: File) {
       ctx.drawImage(video, 0, 0)
       videoThumbnail.value = canvas.toDataURL('image/jpeg', 0.7)
     }
-    // Clean up
+    // Clean up canvas to release backing memory
+    canvas.width = 0
+    canvas.height = 0
+    // Clean up video element and object URL
     URL.revokeObjectURL(url)
     video.remove()
   }
@@ -1104,13 +1112,13 @@ function resetState() {
   outputWidth.value = 480
   quality.value = 'balanced'
   resultGifUrl.value = null
+  resultGifBlob.value = null
   resultGifSize.value = 0
   isConverting.value = false
   isPlaying.value = false
   currentPlayTime.value = 0
   customFpsActive.value = false
   customWidthActive.value = false
-  loopCount.value = 0
   loopPreset.value = 'infinite'
   customLoopCount.value = 3
   maxColors.value = 256
@@ -1145,12 +1153,23 @@ function clearVideo() {
 // -- Conversion --
 
 async function convertVideo() {
-  if (!videoFile.value) return
+  if (!videoFile.value || isConverting.value || ffmpeg.isLoading.value) return
+
+  // Snapshot reactive values before any async work so that user changes
+  // during conversion don't produce a mismatched encode.
+  const startTime = trimRange.value[0]
+  const duration = trimRange.value[1] - trimRange.value[0]
+  const currentFps = fps.value
+  const currentWidth = outputWidth.value
+  const currentQuality = quality.value
+  const currentLoopCount = effectiveLoopCount.value
+  const currentMaxColors = maxColors.value
 
   // Revoke previous result if any
   if (resultGifUrl.value) {
     URL.revokeObjectURL(resultGifUrl.value)
     resultGifUrl.value = null
+    resultGifBlob.value = null
     resultGifSize.value = 0
   }
 
@@ -1169,15 +1188,16 @@ async function convertVideo() {
 
     const blob = await ffmpeg.convertToGif({
       inputFile: videoFile.value,
-      startTime: trimRange.value[0],
-      duration: trimDuration.value,
-      fps: fps.value,
-      width: outputWidth.value,
-      quality: quality.value,
-      loopCount: effectiveLoopCount.value,
-      maxColors: maxColors.value,
+      startTime,
+      duration,
+      fps: currentFps,
+      width: currentWidth,
+      quality: currentQuality,
+      loopCount: currentLoopCount,
+      maxColors: currentMaxColors,
     })
 
+    resultGifBlob.value = blob
     resultGifUrl.value = URL.createObjectURL(blob)
     resultGifSize.value = blob.size
     toastSuccess('Video converted to GIF!')
@@ -1198,17 +1218,11 @@ function cancelConversion() {
 // -- Download --
 
 function downloadGif() {
-  if (!resultGifUrl.value) return
+  if (!resultGifBlob.value) return
 
   const baseName = videoFileName.value.replace(/\.[^.]+$/, '') || 'video'
-  // Fetch the blob from the object URL rather than using downloadUrl directly,
-  // because downloadBlob creates its own temporary URL that auto-revokes.
-  fetch(resultGifUrl.value)
-    .then(r => r.blob())
-    .then(blob => {
-      downloadBlob(blob, `${baseName}.gif`)
-      toastSuccess('GIF downloaded!')
-    })
+  downloadBlob(resultGifBlob.value, `${baseName}.gif`)
+  toastSuccess('GIF downloaded!')
 }
 
 // -- Cleanup --
