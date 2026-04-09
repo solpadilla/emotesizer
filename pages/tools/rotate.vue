@@ -740,17 +740,23 @@ function transformFrame(
  * Async to yield to the browser every 50 frames, preventing UI freeze on large GIFs.
  */
 async function buildEncodeParams() {
-  const w = sourceWidth.value
-  const h = sourceHeight.value
+  // Snapshot all reactive values upfront to prevent mid-encode inconsistencies
+  // if the user adjusts controls while encoding is in progress
+  const srcW = sourceWidth.value
+  const srcH = sourceHeight.value
+  const outW = outputWidth.value
+  const outH = outputHeight.value
   const angle = rotation.value
   const fH = flipH.value
   const fV = flipV.value
+  const srcFrames = decodedFrames.value
+  const looped = gifMetadata.value?.looped ?? true
 
   const frames: Array<{ data: Uint8ClampedArray; delay: number }> = []
-  for (let i = 0; i < decodedFrames.value.length; i++) {
-    const f = decodedFrames.value[i]
+  for (let i = 0; i < srcFrames.length; i++) {
+    const f = srcFrames[i]
     frames.push({
-      data: transformFrame(f.data, w, h, angle, fH, fV),
+      data: transformFrame(f.data, srcW, srcH, angle, fH, fV),
       delay: f.delay,
     })
 
@@ -761,9 +767,9 @@ async function buildEncodeParams() {
   }
 
   return {
-    width: outputWidth.value,
-    height: outputHeight.value,
-    looped: gifMetadata.value?.looped ?? true,
+    width: outW,
+    height: outH,
+    looped,
     frames,
   }
 }
@@ -771,6 +777,8 @@ async function buildEncodeParams() {
 // -- Download --
 
 async function downloadGif() {
+  if (isDecoding.value) return
+
   const baseName = gifFileName.value || 'animation.gif'
 
   // No transform applied — download original GIF directly (no re-encoding needed)

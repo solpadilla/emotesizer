@@ -7,25 +7,14 @@
 - `/tools/gif-to-png` — GIF to PNG frame picker + static export
 - `/tools/speed` — GIF speed changer (Speed/FPS/Duration modes, 0.1x–8x range, side-by-side preview)
 - `/tools/reverse` — GIF reverse & boomerang (ping-pong loops, speed control, tool chaining)
+- `/tools/crop` — GIF cropping (interactive canvas, 10 aspect ratios, autocrop, file size display)
+- `/tools/rotate` — GIF rotate & flip (0°/90°/180°/270° rotation, horizontal/vertical flip, CSS preview)
 
 ## Features in Optimizer Not Yet Standalone
 - **Platform-aware optimization** — optimizer targets specific platforms (Twitch animated/static/badges, Discord, Kick, 7TV, BTTV, FFZ, YouTube) with multi-size output
 - **Twitch sub badge support** — 18x18, 36x36, 72x72 badge presets
 
 ## Quick Wins (low effort, gifsicle-wasm already available)
-
-### GIF Crop
-- **Search volume**: Medium-High
-- **Effort**: Low — gifsicle-wasm supports cropping directly
-- **How**: Let user draw crop region, apply via gifsicle `--crop x1,y1-x2,y2`
-- **Note**: Distinct from resize (crop = cut a region; resize = scale dimensions)
-- **Competitors**: ezgif, Kapwing, Pi7, RedKetchup
-
-### Rotate/Flip GIF
-- **Search volume**: Medium
-- **Effort**: Low — canvas transform or gifsicle
-- **How**: Rotate 90/180/270 degrees, flip horizontal/vertical via canvas transforms per frame
-- **Competitors**: ezgif, Kapwing, VEED, GIFSpeed
 
 ### GIF Loop Changer
 - **Search volume**: Medium-Low
@@ -103,20 +92,18 @@
 ## Recommended Build Order
 
 ### Phase 1 — Quick wins (use existing gifsicle-wasm)
-1. GIF Crop
-2. Rotate/Flip GIF
-3. GIF Frame Extractor
-4. GIF Loop Changer
+1. GIF Loop Changer
+2. GIF Frame Extractor
 
 ### Phase 2 — High-traffic tools (add FFmpeg.wasm)
-5. Video to GIF (MP4 to GIF)
-6. GIF to MP4/Video
-7. GIF Maker (from images)
+3. Video to GIF (MP4 to GIF)
+4. GIF to MP4/Video
+5. GIF Maker (from images)
 
 ### Phase 3 — Format converters
-8. GIF to WebP
-9. WebP to GIF
+6. GIF to WebP
+7. WebP to GIF
 
 ### Phase 4 — Creative tools
-10. Add Text to GIF
-11. GIF to APNG
+8. Add Text to GIF
+9. GIF to APNG
