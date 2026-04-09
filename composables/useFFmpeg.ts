@@ -14,13 +14,8 @@ export interface ConvertToMp4Options {
   crf: number  // 18 (best), 23 (better), or 28 (good)
 }
 
-// Must match the CORE_VERSION expected by the installed @ffmpeg/ffmpeg package.
-// Check node_modules/@ffmpeg/ffmpeg/dist/esm/const.js → CORE_VERSION to verify.
-const FFMPEG_CORE_VERSION = '0.12.9'
-const FFMPEG_CDN_BASE = `https://unpkg.com/@ffmpeg/core@${FFMPEG_CORE_VERSION}/dist/esm`
-
-// Maximum time (ms) to wait for FFmpeg WASM core to download and initialize.
-// 30 seconds is generous for CDN fetches; prevents infinite hang on slow/blocked CDNs.
+// Maximum time (ms) to wait for FFmpeg WASM core to initialize.
+// With local files this should be fast, but keep a safety net for edge cases.
 const LOAD_TIMEOUT_MS = 30_000
 
 /**
@@ -48,13 +43,13 @@ export function useFFmpeg() {
 
   /**
    * Creates a promise that rejects after `ms` milliseconds.
-   * Used to race against long-running FFmpeg CDN downloads.
+   * Used as a safety net against unexpectedly slow WASM initialization.
    */
   function createTimeout(ms: number): { promise: Promise<never>; clear: () => void } {
     let timeoutId: ReturnType<typeof setTimeout>
     const promise = new Promise<never>((_, reject) => {
       timeoutId = setTimeout(
-        () => reject(new Error(`FFmpeg loading timed out after ${ms / 1000} seconds. The CDN may be slow or blocked — please try again.`)),
+        () => reject(new Error(`FFmpeg loading timed out after ${ms / 1000} seconds — please try again.`)),
         ms,
       )
     })
@@ -79,9 +74,8 @@ export function useFFmpeg() {
     const timeout = createTimeout(LOAD_TIMEOUT_MS)
 
     try {
-      // Dynamic imports — only resolved in the browser, never during SSR
+      // Dynamic import — only resolved in the browser, never during SSR
       const { FFmpeg } = await import('@ffmpeg/ffmpeg')
-      const { toBlobURL } = await import('@ffmpeg/util')
 
       ffmpeg = new FFmpeg()
 
@@ -94,20 +88,14 @@ export function useFFmpeg() {
         progressListenerAttached = true
       }
 
-      // Convert CDN resources to blob URLs so the Web Worker can import them
-      // without CORS issues. Race against a timeout to prevent infinite hangs
-      // when the CDN is slow or unreachable.
-      const coreURL = await Promise.race([
-        toBlobURL(`${FFMPEG_CDN_BASE}/ffmpeg-core.js`, 'text/javascript'),
-        timeout.promise,
-      ])
-      const wasmURL = await Promise.race([
-        toBlobURL(`${FFMPEG_CDN_BASE}/ffmpeg-core.wasm`, 'application/wasm'),
-        timeout.promise,
-      ])
-
+      // Load FFmpeg core from local public/ directory instead of a CDN.
+      // Files are served from the same origin, so there are no CORS issues
+      // and no dependency on external CDN availability or speed.
       await Promise.race([
-        ffmpeg.load({ coreURL, wasmURL }),
+        ffmpeg.load({
+          coreURL: '/ffmpeg/ffmpeg-core.js',
+          wasmURL: '/ffmpeg/ffmpeg-core.wasm',
+        }),
         timeout.promise,
       ])
 
