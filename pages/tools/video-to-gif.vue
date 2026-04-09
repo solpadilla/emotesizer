@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
     <div class="mb-6">
       <h1 class="page-title">Video to GIF Converter — Convert MP4 to GIF Online Free</h1>
-      <p class="page-subtitle mt-1">Convert video clips to animated GIFs — trim, adjust quality, and download. Free, no watermark, no signup.</p>
+      <p class="page-subtitle mt-1">Convert video clips to animated GIFs in your browser — trim, set frame rate, resize, and download. No upload to servers, no watermark, no signup.</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -491,35 +491,46 @@
 
     <!-- SEO content section -->
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
-      <h2 class="text-base font-bold text-surface-900 mb-3">How to Convert Video to GIF Online</h2>
+      <h2 class="text-base font-bold text-surface-900 mb-3">How to Convert MP4 to GIF Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your video</strong> — drag and drop or click to browse. Supports MP4, WebM, MOV, and AVI files up to 200 MB. All processing happens in your browser using FFmpeg.wasm, so your file never leaves your device.</li>
-        <li><strong>Trim and adjust settings</strong> — use the trim slider to select the exact clip range. Choose your preferred frame rate, output width, and quality preset. Lower frame rates and widths produce smaller GIF files.</li>
-        <li><strong>Convert to GIF</strong> — click the convert button. The tool uses a 2-pass palette-based encoding for optimal color reproduction. Watch the progress in real time.</li>
-        <li><strong>Download</strong> — preview the result side-by-side with the original video, then download your GIF. Completely free, no watermark, no account needed.</li>
+        <li><strong>Upload your video file</strong> — drag and drop or click to browse. This free online video to GIF converter accepts MP4, WebM, MOV, and AVI files up to 200 MB. Everything runs in your browser using FFmpeg.wasm, so your video never leaves your device.</li>
+        <li><strong>Trim the clip</strong> — use the trim slider to select the exact start and end points. Shorter clips produce smaller, more shareable GIFs. For best results, keep your selection under 10-15 seconds.</li>
+        <li><strong>Adjust GIF settings</strong> — set the frame rate (FPS), output width, quality preset, max colors, and loop count. The Balanced and Best modes use 2-pass palette encoding for superior color accuracy.</li>
+        <li><strong>Convert and download</strong> — click "Convert to GIF" and watch the progress in real time. Preview the result side-by-side with the original video, then download your GIF. Completely free, no watermark, no signup required.</li>
       </ol>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Convert MP4 to GIF?</h2>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Convert Video to GIF?</h2>
       <ul class="list-disc list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Universal compatibility</strong> — GIFs play everywhere: social media, messaging apps, forums, emails, and websites. No video player required.</li>
-        <li><strong>Perfect for short clips</strong> — reaction GIFs, tutorials, product demos, and memes are more impactful as auto-playing loops than as video files.</li>
-        <li><strong>Emote creation</strong> — convert video clips into animated emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ. Pair with our compression and resize tools for platform-ready results.</li>
-        <li><strong>No server upload</strong> — your video never leaves your browser. FFmpeg.wasm processes everything locally using WebAssembly for privacy and speed.</li>
-        <li><strong>100% free, no watermark</strong> — convert any video to GIF online free with no hidden costs and no branding.</li>
+        <li><strong>Share anywhere, no player needed</strong> — GIFs play natively in social media, messaging apps, forums, emails, and websites. Unlike video files, they auto-play and loop without requiring a dedicated player.</li>
+        <li><strong>Create animated emotes</strong> — turn video clips into animated emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ. Pair with our <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink> and <NuxtLink to="/tools/resize" class="text-primary-500 hover:underline">resizer</NuxtLink> to meet platform size limits.</li>
+        <li><strong>Perfect for short clips</strong> — reaction GIFs, tutorials, product demos, and memes are more engaging as auto-playing loops than static images or video links.</li>
+        <li><strong>Private and browser-based</strong> — your video never leaves your browser. FFmpeg.wasm processes everything locally using WebAssembly. No server upload, no cloud processing, complete privacy.</li>
+        <li><strong>100% free, no watermark, no signup</strong> — convert any video to GIF online free with no hidden costs, no account required, and no branding on your output.</li>
       </ul>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Quality Settings Explained</h2>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Convert MOV, WebM, and AVI to GIF</h2>
       <p class="text-sm text-surface-600 mb-3">
-        <strong>Small</strong> uses a single-pass encoding that produces compact files with acceptable quality. Best for simple animations with few colors.
+        While MP4 is the most common video format, this converter handles several other formats just as well. Upload a <strong>MOV file</strong> from your iPhone or Mac and convert it to GIF without installing any software. <strong>WebM files</strong> from screen recordings or web downloads convert seamlessly too. Even older <strong>AVI files</strong> work — just drag and drop, and the tool handles the rest. No matter the source format, you get the same trim, FPS, resize, and quality controls.
       </p>
+
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Video to GIF for Twitch, Discord & Streaming Emotes</h2>
       <p class="text-sm text-surface-600 mb-3">
-        <strong>Balanced</strong> (recommended) uses a 2-pass palette approach with Bayer dithering. The first pass analyzes the video to generate an optimal 256-color palette, then the second pass encodes the GIF using that palette. This produces noticeably better colors at a moderate file size increase.
+        Creating animated emotes from video clips is one of the most popular uses for this converter. Clip a highlight, a reaction, or a funny moment from your stream, then convert it to GIF here. For <strong>Discord animated emoji</strong>, the output must be 128x128 pixels and under 256 KB — set the width to 128px, keep the clip to 1-3 seconds, then use our <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink> to hit the size target. For <strong>Twitch emotes</strong>, the limit is 112x112 pixels and 1 MB — use our <NuxtLink to="/tools/resize" class="text-primary-500 hover:underline">GIF resizer</NuxtLink> to get the exact dimensions. The same workflow applies to Kick, 7TV, BTTV, and FFZ emotes.
       </p>
+
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">How to Convert MP4 to GIF Without Losing Quality</h2>
       <p class="text-sm text-surface-600 mb-3">
-        <strong>Best</strong> also uses 2-pass palette encoding but with Sierra error diffusion dithering, which produces smoother gradients and fewer visible dithering artifacts. The trade-off is a slightly larger file size.
+        GIFs are limited to 256 colors per frame, so some quality loss is inherent when converting from video. However, you can minimize it with the right settings:
       </p>
-      <p class="text-sm text-surface-500 mt-3">
-        If the output GIF is too large, use our <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink> to reduce the file size. You can also lower the frame rate, reduce the output width, or shorten the trim range.
+      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2 mb-3">
+        <li><strong>Use Balanced or Best quality</strong> — these modes use 2-pass palette encoding. The first pass analyzes your video to build an optimal color palette, then the second pass encodes with advanced dithering to smooth gradients and reduce banding.</li>
+        <li><strong>Keep the max colors slider at 256</strong> — this gives the encoder the full GIF color range to work with. Lower it only if you need to reduce file size.</li>
+        <li><strong>Set FPS to 15-20</strong> — this provides smooth animation without bloating the file. Higher FPS increases file size proportionally with minimal perceptual benefit.</li>
+        <li><strong>Use 480px width or lower</strong> — GIF compression is less efficient at larger resolutions. 480px strikes a good balance between clarity and file size for most use cases.</li>
+        <li><strong>Trim to under 10 seconds</strong> — shorter clips allow you to use higher quality settings without producing an oversized file.</li>
+      </ul>
+      <p class="text-sm text-surface-500">
+        If the output GIF is still too large, run it through our <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink> to reduce the file size further without re-converting from video.
       </p>
     </section>
 
@@ -528,44 +539,52 @@
       <h2 class="text-base font-bold text-surface-900 mb-4">Frequently Asked Questions</h2>
       <div class="space-y-4">
         <div>
-          <h3 class="text-sm font-bold text-surface-900">What video formats are supported?</h3>
-          <p class="text-sm text-surface-500 mt-1">MP4, WebM, MOV (QuickTime), and AVI. MP4 is the most widely supported and recommended format for best compatibility with FFmpeg.wasm.</p>
+          <h3 class="text-sm font-bold text-surface-900">How do I convert MP4 to GIF?</h3>
+          <p class="text-sm text-surface-500 mt-1">Upload your MP4 file, trim the clip to the section you want, set your preferred FPS and output width, then click "Convert to GIF." The conversion runs in your browser and takes just seconds. Download the result — it is completely free, with no watermark and no signup.</p>
         </div>
         <div>
-          <h3 class="text-sm font-bold text-surface-900">Is there a file size limit?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload videos up to 200 MB. Since all processing happens in your browser using WebAssembly, very large files may take longer to process depending on your device.</p>
+          <h3 class="text-sm font-bold text-surface-900">How do I make a GIF from a video?</h3>
+          <p class="text-sm text-surface-500 mt-1">The process is the same regardless of format. Upload any video file (MP4, WebM, MOV, or AVI), adjust the trim range and settings, and the converter handles the rest. Our tool uses FFmpeg.wasm to decode the video and encode it as an animated GIF.</p>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-surface-900">What video formats are supported?</h3>
+          <p class="text-sm text-surface-500 mt-1">MP4, WebM, MOV (QuickTime), and AVI. MP4 is the most widely supported and recommended format for best compatibility with FFmpeg.wasm. MOV files from iPhones and Macs work well too.</p>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-surface-900">Is there a file size or duration limit?</h3>
+          <p class="text-sm text-surface-500 mt-1">You can upload videos up to 200 MB. There is no hard duration limit, but for best results keep your GIFs under 15 seconds. Longer clips produce very large GIF files since every frame is stored as a full image.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Does this add a watermark?</h3>
-          <p class="text-sm text-surface-500 mt-1">No. EmoteSizer never adds watermarks to your files. The output GIF is clean and ready to use on any platform.</p>
+          <p class="text-sm text-surface-500 mt-1">No. EmoteSizer never adds watermarks to your files. The output GIF is clean and ready to use on any platform — social media, messaging, websites, or emote platforms.</p>
         </div>
         <div>
-          <h3 class="text-sm font-bold text-surface-900">Is my video uploaded to a server?</h3>
-          <p class="text-sm text-surface-500 mt-1">No. All conversion happens entirely in your browser using FFmpeg.wasm (WebAssembly). Your video file never leaves your device. No server, no cloud processing, complete privacy.</p>
+          <h3 class="text-sm font-bold text-surface-900">How does browser-based conversion work?</h3>
+          <p class="text-sm text-surface-500 mt-1">This tool uses FFmpeg.wasm, a WebAssembly port of the professional FFmpeg video toolkit. It runs entirely in your browser — your video is decoded, processed, and encoded into a GIF on your device. Nothing is uploaded to any server, giving you complete privacy.</p>
         </div>
         <div>
-          <h3 class="text-sm font-bold text-surface-900">Why is my GIF so large?</h3>
-          <p class="text-sm text-surface-500 mt-1">GIFs are inherently larger than modern video formats because they use lossless per-frame compression without inter-frame encoding. To reduce size: shorten the clip, lower the frame rate (10-15 fps is usually sufficient), reduce the output width, or use our <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink> after conversion.</p>
+          <h3 class="text-sm font-bold text-surface-900">Can I convert MP4 to GIF without software?</h3>
+          <p class="text-sm text-surface-500 mt-1">Yes. This tool runs entirely in your web browser — no app download or software installation needed. It works on Mac, Windows, iPhone, and Android. Just open the page, upload your video, and convert.</p>
         </div>
         <div>
-          <h3 class="text-sm font-bold text-surface-900">What do the quality settings do?</h3>
-          <p class="text-sm text-surface-500 mt-1">"Small" uses a single-pass encoding for compact files. "Balanced" and "Best" use a 2-pass palette technique that produces much better colors — the difference is in the dithering algorithm used to approximate colors outside the 256-color palette.</p>
+          <h3 class="text-sm font-bold text-surface-900">Why is my GIF file so large?</h3>
+          <p class="text-sm text-surface-500 mt-1">GIFs store each frame as a full image without inter-frame compression, so they are inherently larger than video files. To reduce GIF file size: lower the FPS (10-15 is usually enough), reduce the output width, shorten the clip, or decrease the max colors. You can also run the result through our <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink> afterward.</p>
         </div>
         <div>
-          <h3 class="text-sm font-bold text-surface-900">What frame rate should I use?</h3>
-          <p class="text-sm text-surface-500 mt-1">15 fps is a good default that balances smooth animation with reasonable file size. Use 10 fps for smaller files or 24-30 fps for smoother motion. Remember that higher frame rates directly increase file size.</p>
+          <h3 class="text-sm font-bold text-surface-900">What FPS should I use for a GIF?</h3>
+          <p class="text-sm text-surface-500 mt-1">10-15 FPS is ideal for most GIFs. This range provides smooth-looking animation while keeping file size reasonable. Use 20+ FPS only when smooth motion is critical (such as gameplay clips), and be aware that higher FPS directly increases file size.</p>
         </div>
         <div>
-          <h3 class="text-sm font-bold text-surface-900">Can I convert video to GIF on my phone?</h3>
-          <p class="text-sm text-surface-500 mt-1">Yes, if your mobile browser supports SharedArrayBuffer (most modern browsers do). The conversion runs in WebAssembly so it works on any device. Processing may be slower on mobile devices.</p>
+          <h3 class="text-sm font-bold text-surface-900">How do I make a GIF emote from a video for Discord?</h3>
+          <p class="text-sm text-surface-500 mt-1">Convert a short clip (1-3 seconds), set the output width to 128px, and use Balanced or Best quality. After conversion, use our <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink> to get the file under 256 KB. Discord animated emoji must be 128x128 pixels and under 256 KB.</p>
         </div>
         <div>
-          <h3 class="text-sm font-bold text-surface-900">Why does the tool need to download FFmpeg?</h3>
-          <p class="text-sm text-surface-500 mt-1">FFmpeg.wasm is a ~30 MB WebAssembly module that provides professional-grade video processing capabilities. It downloads once and is cached by your browser for subsequent visits.</p>
+          <h3 class="text-sm font-bold text-surface-900">Can I control the GIF loop count?</h3>
+          <p class="text-sm text-surface-500 mt-1">Yes. Choose from Infinite, Play Once, 3x, or enter any custom loop count. Most GIFs use infinite looping, but single-play or limited loops are useful for intro animations and presentations.</p>
         </div>
         <div>
-          <h3 class="text-sm font-bold text-surface-900">Can I make a GIF from a YouTube video?</h3>
-          <p class="text-sm text-surface-500 mt-1">Not directly — you need to download the video file first, then upload it here. This tool accepts local video files (MP4, WebM, MOV, AVI) from your device.</p>
+          <h3 class="text-sm font-bold text-surface-900">How do I reduce the GIF file size after conversion?</h3>
+          <p class="text-sm text-surface-500 mt-1">Use our <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink> to further reduce file size after converting. You can also reduce GIF size before converting by lowering the FPS, reducing the output width, trimming a shorter clip, or lowering the max colors slider.</p>
         </div>
       </div>
     </section>
@@ -578,14 +597,14 @@ import { useFFmpeg } from '~/composables/useFFmpeg'
 useHead({
   title: 'Video to GIF Converter — Convert MP4 to GIF Online Free | EmoteSizer',
   meta: [
-    { key: 'description', name: 'description', content: 'Convert video to GIF online for free — no watermark, no signup. Trim, adjust quality, and download animated GIFs from MP4, WebM, MOV. Browser-based conversion, your files stay private.' },
+    { key: 'description', name: 'description', content: 'Free online video to GIF converter. Convert MP4, WebM, MOV, or AVI to animated GIF — trim, set FPS, resize, and control quality. Browser-based, no watermark, no signup. Works on any device.' },
     { key: 'og:title', property: 'og:title', content: 'Video to GIF Converter — Convert MP4 to GIF Online Free | EmoteSizer' },
-    { key: 'og:description', property: 'og:description', content: 'Convert video to GIF online for free — no watermark, no signup. Trim, adjust quality, and download animated GIFs from MP4, WebM, MOV. Browser-based conversion, your files stay private.' },
+    { key: 'og:description', property: 'og:description', content: 'Free online video to GIF converter. Convert MP4, WebM, MOV, or AVI to animated GIF — trim, set FPS, resize, and control quality. Browser-based, no watermark, no signup. Works on any device.' },
     { key: 'og:url', property: 'og:url', content: 'https://emotesizer.com/tools/video-to-gif' },
     { key: 'og:type', property: 'og:type', content: 'website' },
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
     { key: 'twitter:title', name: 'twitter:title', content: 'Video to GIF Converter — Convert MP4 to GIF Online Free | EmoteSizer' },
-    { key: 'twitter:description', name: 'twitter:description', content: 'Convert video to GIF online for free — no watermark, no signup. Trim, adjust quality, and download animated GIFs from MP4, WebM, MOV. Browser-based conversion, your files stay private.' },
+    { key: 'twitter:description', name: 'twitter:description', content: 'Free online video to GIF converter. Convert MP4, WebM, MOV, or AVI to animated GIF — trim, set FPS, resize, and control quality. Browser-based, no watermark, no signup. Works on any device.' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com/tools/video-to-gif' }],
   script: [
@@ -602,18 +621,21 @@ useHead({
         'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
         'featureList': [
           'Convert MP4 to GIF',
-          'Convert WebM to GIF',
           'Convert MOV to GIF',
+          'Convert WebM to GIF',
           'Convert AVI to GIF',
-          'Trim video before conversion',
-          'Adjustable frame rate (1-60 fps)',
-          'Adjustable output width',
-          '3 quality presets (Small, Balanced, Best)',
+          'Video to GIF no watermark',
+          'Browser-based FFmpeg',
+          'Custom FPS',
+          'Trim video clip',
+          'GIF loop count control',
+          'Max colors slider',
           '2-pass palette encoding',
+          'Adjustable output width and resize',
+          '3 quality presets (Small, Balanced, Best)',
           'Side-by-side video vs GIF preview',
-          'No watermark',
           'No signup required',
-          'Browser-based processing via FFmpeg.wasm — files never leave your device',
+          'Works on any device — Mac, Windows, iPhone, Android',
         ],
       }),
     },
@@ -625,18 +647,34 @@ useHead({
         'mainEntity': [
           {
             '@type': 'Question',
-            'name': 'What video formats are supported?',
+            'name': 'How do I convert MP4 to GIF?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'MP4, WebM, MOV (QuickTime), and AVI. MP4 is the most widely supported and recommended format.',
+              'text': 'Upload your MP4 file, trim the clip to the section you want, set your preferred FPS and output width, then click "Convert to GIF." The conversion runs in your browser and takes just seconds. Download the result — it is completely free, with no watermark and no signup.',
             },
           },
           {
             '@type': 'Question',
-            'name': 'Is there a file size limit?',
+            'name': 'How do I make a GIF from a video?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload videos up to 200 MB. All processing happens in your browser using WebAssembly.',
+              'text': 'The process is the same regardless of format. Upload any video file (MP4, WebM, MOV, or AVI), adjust the trim range and settings, and the converter handles the rest. The tool uses FFmpeg.wasm to decode the video and encode it as an animated GIF.',
+            },
+          },
+          {
+            '@type': 'Question',
+            'name': 'What video formats are supported?',
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': 'MP4, WebM, MOV (QuickTime), and AVI. MP4 is the most widely supported and recommended format for best compatibility with FFmpeg.wasm. MOV files from iPhones and Macs work well too.',
+            },
+          },
+          {
+            '@type': 'Question',
+            'name': 'Is there a file size or duration limit?',
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': 'You can upload videos up to 200 MB. There is no hard duration limit, but for best results keep your GIFs under 15 seconds. Longer clips produce very large GIF files since every frame is stored as a full image.',
             },
           },
           {
@@ -644,63 +682,63 @@ useHead({
             'name': 'Does this add a watermark?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'No. EmoteSizer never adds watermarks to your files.',
+              'text': 'No. EmoteSizer never adds watermarks to your files. The output GIF is clean and ready to use on any platform.',
             },
           },
           {
             '@type': 'Question',
-            'name': 'Is my video uploaded to a server?',
+            'name': 'How does browser-based conversion work?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'No. All conversion happens entirely in your browser using FFmpeg.wasm (WebAssembly). Your video file never leaves your device.',
+              'text': 'This tool uses FFmpeg.wasm, a WebAssembly port of the professional FFmpeg video toolkit. It runs entirely in your browser — your video is decoded, processed, and encoded into a GIF on your device. Nothing is uploaded to any server, giving you complete privacy.',
             },
           },
           {
             '@type': 'Question',
-            'name': 'Why is my GIF so large?',
+            'name': 'Can I convert MP4 to GIF without software?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'GIFs are inherently larger than modern video formats. To reduce size: shorten the clip, lower the frame rate, reduce the output width, or use the GIF compressor after conversion.',
+              'text': 'Yes. This tool runs entirely in your web browser — no app download or software installation needed. It works on Mac, Windows, iPhone, and Android. Just open the page, upload your video, and convert.',
             },
           },
           {
             '@type': 'Question',
-            'name': 'What do the quality settings do?',
+            'name': 'Why is my GIF file so large?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': '"Small" uses single-pass encoding for compact files. "Balanced" and "Best" use a 2-pass palette technique for much better colors, with different dithering algorithms.',
+              'text': 'GIFs store each frame as a full image without inter-frame compression, so they are inherently larger than video files. To reduce GIF file size: lower the FPS, reduce the output width, shorten the clip, or decrease the max colors. You can also run the result through the GIF compressor afterward.',
             },
           },
           {
             '@type': 'Question',
-            'name': 'What frame rate should I use?',
+            'name': 'What FPS should I use for a GIF?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': '15 fps is a good default. Use 10 fps for smaller files or 24-30 fps for smoother motion. Higher frame rates directly increase file size.',
+              'text': '10-15 FPS is ideal for most GIFs. This range provides smooth-looking animation while keeping file size reasonable. Use 20+ FPS only when smooth motion is critical, and be aware that higher FPS directly increases file size.',
             },
           },
           {
             '@type': 'Question',
-            'name': 'Can I convert video to GIF on my phone?',
+            'name': 'How do I make a GIF emote from a video for Discord?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'Yes, if your mobile browser supports SharedArrayBuffer. The conversion runs in WebAssembly so it works on any device, though processing may be slower on mobile.',
+              'text': 'Convert a short clip (1-3 seconds), set the output width to 128px, and use Balanced or Best quality. After conversion, use the GIF compressor to get the file under 256 KB. Discord animated emoji must be 128x128 pixels and under 256 KB.',
             },
           },
           {
             '@type': 'Question',
-            'name': 'Why does the tool need to download FFmpeg?',
+            'name': 'Can I control the GIF loop count?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'FFmpeg.wasm is a ~30 MB WebAssembly module that provides professional-grade video processing. It downloads once and is cached by your browser.',
+              'text': 'Yes. Choose from Infinite, Play Once, 3x, or enter any custom loop count. Most GIFs use infinite looping, but single-play or limited loops are useful for intro animations and presentations.',
             },
           },
           {
             '@type': 'Question',
-            'name': 'Can I make a GIF from a YouTube video?',
+            'name': 'How do I reduce the GIF file size after conversion?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'Not directly — you need to download the video file first, then upload it here. This tool accepts local video files from your device.',
+              'text': 'Use the GIF compressor to further reduce file size after converting. You can also reduce GIF size before converting by lowering the FPS, reducing the output width, trimming a shorter clip, or lowering the max colors slider.',
             },
           },
         ],
@@ -711,26 +749,32 @@ useHead({
       innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'HowTo',
-        'name': 'How to Convert Video to GIF Online',
-        'description': 'Convert any video to an animated GIF using EmoteSizer\'s free online converter. No signup, no watermark.',
+        'name': 'How to Convert MP4 to GIF Online',
+        'description': 'Convert any MP4, WebM, MOV, or AVI video to an animated GIF using EmoteSizer\'s free online video to GIF converter. No signup, no watermark, no software to install.',
         'step': [
           {
             '@type': 'HowToStep',
             'position': 1,
-            'name': 'Upload your video',
-            'text': 'Drag and drop or click to browse. Supports MP4, WebM, MOV, and AVI up to 200 MB. Processed entirely in your browser.',
+            'name': 'Upload your video file',
+            'text': 'Drag and drop or click to browse. This free online converter accepts MP4, WebM, MOV, and AVI files up to 200 MB. The video is processed entirely in your browser using FFmpeg.wasm.',
           },
           {
             '@type': 'HowToStep',
             'position': 2,
-            'name': 'Trim and adjust settings',
-            'text': 'Use the trim slider to select the clip range. Choose frame rate, output width, and quality preset.',
+            'name': 'Trim the clip',
+            'text': 'Use the trim slider to select the exact start and end points for your GIF. For best results, keep the clip under 10-15 seconds.',
           },
           {
             '@type': 'HowToStep',
             'position': 3,
-            'name': 'Convert and download',
-            'text': 'Click Convert to GIF. Preview the result side-by-side with the original, then download. Free, no watermark.',
+            'name': 'Adjust GIF settings',
+            'text': 'Set the frame rate (FPS), output width, quality preset, max colors, and loop count. Use Balanced or Best quality for 2-pass palette encoding with superior color accuracy.',
+          },
+          {
+            '@type': 'HowToStep',
+            'position': 4,
+            'name': 'Convert and download your GIF',
+            'text': 'Click "Convert to GIF" and watch the progress. Preview the result side-by-side with the original video, then download. Free, no watermark, no signup.',
           },
         ],
         'tool': { '@type': 'HowToTool', 'name': 'EmoteSizer Video to GIF Converter' },
