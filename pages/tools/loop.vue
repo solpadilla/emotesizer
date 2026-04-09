@@ -143,14 +143,28 @@
           Upload a GIF to get started
         </div>
 
-        <!-- Single GIF preview -->
+        <!-- Canvas-based animated preview (respects loop count) -->
         <div v-else class="rounded-2xl overflow-hidden checkerboard p-4 min-h-[200px]">
-          <div class="flex items-center justify-center">
-            <img
-              :src="gifUrl"
-              alt="GIF preview"
-              class="max-w-full max-h-[300px] md:max-h-[400px] object-contain"
+          <div class="flex flex-col items-center justify-center gap-3">
+            <canvas
+              ref="canvasRef"
+              :width="canvasDisplayWidth"
+              :height="canvasDisplayHeight"
+              class="block max-w-full max-h-[300px] md:max-h-[400px]"
+              :style="{ width: canvasDisplayWidth + 'px', height: canvasDisplayHeight + 'px' }"
             />
+            <!-- Replay button: shown when a finite animation has completed -->
+            <button
+              v-if="isAnimationComplete"
+              class="btn-ghost text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-surface-500 hover:text-surface-700"
+              @click="replayAnimation"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="1 4 1 10 7 10" />
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+              </svg>
+              Replay
+            </button>
           </div>
         </div>
 
@@ -460,6 +474,10 @@ const gifMetadata = ref<ReturnType<typeof decode> | null>(null)
 /** Stores the raw GIF ArrayBuffer so we can download the original without re-encoding */
 const originalBuffer = ref<ArrayBuffer | null>(null)
 
+// -- Canvas preview state --
+const canvasRef = ref<HTMLCanvasElement | null>(null)
+const isAnimationComplete = ref(false)
+
 /** The loop count read from the original GIF (0 = infinite) */
 const originalLoopCount = ref(0)
 
@@ -498,6 +516,221 @@ const effectiveLoopCount = computed(() => {
 
 /** Whether the selected loop count differs from the original */
 const hasChanged = computed(() => effectiveLoopCount.value !== originalLoopCount.value)
+
+// -- Canvas display sizing --
+// Scale the GIF to fit within the preview area constraints (max-h 300px / 400px on md+)
+
+const maxPreviewHeight = computed(() => {
+  // Match the CSS constraint: max-h-[300px] md:max-h-[400px]
+  if (import.meta.client && window.innerWidth >= 768) return 400
+  return 300
+})
+
+const canvasDisplayWidth = computed(() => {
+  const w = sourceWidth.value
+  const h = sourceHeight.value
+  if (!w || !h) return 0
+  // Scale down to fit max height while preserving aspect ratio
+  const scale = Math.min(1, maxPreviewHeight.value / h)
+  return Math.round(w * scale)
+})
+
+const canvasDisplayHeight = computed(() => {
+  const w = sourceWidth.value
+  const h = sourceHeight.value
+  if (!w || !h) return 0
+  const scale = Math.min(1, maxPreviewHeight.value / h)
+  return Math.round(h * scale)
+})
+
+// -- Canvas animation engine --
+
+/** Reusable offscreen canvas for rendering frame pixel data at source resolution */
+let srcCanvas: HTMLCanvasElement | null = null
+let srcCtx: CanvasRenderingContext2D | null = null
+
+/** Cached ImageData to avoid per-frame allocation */
+let cachedImageData: ImageData | null = null
+
+let animFrameId: number | null = null
+let currentFrameIndex = 0
+let lastFrameTime = 0
+let accumulatedTime = 0
+let completedLoops = 0
+
+/** Whether the user prefers reduced motion */
+const prefersReducedMotion = ref(false)
+
+/** Media query listener refs for cleanup */
+let mqlListener: ((e: MediaQueryListEvent) => void) | null = null
+let mql: MediaQueryList | null = null
+
+onMounted(() => {
+  // Check reduced motion preference
+  mql = window.matchMedia('(prefers-reduced-motion: reduce)')
+  prefersReducedMotion.value = mql.matches
+  mqlListener = (e: MediaQueryListEvent) => { prefersReducedMotion.value = e.matches }
+  mql.addEventListener('change', mqlListener)
+})
+
+onBeforeUnmount(() => {
+  stopAnimation()
+
+  // Clean up media query listener
+  if (mql && mqlListener) {
+    mql.removeEventListener('change', mqlListener)
+    mqlListener = null
+    mql = null
+  }
+
+  // Release offscreen canvas memory
+  if (srcCanvas) {
+    srcCanvas.width = 0
+    srcCanvas.height = 0
+    srcCanvas = null
+    srcCtx = null
+  }
+  cachedImageData = null
+})
+
+function startAnimation() {
+  stopAnimation()
+  currentFrameIndex = 0
+  lastFrameTime = 0
+  accumulatedTime = 0
+  completedLoops = 0
+  isAnimationComplete.value = false
+  animFrameId = requestAnimationFrame(animationLoop)
+}
+
+function stopAnimation() {
+  if (animFrameId !== null) {
+    cancelAnimationFrame(animFrameId)
+    animFrameId = null
+  }
+}
+
+function replayAnimation() {
+  startAnimation()
+}
+
+function animationLoop(timestamp: number) {
+  const frames = decodedFrames.value
+  if (!frames.length) return
+
+  // For reduced motion: draw first frame statically and stop
+  if (prefersReducedMotion.value) {
+    drawFrame(0)
+    return
+  }
+
+  // Single-frame GIF: draw once, no animation needed
+  if (frames.length <= 1) {
+    drawFrame(0)
+    return
+  }
+
+  // First frame initialization
+  if (lastFrameTime === 0) {
+    lastFrameTime = timestamp
+    drawFrame(0)
+    animFrameId = requestAnimationFrame(animationLoop)
+    return
+  }
+
+  const elapsed = timestamp - lastFrameTime
+  lastFrameTime = timestamp
+  accumulatedTime += elapsed
+
+  const currentDelay = frames[currentFrameIndex]?.delay || 100
+
+  if (accumulatedTime >= currentDelay) {
+    accumulatedTime -= currentDelay
+
+    const nextIndex = currentFrameIndex + 1
+
+    // Check if we've reached the end of all frames in this loop iteration
+    if (nextIndex >= frames.length) {
+      completedLoops++
+
+      const loopCount = effectiveLoopCount.value
+
+      // Check if we should stop:
+      // loopCount 0 = infinite, never stop
+      // loopCount N = stop after N complete plays
+      if (loopCount !== 0 && completedLoops >= loopCount) {
+        // Stay on the last frame and stop animating
+        isAnimationComplete.value = true
+        return
+      }
+
+      // Loop back to frame 0
+      currentFrameIndex = 0
+    } else {
+      currentFrameIndex = nextIndex
+    }
+
+    drawFrame(currentFrameIndex)
+  }
+
+  animFrameId = requestAnimationFrame(animationLoop)
+}
+
+function drawFrame(index: number) {
+  const canvas = canvasRef.value
+  const frames = decodedFrames.value
+  if (!canvas || !frames[index]) return
+
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+
+  const frame = frames[index]
+
+  // Lazily create or reuse the offscreen source canvas
+  if (!srcCanvas) {
+    srcCanvas = document.createElement('canvas')
+    srcCtx = srcCanvas.getContext('2d')
+  }
+  if (!srcCtx) return
+
+  srcCanvas.width = frame.width
+  srcCanvas.height = frame.height
+
+  // Reuse cached ImageData to avoid allocating new pixel buffers every frame
+  if (!cachedImageData || cachedImageData.width !== frame.width || cachedImageData.height !== frame.height) {
+    cachedImageData = new ImageData(frame.width, frame.height)
+  }
+  cachedImageData.data.set(frame.data)
+  srcCtx.putImageData(cachedImageData, 0, 0)
+
+  // Draw scaled to the display canvas
+  ctx.clearRect(0, 0, canvasDisplayWidth.value, canvasDisplayHeight.value)
+  ctx.drawImage(srcCanvas, 0, 0, canvasDisplayWidth.value, canvasDisplayHeight.value)
+}
+
+// Restart animation when decoded frames change (new GIF loaded)
+watch(decodedFrames, (frames) => {
+  cachedImageData = null
+  if (frames.length > 0) {
+    startAnimation()
+  }
+})
+
+// Restart animation when the user changes the loop count preset
+// so they can see the new loop behavior immediately
+watch(effectiveLoopCount, () => {
+  if (decodedFrames.value.length > 0) {
+    startAnimation()
+  }
+})
+
+// Redraw current frame when canvas size changes
+watch([canvasDisplayWidth, canvasDisplayHeight], () => {
+  if (decodedFrames.value.length > 0 && animFrameId === null) {
+    // Animation is stopped (complete) — redraw the last frame at new size
+    drawFrame(currentFrameIndex)
+  }
+})
 
 // -- Helpers --
 
