@@ -2,28 +2,17 @@
 
 ## Current Tools
 - `/tools/compress` — GIF compression (smart + manual, 11 strategies)
-- `/tools/resize` — GIF resizing (platform presets, custom dimensions)
+- `/tools/resize` — GIF resizing (platform presets, custom dimensions, crop/pad/stretch modes)
 - `/tools/trim` — GIF trimming (cut frames from start/end)
+- `/tools/gif-to-png` — GIF to PNG frame picker + static export
+- `/tools/speed` — GIF speed changer (Speed/FPS/Duration modes, 0.1x–8x range, side-by-side preview)
+- `/tools/reverse` — GIF reverse & boomerang (ping-pong loops, speed control, tool chaining)
 
 ## Features in Optimizer Not Yet Standalone
-- **GIF to PNG** — frame picker + static export (optimizer has this via FramePicker component)
-- **Crop/Pad/Stretch resize modes** — optimizer supports fill & crop, fit & pad, stretch; standalone resize only does direct scaling
 - **Platform-aware optimization** — optimizer targets specific platforms (Twitch animated/static/badges, Discord, Kick, 7TV, BTTV, FFZ, YouTube) with multi-size output
 - **Twitch sub badge support** — 18x18, 36x36, 72x72 badge presets
 
 ## Quick Wins (low effort, gifsicle-wasm already available)
-
-### GIF Speed Changer
-- **Search volume**: Medium-High (10K-50K/mo)
-- **Effort**: Low — modify frame delay values
-- **How**: Use gifsicle-wasm to adjust delays, or decode/re-encode with modified delay per frame
-- **Competitors**: ezgif, gifspeed.com, Kapwing, VEED
-
-### Reverse GIF
-- **Search volume**: Medium
-- **Effort**: Very Low — reverse frame order
-- **How**: Decode frames, reverse array, re-encode
-- **Competitors**: ezgif, GIFSpeed, Kapwing, Imgflip
 
 ### GIF Crop
 - **Search volume**: Medium-High
@@ -114,25 +103,20 @@
 ## Recommended Build Order
 
 ### Phase 1 — Quick wins (use existing gifsicle-wasm)
-1. GIF Speed Changer
-2. Reverse GIF
-3. GIF Crop
-4. Rotate/Flip GIF
-5. GIF Frame Extractor
-6. GIF Loop Changer
+1. GIF Crop
+2. Rotate/Flip GIF
+3. GIF Frame Extractor
+4. GIF Loop Changer
 
-### Phase 2 — Standalone versions of optimizer features
-7. GIF to PNG (standalone frame picker)
+### Phase 2 — High-traffic tools (add FFmpeg.wasm)
+5. Video to GIF (MP4 to GIF)
+6. GIF to MP4/Video
+7. GIF Maker (from images)
 
-### Phase 3 — High-traffic tools (add FFmpeg.wasm)
-8. Video to GIF (MP4 to GIF)
-9. GIF to MP4/Video
-10. GIF Maker (from images)
+### Phase 3 — Format converters
+8. GIF to WebP
+9. WebP to GIF
 
-### Phase 4 — Format converters
-11. GIF to WebP
-12. WebP to GIF
-
-### Phase 5 — Creative tools
-13. Add Text to GIF
-14. GIF to APNG
+### Phase 4 — Creative tools
+10. Add Text to GIF
+11. GIF to APNG

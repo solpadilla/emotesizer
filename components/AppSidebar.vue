@@ -132,6 +132,12 @@ const toolsNav = computed(() => [
     isActive: route.path === '/tools/resize',
   },
   {
+    to: '/tools/crop',
+    label: 'GIF Crop',
+    icon: resolveComponent('IconCrop'),
+    isActive: route.path === '/tools/crop',
+  },
+  {
     to: '/tools/compress',
     label: 'GIF Compress',
     icon: resolveComponent('IconCompress'),
