@@ -395,7 +395,7 @@
       <p class="text-xs text-surface-400 mt-2">Need to resize your GIF to match these dimensions? Use our <NuxtLink to="/tools/resize" class="text-primary-500 hover:underline">GIF resizer</NuxtLink> first, then compress here.</p>
 
       <p class="text-sm text-surface-500 mt-6">
-        Need to change GIF dimensions? Try our <NuxtLink to="/tools/resize" class="text-primary-500 hover:underline">free GIF resizer</NuxtLink> to resize animated GIFs to exact pixel dimensions. Want to cut frames? Use the <NuxtLink to="/tools/trim" class="text-primary-500 hover:underline">GIF trimmer and cutter</NuxtLink> to shorten animations. Or use the <NuxtLink to="/optimizer" class="text-primary-500 hover:underline">full emote optimizer</NuxtLink> to resize, compress, and convert GIFs into emotes for Twitch, Discord, and Kick in one step.
+        Need to change GIF dimensions? Try our <NuxtLink to="/tools/resize" class="text-primary-500 hover:underline">free GIF resizer</NuxtLink> to resize animated GIFs to exact pixel dimensions. Want to cut frames? Use the <NuxtLink to="/tools/trim" class="text-primary-500 hover:underline">GIF trimmer and cutter</NuxtLink> to shorten animations. Need to remove edges? Use the <NuxtLink to="/tools/crop" class="text-primary-500 hover:underline">GIF cropper</NuxtLink> to crop a specific region. You can also <NuxtLink to="/tools/speed" class="text-primary-500 hover:underline">change GIF speed</NuxtLink> or use the <NuxtLink to="/optimizer" class="text-primary-500 hover:underline">full emote optimizer</NuxtLink> to resize, compress, and convert GIFs into emotes for Twitch, Discord, and Kick in one step.
       </p>
     </section>
 
@@ -482,6 +482,7 @@ useHead({
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
     { key: 'twitter:title', name: 'twitter:title', content: 'GIF Compressor — Reduce GIF File Size Online Free | EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Free GIF compressor — reduce file size for Discord, Twitch, Kick & 7TV. Lossless and lossy strategies. No watermark, no signup.' },
+    { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com/tools/compress' }],
   script: [

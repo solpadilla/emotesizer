@@ -626,6 +626,7 @@ useHead({
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
     { key: 'twitter:title', name: 'twitter:title', content: 'Video to GIF Converter — Convert MP4 to GIF Online Free | EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Free online video to GIF converter. Convert MP4, WebM, MOV, or AVI to animated GIF — trim, set FPS, resize, and control quality. Browser-based, no watermark, no signup. Works on any device.' },
+    { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com/tools/video-to-gif' }],
   script: [

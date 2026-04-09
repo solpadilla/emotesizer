@@ -57,6 +57,7 @@ useHead({
       name: 'description',
       content: 'Free online GIF tools — trim, resize, crop, rotate, compress, change speed, reverse, and convert animated GIFs. No upload limits, no watermarks.',
     },
+    { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
   link: [
     { rel: 'canonical', href: 'https://emotesizer.com/tools' },

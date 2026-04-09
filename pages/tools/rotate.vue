@@ -340,6 +340,7 @@ useHead({
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
     { key: 'twitter:title', name: 'twitter:title', content: 'Rotate & Flip GIF Online Free \u2014 GIF Rotator & Mirror Tool | EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Rotate GIFs 90\u00B0, 180\u00B0, or 270\u00B0 and flip horizontally or vertically \u2014 all online and free. Instant preview, no watermark, no signup. Perfect for Twitch & Discord emotes.' },
+    { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com/tools/rotate' }],
   script: [

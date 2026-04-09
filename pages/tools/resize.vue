@@ -368,7 +368,7 @@
       </ul>
 
       <p class="text-sm text-surface-500 mt-6">
-        Need to compress a GIF under 256 KB? Try our <NuxtLink to="/optimizer" class="text-primary-500 hover:underline">emote optimizer</NuxtLink> for smart compression. Want to cut frames? Use the <NuxtLink to="/tools/trim" class="text-primary-500 hover:underline">GIF trimmer</NuxtLink> to shorten animations. Or <NuxtLink to="/search" class="text-primary-500 hover:underline">search our GIF library</NuxtLink> to find the perfect emote.
+        Need to compress a GIF under 256 KB? Try our <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink> or <NuxtLink to="/optimizer" class="text-primary-500 hover:underline">emote optimizer</NuxtLink> for smart compression. Want to cut frames? Use the <NuxtLink to="/tools/trim" class="text-primary-500 hover:underline">GIF trimmer</NuxtLink> to shorten animations. Need to remove edges? Use the <NuxtLink to="/tools/crop" class="text-primary-500 hover:underline">GIF cropper</NuxtLink>. Or <NuxtLink to="/search" class="text-primary-500 hover:underline">search our GIF library</NuxtLink> to find the perfect emote.
       </p>
     </section>
 
@@ -437,6 +437,7 @@ useHead({
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
     { key: 'twitter:title', name: 'twitter:title', content: 'Free GIF Resizer — Resize Animated GIFs Online | EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Resize animated GIFs to exact emote sizes for Discord, Twitch, Kick, and more. Free browser-based GIF resizer — no watermark, no signup.' },
+    { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com/tools/resize' }],
   script: [

@@ -120,6 +120,12 @@
       <p class="text-sm text-surface-500 mt-6">
         Need more than just trimming? Try our <NuxtLink to="/optimizer" class="text-primary-500 hover:underline">full emote optimizer</NuxtLink> to resize and compress GIFs for Twitch, Discord, and Kick emotes.
       </p>
+      <p class="text-sm text-surface-500 mt-6">
+        Need to edit more? Try our
+        <NuxtLink to="/tools/resize" class="text-primary-500 hover:underline">GIF resizer</NuxtLink>,
+        <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink>,
+        or <NuxtLink to="/tools/speed" class="text-primary-500 hover:underline">speed changer</NuxtLink>.
+      </p>
     </section>
 
     <!-- FAQ section -->
@@ -158,6 +164,7 @@ useHead({
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
     { key: 'twitter:title', name: 'twitter:title', content: 'Free GIF Trimmer — Cut & Shorten GIFs Online' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Trim animated GIFs online. Cut frames, shorten duration, download instantly. Free browser-based tool.' },
+    { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com/tools/trim' }],
   script: [

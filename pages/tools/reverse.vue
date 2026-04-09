@@ -361,6 +361,7 @@ useHead({
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
     { key: 'twitter:title', name: 'twitter:title', content: 'Reverse GIF Online Free — GIF Reverser & Boomerang Maker | EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Reverse any GIF online for free — no watermark, no signup. Play GIFs backwards or create boomerang ping-pong loops. Perfect for Discord emotes, Twitch animations & memes.' },
+    { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com/tools/reverse' }],
   script: [

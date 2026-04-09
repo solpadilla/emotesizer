@@ -279,6 +279,7 @@ useHead({
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
     { key: 'twitter:title', name: 'twitter:title', content: 'GIF to PNG Converter & GIF Splitter — Extract Frames Free Online | EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Free online GIF to PNG converter and GIF splitter. Extract a single frame or split all frames from animated GIFs — download as PNG or ZIP. Lossless, no watermark, no signup.' },
+    { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com/tools/gif-to-png' }],
   script: [

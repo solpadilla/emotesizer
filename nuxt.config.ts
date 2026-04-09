@@ -150,8 +150,13 @@ export default defineNuxtConfig({
     '~/components',
   ],
 
+  site: {
+    url: 'https://emotesizer.com',
+  },
+
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
+    '@nuxtjs/sitemap',
   ],
 })

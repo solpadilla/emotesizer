@@ -463,6 +463,7 @@ useHead({
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
     { key: 'twitter:title', name: 'twitter:title', content: 'GIF Speed Changer - Speed Up or Slow Down GIFs Free | EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Free online GIF speed changer. Speed up or slow down GIF animations instantly in your browser. Perfect for Twitch & Discord emotes. No watermark, no signup.' },
+    { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com/tools/speed' }],
   script: [

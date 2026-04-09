@@ -359,6 +359,7 @@ useHead({
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
     { key: 'twitter:title', name: 'twitter:title', content: 'GIF Cropper — Crop Animated GIFs Online Free | EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Free online GIF cropper. Crop animated GIFs with aspect ratio presets, autocrop transparent edges, and precise pixel controls. No watermark, no signup. Perfect for Twitch & Discord emotes.' },
+    { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com/tools/crop' }],
   script: [

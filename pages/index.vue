@@ -127,6 +127,30 @@
       </div>
     </section>
 
+    <!-- GIF Tools Section -->
+    <section class="mt-12 mb-8 px-4">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-surface-900">Free GIF Tools</h2>
+          <NuxtLink to="/tools" class="text-sm text-primary-500 hover:underline">View all &rarr;</NuxtLink>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          <NuxtLink
+            v-for="tool in allTools"
+            :key="tool.to"
+            :to="tool.to"
+            class="card p-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 cursor-pointer"
+          >
+            <div class="w-10 h-10 rounded-xl bg-primary-500/10 flex items-center justify-center mb-3">
+              <component :is="toolIconMap[tool.icon]" :size="20" class="text-primary-500" />
+            </div>
+            <p class="text-sm font-bold text-surface-900">{{ tool.label }}</p>
+            <p class="text-xs text-surface-500 mt-1 line-clamp-2">{{ tool.description }}</p>
+          </NuxtLink>
+        </div>
+      </div>
+    </section>
+
     <!-- Platform Cards Section -->
     <section class="py-10 md:py-16 px-4">
       <div class="max-w-5xl mx-auto">
@@ -292,6 +316,23 @@
 
 <script setup lang="ts">
 import type { KlipyItem } from '~/types/klipy'
+
+const { allTools } = useToolsNav()
+
+// Pre-resolve icon components so dynamic <component :is="..."> works correctly.
+// Nuxt tree-shakes auto-imported components not statically referenced in the template.
+const toolIconMap: Record<string, ReturnType<typeof resolveComponent>> = {
+  IconScissors: resolveComponent('IconScissors'),
+  IconResize: resolveComponent('IconResize'),
+  IconCrop: resolveComponent('IconCrop'),
+  IconRotate: resolveComponent('IconRotate'),
+  IconGauge: resolveComponent('IconGauge'),
+  IconReverse: resolveComponent('IconReverse'),
+  IconLoop: resolveComponent('IconLoop'),
+  IconFrame: resolveComponent('IconFrame'),
+  IconCompress: resolveComponent('IconCompress'),
+  IconVideo: resolveComponent('IconVideo'),
+}
 
 useHead({
   title: 'EmoteSizer — Free Twitch Emote Resizer, GIF & Sticker Optimizer',
