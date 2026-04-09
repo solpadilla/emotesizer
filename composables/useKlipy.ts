@@ -1,5 +1,8 @@
 import type { KlipyGif, KlipyGifItem, KlipySearchResponse, KlipyCategoriesResponse, KlipyAutocompleteResponse, KlipyCategory } from '~/types/klipy'
 
+// NOTE: Klipy ads are temporarily disabled (2026-04-09).
+// To re-enable, uncomment the ad parameters in search() and trending() methods.
+
 // Klipy only serves ads to mobile devices, so a mobile User-Agent is required
 const MOBILE_USER_AGENT = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
 
@@ -53,12 +56,13 @@ export function useKlipy() {
       content_filter: 'medium',
     })
     // Ad params — Klipy only serves ads on page 1
-    if (page === 1) {
-      params.set('ad-min-width', '200')
-      params.set('ad-max-width', '400')
-      params.set('ad-min-height', '150')
-      params.set('ad-max-height', '300')
-    }
+    // Klipy ads temporarily disabled — re-enable when ad partnership is active
+    // if (page === 1) {
+    //   params.set('ad-min-width', '200')
+    //   params.set('ad-max-width', '400')
+    //   params.set('ad-min-height', '150')
+    //   params.set('ad-max-height', '300')
+    // }
     const response = await $fetch<KlipySearchResponse>(
       `${baseUrl}/${appKey}/${type}/search?${params}`,
       {
@@ -83,12 +87,13 @@ export function useKlipy() {
       content_filter: 'medium',
     })
     // Ad params — Klipy only serves ads on page 1
-    if (page === 1) {
-      params.set('ad-min-width', '200')
-      params.set('ad-max-width', '400')
-      params.set('ad-min-height', '150')
-      params.set('ad-max-height', '300')
-    }
+    // Klipy ads temporarily disabled — re-enable when ad partnership is active
+    // if (page === 1) {
+    //   params.set('ad-min-width', '200')
+    //   params.set('ad-max-width', '400')
+    //   params.set('ad-min-height', '150')
+    //   params.set('ad-max-height', '300')
+    // }
     const response = await $fetch<KlipySearchResponse>(
       `${baseUrl}/${appKey}/${type}/trending?${params}`,
       {
