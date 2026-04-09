@@ -119,6 +119,17 @@ export default defineNuxtConfig({
     },
   },
 
+  // Exclude @ffmpeg/ffmpeg and @ffmpeg/util from Vite's dep optimizer.
+  // FFmpeg.wasm uses a Web Worker internally that Vite cannot pre-bundle,
+  // producing a "worker.js?worker_file&type=module does not exist" warning.
+  // These packages are designed to load as native ESM (WASM core fetched
+  // from CDN at runtime), so pre-bundling is unnecessary.
+  vite: {
+    optimizeDeps: {
+      exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],
+    },
+  },
+
   css: ['~/assets/css/main.css'],
 
   // Flatten the icons/ subdirectory so components inside it are auto-imported
