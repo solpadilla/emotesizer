@@ -603,20 +603,25 @@ function formatFileSize(bytes: number): string {
   return (bytes / 1048576).toFixed(1) + ' MB'
 }
 
+// -- Blob URL cleanup --
+
+/** Revokes both blob URLs to prevent memory leaks */
+function revokeUrls() {
+  if (gifUrl.value) { URL.revokeObjectURL(gifUrl.value); gifUrl.value = '' }
+  if (resultMp4Url.value) { URL.revokeObjectURL(resultMp4Url.value); resultMp4Url.value = null }
+}
+
 // -- State reset --
 
 function resetState() {
-  if (gifUrl.value) URL.revokeObjectURL(gifUrl.value)
-  if (resultMp4Url.value) URL.revokeObjectURL(resultMp4Url.value)
+  revokeUrls()
 
   gifFile.value = null
-  gifUrl.value = ''
   gifFileName.value = ''
   gifFileSize.value = 0
   gifWidth.value = 0
   gifHeight.value = 0
   quality.value = 'better'
-  resultMp4Url.value = null
   resultMp4Blob.value = null
   resultMp4Size.value = 0
   isConverting.value = false
@@ -637,6 +642,10 @@ function handleFileSelected(file: File) {
   img.onload = () => {
     gifWidth.value = img.naturalWidth
     gifHeight.value = img.naturalHeight
+  }
+  img.onerror = () => {
+    toastError('Failed to load GIF preview')
+    resetState()
   }
   img.src = gifUrl.value
 
@@ -662,13 +671,13 @@ async function convertGif() {
   // Snapshot the quality setting before async work
   const currentCrf = crfMap[quality.value]
 
-  // Revoke previous result if any
+  // Revoke previous result URL if re-converting (gif URL still needed for preview)
   if (resultMp4Url.value) {
     URL.revokeObjectURL(resultMp4Url.value)
     resultMp4Url.value = null
-    resultMp4Blob.value = null
-    resultMp4Size.value = 0
   }
+  resultMp4Blob.value = null
+  resultMp4Size.value = 0
 
   isConverting.value = true
 
@@ -719,7 +728,6 @@ function downloadMp4() {
 // -- Cleanup --
 
 onUnmounted(() => {
-  if (gifUrl.value) URL.revokeObjectURL(gifUrl.value)
-  if (resultMp4Url.value) URL.revokeObjectURL(resultMp4Url.value)
+  revokeUrls()
 })
 </script>
