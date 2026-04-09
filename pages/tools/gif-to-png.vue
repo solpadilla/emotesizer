@@ -176,7 +176,7 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Convert GIF to PNG or Extract All Frames</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 10 MB. Your file never leaves your device — all processing is browser-based and private.</li>
+        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB. Your file never leaves your device — all processing is browser-based and private.</li>
         <li><strong>Choose your mode</strong> — use <em>Single Frame</em> to pick one frame with the slider, or switch to <em>Multiple Frames</em> to select several frames or extract all frames from the GIF at once.</li>
         <li><strong>Select frames</strong> — in Single Frame mode, scrub the slider to find the perfect still image. In Multiple Frames mode, click individual thumbnails or hit "Select All" to use our GIF splitter to grab every frame.</li>
         <li><strong>Download as PNG or ZIP</strong> — save a single frame as a lossless PNG, or download multiple GIF frames as a ZIP of PNGs. No watermark, no signup required.</li>
@@ -245,7 +245,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 10 MB. All processing happens in your browser — private and secure. Larger files may take a moment to decode.</p>
+          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. All processing happens in your browser — private and secure. Larger files may take a moment to decode.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Does this add a watermark?</h3>
@@ -392,7 +392,7 @@ useHead({
             'name': 'Is there a file size limit?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload GIFs up to 10 MB. All processing happens in your browser — private and secure. Larger files may take a moment to decode.',
+              'text': 'You can upload GIFs up to 20 MB. All processing happens in your browser — private and secure. Larger files may take a moment to decode.',
             },
           },
           {
@@ -430,7 +430,7 @@ useHead({
         'name': 'How to Convert GIF to PNG or Extract All Frames',
         'description': 'Extract a single frame or split all frames from an animated GIF into lossless PNG images using EmoteSizer\'s free GIF to PNG converter and GIF splitter.',
         'step': [
-          { '@type': 'HowToStep', 'position': 1, 'name': 'Upload your GIF', 'text': 'Drag and drop or click to browse. Supports animated GIFs up to 10 MB. Your file never leaves your device — all processing is browser-based and private.' },
+          { '@type': 'HowToStep', 'position': 1, 'name': 'Upload your GIF', 'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB. Your file never leaves your device — all processing is browser-based and private.' },
           { '@type': 'HowToStep', 'position': 2, 'name': 'Choose your mode', 'text': 'Use Single Frame mode to pick one frame with the slider, or switch to Multiple Frames mode to select several frames or extract all frames from the GIF at once.' },
           { '@type': 'HowToStep', 'position': 3, 'name': 'Select frames', 'text': 'In Single Frame mode, scrub the slider to find the perfect still image. In Multiple Frames mode, click individual thumbnails or hit Select All to grab every frame.' },
           { '@type': 'HowToStep', 'position': 4, 'name': 'Download as PNG or ZIP', 'text': 'Save a single frame as a lossless PNG, or download multiple GIF frames as a ZIP of PNGs. No watermark, no signup required.' },

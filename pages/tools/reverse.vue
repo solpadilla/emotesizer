@@ -257,7 +257,7 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Reverse a GIF Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 10 MB. All processing is browser-based, so your file never leaves your device.</li>
+        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB. All processing is browser-based, so your file never leaves your device.</li>
         <li><strong>Choose a mode</strong> — select "Reverse" to play the GIF backwards, or "Boomerang" to create a seamless forward-backward ping-pong loop. Optionally adjust playback speed.</li>
         <li><strong>Preview the result</strong> — see your reversed or boomerang GIF play side-by-side with the original animation.</li>
         <li><strong>Download</strong> — click the download button to save your modified GIF. Completely free, no watermark, no account needed.</li>
@@ -331,7 +331,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 10 MB. All processing happens entirely in your browser — your files stay private and are never uploaded to a server.</p>
+          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. All processing happens entirely in your browser — your files stay private and are never uploaded to a server.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Does this add a watermark?</h3>
@@ -458,7 +458,7 @@ useHead({
             'name': 'Is there a file size limit?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload GIFs up to 10 MB. All processing happens entirely in your browser — your files stay private and are never uploaded to a server.',
+              'text': 'You can upload GIFs up to 20 MB. All processing happens entirely in your browser — your files stay private and are never uploaded to a server.',
             },
           },
           {
@@ -492,7 +492,7 @@ useHead({
             '@type': 'HowToStep',
             'position': 1,
             'name': 'Upload your GIF',
-            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 10 MB. Your file is processed entirely in your browser and never leaves your device.',
+            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB. Your file is processed entirely in your browser and never leaves your device.',
           },
           {
             '@type': 'HowToStep',

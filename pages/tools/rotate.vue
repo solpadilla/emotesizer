@@ -245,7 +245,7 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Rotate or Flip a GIF Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. This free online GIF rotator supports animated GIFs up to 10 MB. All processing is browser-based and private, so your file never leaves your device.</li>
+        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. This free online GIF rotator supports animated GIFs up to 20 MB. All processing is browser-based and private, so your file never leaves your device.</li>
         <li><strong>Pick a rotation angle or flip direction</strong> — rotate your GIF 90 degrees, 180 degrees, or 270 degrees clockwise. Flip the GIF horizontally to mirror it, or flip vertically to turn it upside down. Rotation and flip controls combine freely for any orientation.</li>
         <li><strong>Preview instantly</strong> — see your rotated or flipped GIF side-by-side with the original. The preview uses an instant CSS transform so there is no wait and no re-encoding until you download.</li>
         <li><strong>Download</strong> — click the download button to save your rotated or flipped GIF. Completely free, no watermark, no signup, no account needed.</li>
@@ -310,7 +310,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit?</h3>
-          <p class="text-sm text-surface-500 mt-1">Up to 10 MB. All processing happens in your browser — private and secure. Your GIF is never uploaded to a server.</p>
+          <p class="text-sm text-surface-500 mt-1">Up to 20 MB. All processing happens in your browser — private and secure. Your GIF is never uploaded to a server.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Does rotating or flipping add a watermark?</h3>
@@ -434,7 +434,7 @@ useHead({
             'name': 'Is there a file size limit?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'Up to 10 MB. All processing happens in your browser \u2014 private and secure. Your GIF is never uploaded to a server.',
+              'text': 'Up to 20 MB. All processing happens in your browser \u2014 private and secure. Your GIF is never uploaded to a server.',
             },
           },
           {
@@ -468,7 +468,7 @@ useHead({
             '@type': 'HowToStep',
             'position': 1,
             'name': 'Upload your animated GIF',
-            'text': 'Drag and drop or click to browse. This free GIF rotator supports animated GIFs up to 10 MB. Your file is processed entirely in your browser and never leaves your device.',
+            'text': 'Drag and drop or click to browse. This free GIF rotator supports animated GIFs up to 20 MB. Your file is processed entirely in your browser and never leaves your device.',
           },
           {
             '@type': 'HowToStep',

@@ -102,7 +102,7 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Trim a GIF Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 10 MB.</li>
+        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB.</li>
         <li><strong>Set your trim range</strong> — drag the start and end handles to select exactly which frames to keep.</li>
         <li><strong>Preview the result</strong> — see your trimmed animation play in real time before downloading.</li>
         <li><strong>Download</strong> — click "Download Trimmed GIF" to save your shortened GIF. No watermark, no account needed.</li>
@@ -138,7 +138,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 10 MB. Since all processing happens in your browser, larger files may take a moment to decode.</p>
+          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to decode.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Does trimming add a watermark?</h3>
@@ -201,7 +201,7 @@ useHead({
             'name': 'Is there a file size limit?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload GIFs up to 10 MB. Since all processing happens in your browser, larger files may take a moment to decode.',
+              'text': 'You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to decode.',
             },
           },
           {

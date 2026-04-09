@@ -355,7 +355,7 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Change GIF Speed Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 10 MB. Your file never leaves your device.</li>
+        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB. Your file never leaves your device.</li>
         <li><strong>Adjust the speed</strong> — use preset buttons to speed up a GIF (2x, 4x, 8x) or slow down a GIF (0.5x, 0.25x, 0.1x). Switch to FPS mode to target a specific frame rate, or Duration mode to set an exact playback length. Fine-tune with the slider, or enter a custom frame delay in the advanced section for precise control over GIF animation speed.</li>
         <li><strong>Download</strong> — click "Download Modified GIF" to save your speed-adjusted GIF. Free online, no watermark, no account needed.</li>
       </ol>
@@ -441,7 +441,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 10 MB. All processing happens entirely in your browser — your files stay private and are never uploaded to a server.</p>
+          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. All processing happens entirely in your browser — your files stay private and are never uploaded to a server.</p>
         </div>
       </div>
     </section>
@@ -583,7 +583,7 @@ useHead({
             'name': 'Is there a file size limit?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload GIFs up to 10 MB. All processing happens entirely in your browser — your files stay private and are never uploaded to a server.',
+              'text': 'You can upload GIFs up to 20 MB. All processing happens entirely in your browser — your files stay private and are never uploaded to a server.',
             },
           },
         ],
@@ -601,7 +601,7 @@ useHead({
             '@type': 'HowToStep',
             'position': 1,
             'name': 'Upload your GIF',
-            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 10 MB. Your file is processed entirely in your browser and never leaves your device.',
+            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB. Your file is processed entirely in your browser and never leaves your device.',
           },
           {
             '@type': 'HowToStep',

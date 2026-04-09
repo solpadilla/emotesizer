@@ -342,7 +342,7 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Compress a GIF Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> — drag & drop or click to browse. Supports animated GIFs up to 10 MB. Your file never leaves your device.</li>
+        <li><strong>Upload your GIF</strong> — drag & drop or click to browse. Supports animated GIFs up to 20 MB. Your file never leaves your device.</li>
         <li><strong>Choose a compression mode</strong> — use Smart Compress for automatic optimization with platform presets (Twitch, Discord, Kick, 7TV), or switch to Manual mode to pick individual strategies.</li>
         <li><strong>Compress and preview</strong> — see the compressed GIF alongside file size savings. Smart Compress tries strategies from lossless to aggressive until the target size is reached.</li>
         <li><strong>Download your compressed GIF</strong> — click to save instantly. Free, no watermark, no account needed.</li>
@@ -429,7 +429,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit for uploads?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 10 MB. Since all processing happens in your browser, larger files may take a moment to process. Your GIF never leaves your device.</p>
+          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to process. Your GIF never leaves your device.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Can I undo compression?</h3>
@@ -584,7 +584,7 @@ useHead({
             'name': 'Is there a file size limit for uploads?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload GIFs up to 10 MB. Since all processing happens in your browser, larger files may take a moment to process. Your GIF never leaves your device.',
+              'text': 'You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to process. Your GIF never leaves your device.',
             },
           },
           {
@@ -646,7 +646,7 @@ useHead({
         'name': 'How to Compress a GIF Online',
         'description': 'Compress animated GIFs for free using EmoteSizer. Reduce GIF file size for Discord, Twitch, Kick, and 7TV with smart auto-compression or manual strategies.',
         'step': [
-          { '@type': 'HowToStep', 'position': 1, 'name': 'Upload your GIF', 'text': 'Drag and drop or click to browse. Supports animated GIFs up to 10 MB. Your file never leaves your device — all processing happens in your browser.' },
+          { '@type': 'HowToStep', 'position': 1, 'name': 'Upload your GIF', 'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB. Your file never leaves your device — all processing happens in your browser.' },
           { '@type': 'HowToStep', 'position': 2, 'name': 'Choose a compression mode', 'text': 'Use Smart Compress with platform presets (Discord 256 KB, Twitch 1 MB, Kick, 7TV) for automatic optimization, or switch to Manual mode to pick from 11 individual compression strategies.' },
           { '@type': 'HowToStep', 'position': 3, 'name': 'Preview and compare', 'text': 'See the compressed GIF alongside file size savings in real time. Smart Compress tries strategies from lossless to aggressive until the target size is reached.' },
           { '@type': 'HowToStep', 'position': 4, 'name': 'Download the compressed GIF', 'text': 'Click download to save your compressed GIF instantly. Free, no watermark, no account needed.' },

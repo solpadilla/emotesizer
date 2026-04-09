@@ -292,7 +292,7 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Resize a GIF Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> — drag & drop or click to browse. Supports animated GIFs up to 10 MB. Your file never leaves your device.</li>
+        <li><strong>Upload your GIF</strong> — drag & drop or click to browse. Supports animated GIFs up to 20 MB. Your file never leaves your device.</li>
         <li><strong>Pick a platform preset or enter custom dimensions</strong> — one-click presets for Twitch (112x112), Discord (128x128), Kick, 7TV, BTTV, YouTube, or Slack. Or type any custom width and height up to 4096px.</li>
         <li><strong>Preview the resized GIF</strong> — see your resized animated GIF at the target dimensions before downloading. Animation, transparency, and frame timing are preserved.</li>
         <li><strong>Download your resized GIF</strong> — click to save instantly. Free, no watermark, no account needed.</li>
@@ -402,7 +402,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit for uploads?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 10 MB. Since all processing happens in your browser, larger files may take a moment to process. Your GIF never leaves your device.</p>
+          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to process. Your GIF never leaves your device.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Does resizing add a watermark?</h3>
@@ -530,7 +530,7 @@ useHead({
             'name': 'Is there a file size limit for uploads?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload GIFs up to 10 MB. Since all processing happens in your browser, larger files may take a moment to process. Your GIF never leaves your device.',
+              'text': 'You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to process. Your GIF never leaves your device.',
             },
           },
           {

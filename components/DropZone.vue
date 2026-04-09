@@ -44,7 +44,7 @@ const props = withDefaults(defineProps<{
   maxSize?: number
 }>(), {
   accept: 'image/gif,image/png',
-  maxSize: 10485760,
+  maxSize: 20971520,
 })
 
 const emit = defineEmits<{

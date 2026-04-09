@@ -248,7 +248,7 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Crop a GIF Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your animated GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 10 MB. All processing is browser-based and private, so your file never leaves your device.</li>
+        <li><strong>Upload your animated GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB. All processing is browser-based and private, so your file never leaves your device.</li>
         <li><strong>Draw your crop region or autocrop</strong> — drag the crop handles or enter exact pixel values to crop your animated GIF. Use the Autocrop button to trim transparent edges automatically, or lock an aspect ratio for square emotes and social media formats.</li>
         <li><strong>Preview the cropped GIF</strong> — see the animated crop preview in real time. The cropped file size is displayed so you can verify platform limits before downloading.</li>
         <li><strong>Download</strong> — click "Download Cropped GIF" to save. Crop a GIF online free — no watermark, no signup, no account needed.</li>
@@ -317,7 +317,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 10 MB. Since all processing happens in your browser, larger files may take a moment to decode. Your GIF never leaves your device.</p>
+          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to decode. Your GIF never leaves your device.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Does this add a watermark?</h3>
@@ -440,7 +440,7 @@ useHead({
             'name': 'Is there a file size limit?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload GIFs up to 10 MB. Since all processing happens in your browser, larger files may take a moment to decode. Your GIF never leaves your device.',
+              'text': 'You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to decode. Your GIF never leaves your device.',
             },
           },
           {
@@ -498,7 +498,7 @@ useHead({
             '@type': 'HowToStep',
             'position': 1,
             'name': 'Upload your animated GIF',
-            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 10 MB. All processing is browser-based and private — your file never leaves your device.',
+            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB. All processing is browser-based and private — your file never leaves your device.',
           },
           {
             '@type': 'HowToStep',

@@ -195,7 +195,7 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Change GIF Loop Count Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> &mdash; drag and drop or click to browse. This free GIF loop changer accepts animated GIFs up to 10 MB. All processing is browser-based and private, so your file never leaves your device.</li>
+        <li><strong>Upload your GIF</strong> &mdash; drag and drop or click to browse. This free GIF loop changer accepts animated GIFs up to 20 MB. All processing is browser-based and private, so your file never leaves your device.</li>
         <li><strong>Choose a GIF loop count</strong> &mdash; select Infinite to make your GIF loop forever, Play Once to stop it from looping, or pick a preset (2x, 3x, 5x, 10x). Need a specific number? Use the Custom option and enter any repeat count from 1 to 65,535.</li>
         <li><strong>Preview the change</strong> &mdash; a summary banner shows the before and after loop count so you know exactly how many times the GIF will repeat. The preview plays the animation so you can verify it looks correct.</li>
         <li><strong>Download</strong> &mdash; click the download button to save your modified GIF. Completely free online, no watermark, no signup required.</li>
@@ -420,7 +420,7 @@ useHead({
             '@type': 'HowToStep',
             'position': 1,
             'name': 'Upload your GIF',
-            'text': 'Drag and drop or click to browse. This free GIF loop changer accepts animated GIFs up to 10 MB. All processing is browser-based and private \u2014 your file never leaves your device.',
+            'text': 'Drag and drop or click to browse. This free GIF loop changer accepts animated GIFs up to 20 MB. All processing is browser-based and private \u2014 your file never leaves your device.',
           },
           {
             '@type': 'HowToStep',
