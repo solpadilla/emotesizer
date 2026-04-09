@@ -9,40 +9,15 @@
 - `/tools/reverse` — GIF reverse & boomerang (ping-pong loops, speed control, tool chaining)
 - `/tools/crop` — GIF cropping (interactive canvas, 10 aspect ratios, autocrop, file size display)
 - `/tools/rotate` — GIF rotate & flip (0°/90°/180°/270° rotation, horizontal/vertical flip, CSS preview)
+- `/tools/loop` — GIF loop changer (Infinite/Once/2x/3x/5x/10x/Custom, canvas preview with loop count)
+- `/tools/video-to-gif` — Video to GIF converter (FFmpeg.wasm, trim, FPS, width, quality, loop count, color count)
+- `/tools/gif-to-mp4` — GIF to MP4 converter (FFmpeg.wasm, CRF quality presets, 80-90% size reduction)
 
 ## Features in Optimizer Not Yet Standalone
 - **Platform-aware optimization** — optimizer targets specific platforms (Twitch animated/static/badges, Discord, Kick, 7TV, BTTV, FFZ, YouTube) with multi-size output
 - **Twitch sub badge support** — 18x18, 36x36, 72x72 badge presets
 
-## Quick Wins (low effort, gifsicle-wasm already available)
-
-### GIF Loop Changer
-- **Search volume**: Medium-Low
-- **Effort**: Very Low — modify loop count in GIF header
-- **How**: Modify Netscape Application Extension loop count byte; gifsicle supports `--loopcount=N`
-- **Competitors**: GIFSpeed, ezgif
-
-### GIF Frame Extractor / Splitter
-- **Search volume**: Medium
-- **Effort**: Low — decode frames, export as PNGs
-- **How**: Decode GIF frames with modern-gif, render each to canvas, export as individual PNGs (zip download)
-- **Keywords**: "gif to png", "gif splitter", "extract frames from gif"
-- **Competitors**: ezgif, GIFSpeed, Kapwing
-
-## High Traffic (bigger effort, needs FFmpeg.wasm ~25MB)
-
-### Video to GIF / MP4 to GIF
-- **Search volume**: Very High (~116K/mo for "mp4 to gif")
-- **Effort**: High — requires FFmpeg.wasm
-- **How**: Decode video frames via FFmpeg.wasm, encode to GIF with frame rate/quality controls
-- **Note**: Highest-traffic GIF tool keyword in existence
-- **Competitors**: ezgif (#1 rank), Canva, Adobe Express, VEED, Kapwing, CloudConvert
-
-### GIF to MP4/Video
-- **Search volume**: Very High
-- **Effort**: High — requires FFmpeg.wasm
-- **How**: Decode GIF frames, encode to MP4 via FFmpeg.wasm; MP4 is 80-90% smaller than GIF
-- **Competitors**: ezgif, Canva, VEED, Kapwing, CloudConvert
+## Remaining Tools
 
 ### GIF Maker (from images)
 - **Search volume**: High (~50K/mo for "gif maker")
@@ -91,19 +66,13 @@
 
 ## Recommended Build Order
 
-### Phase 1 — Quick wins (use existing gifsicle-wasm)
-1. GIF Loop Changer
-2. GIF Frame Extractor
+### Phase 1 — Next up
+1. GIF Maker (from images)
 
-### Phase 2 — High-traffic tools (add FFmpeg.wasm)
-3. Video to GIF (MP4 to GIF)
-4. GIF to MP4/Video
-5. GIF Maker (from images)
+### Phase 2 — Format converters
+2. GIF to WebP
+3. WebP to GIF
 
-### Phase 3 — Format converters
-6. GIF to WebP
-7. WebP to GIF
-
-### Phase 4 — Creative tools
-8. Add Text to GIF
-9. GIF to APNG
+### Phase 3 — Creative tools
+4. Add Text to GIF
+5. GIF to APNG
