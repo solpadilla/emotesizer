@@ -1,6 +1,3 @@
-import { FFmpeg } from '@ffmpeg/ffmpeg'
-import { fetchFile, toBlobURL } from '@ffmpeg/util'
-
 export interface ConvertOptions {
   inputFile: File
   startTime: number
@@ -24,9 +21,14 @@ export interface ConvertToMp4Options {
  * SharedArrayBuffer requires Cross-Origin-Opener-Policy and
  * Cross-Origin-Embedder-Policy headers to be set on the page. If those headers
  * are missing, ffmpeg.load() will fail and this composable surfaces the error.
+ *
+ * All @ffmpeg/* imports are dynamic to prevent SSR failures — FFmpeg.wasm is
+ * browser-only and cannot be imported at the top level in a Nuxt SSR context.
  */
 export function useFFmpeg() {
-  const ffmpeg = new FFmpeg()
+  // FFmpeg instance is created lazily in load() via dynamic import.
+  // Typed as `any` because the class is only available client-side.
+  let ffmpeg: any = null
   const isLoading = ref(false)
   const isReady = ref(false)
   const loadProgress = ref(0)
@@ -42,10 +44,16 @@ export function useFFmpeg() {
     loadProgress.value = 0
 
     try {
+      // Dynamic imports — only resolved in the browser, never during SSR
+      const { FFmpeg } = await import('@ffmpeg/ffmpeg')
+      const { toBlobURL } = await import('@ffmpeg/util')
+
+      ffmpeg = new FFmpeg()
+
       // Track conversion progress via FFmpeg's built-in progress event.
       // Guard against duplicate listeners on repeated load() calls.
       if (!progressListenerAttached) {
-        ffmpeg.on('progress', ({ progress }) => {
+        ffmpeg.on('progress', ({ progress }: { progress: number }) => {
           conversionProgress.value = Math.round(Math.min(progress, 1) * 100)
         })
         progressListenerAttached = true
@@ -81,7 +89,10 @@ export function useFFmpeg() {
    * significantly better color reproduction than direct conversion.
    */
   async function convertToGif(options: ConvertOptions): Promise<Blob> {
+    if (!ffmpeg) throw new Error('FFmpeg not loaded — call load() first')
+
     const { inputFile, startTime, duration, fps, width, quality, loopCount, maxColors } = options
+    const { fetchFile } = await import('@ffmpeg/util')
 
     // Write the input video to FFmpeg's virtual filesystem
     await ffmpeg.writeFile('input.mp4', await fetchFile(inputFile))
@@ -152,7 +163,10 @@ export function useFFmpeg() {
    * yuv420p pixel format, and movflags=faststart enables progressive playback.
    */
   async function convertToMp4(options: ConvertToMp4Options): Promise<Blob> {
+    if (!ffmpeg) throw new Error('FFmpeg not loaded — call load() first')
+
     const { inputFile, crf } = options
+    const { fetchFile } = await import('@ffmpeg/util')
 
     // Write the input GIF to FFmpeg's virtual filesystem
     await ffmpeg.writeFile('input.gif', await fetchFile(inputFile))
@@ -185,9 +199,12 @@ export function useFFmpeg() {
 
   /** Terminates the FFmpeg instance, cancelling any in-progress operation */
   function cancelConversion() {
-    ffmpeg.terminate()
-    // Reset the listener flag so it gets reattached on next load(),
-    // since terminate() destroys the FFmpeg instance and its listeners.
+    if (ffmpeg) {
+      ffmpeg.terminate()
+      // Null out the instance so a fresh one is created on next load(),
+      // since terminate() destroys the FFmpeg instance and its listeners.
+      ffmpeg = null
+    }
     progressListenerAttached = false
     isReady.value = false
     conversionPhase.value = 'idle'
