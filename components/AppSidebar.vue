@@ -79,7 +79,7 @@
                 v-if="isToolActive(tool.to)"
                 class="absolute left-0 w-[3px] h-5 bg-primary-500 rounded-full"
               />
-              <component :is="resolveComponent(tool.icon)" :size="18" />
+              <component :is="iconMap[tool.icon]" :size="18" />
               {{ tool.label }}
             </NuxtLink>
           </div>
@@ -131,6 +131,23 @@
 const route = useRoute()
 const { isDark, cycleTheme } = useTheme()
 const { activeCategories } = useToolsNav()
+
+// Pre-resolve all icon components used in the tools nav so that dynamic
+// `<component :is="...">` lookups work correctly. Nuxt tree-shakes
+// auto-imported components that aren't statically referenced, so calling
+// resolveComponent() with a runtime string in the template fails.
+// Resolving them here during setup keeps them in the registry.
+const iconMap: Record<string, ReturnType<typeof resolveComponent>> = {
+  IconScissors: resolveComponent('IconScissors'),
+  IconResize: resolveComponent('IconResize'),
+  IconCrop: resolveComponent('IconCrop'),
+  IconRotate: resolveComponent('IconRotate'),
+  IconGauge: resolveComponent('IconGauge'),
+  IconReverse: resolveComponent('IconReverse'),
+  IconLoop: resolveComponent('IconLoop'),
+  IconFrame: resolveComponent('IconFrame'),
+  IconCompress: resolveComponent('IconCompress'),
+}
 
 const expandedCategory = ref<string | null>(null)
 

@@ -32,6 +32,7 @@ export const useToolsNav = () => {
       tools: [
         { to: '/tools/speed', label: 'GIF Speed', icon: 'IconGauge', description: 'Speed up or slow down GIF animation' },
         { to: '/tools/reverse', label: 'GIF Reverse', icon: 'IconReverse', description: 'Play GIFs backwards or create boomerang loops' },
+        { to: '/tools/loop', label: 'GIF Loop', icon: 'IconLoop', description: 'Change how many times a GIF loops before stopping' },
       ],
     },
     {
