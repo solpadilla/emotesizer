@@ -546,8 +546,7 @@ const gifFileName = ref('')
 const decodedFrames = ref<DecodedFrame[]>([])
 const isDecoding = ref(false)
 const isEncoding = ref(false)
-const previewUrl = ref<string | null>(null)
-/** File size (bytes) of the most recent crop preview blob */
+/** File size (bytes) of the last encoded crop (populated after download) */
 const previewFileSize = ref<number | null>(null)
 /** Stores the decoded GIF metadata (loop settings, etc.) for re-encoding */
 const gifMetadata = ref<ReturnType<typeof decode> | null>(null)
@@ -563,8 +562,6 @@ type AspectPresetValue = 'free' | '1:1' | '4:3' | '3:2' | '16:9' | '2:1' | '4:5'
 const selectedAspect = ref<AspectPresetValue>('free')
 const customRatioW = ref(1)
 const customRatioH = ref(1)
-
-let previewTimeout: ReturnType<typeof setTimeout> | null = null
 
 const aspectPresets = [
   { value: 'free' as AspectPresetValue, label: 'Free' },
@@ -683,7 +680,9 @@ function applyAspectRatioToCurrentCrop() {
   cropW.value = newW
   cropH.value = newH
 
-  debouncedPreview()
+  // File size estimate is invalidated when the crop region changes.
+  // Re-encoding is deferred to download to avoid blocking the animation loop.
+  previewFileSize.value = null
 }
 
 // -- Quick crop actions --
@@ -695,7 +694,7 @@ function centerSquareCrop() {
   cropX.value = Math.round((sourceWidth.value - side) / 2)
   cropY.value = Math.round((sourceHeight.value - side) / 2)
   selectedAspect.value = '1:1'
-  debouncedPreview()
+  previewFileSize.value = null
 }
 
 function selectAllCrop() {
@@ -704,7 +703,7 @@ function selectAllCrop() {
   cropW.value = sourceWidth.value
   cropH.value = sourceHeight.value
   selectedAspect.value = 'free'
-  debouncedPreview()
+  previewFileSize.value = null
 }
 
 /** Scans the first frame for non-transparent pixels and sets the crop to their bounding box */
@@ -771,7 +770,7 @@ function autoTrimCrop() {
   cropY.value = trimY
   cropW.value = trimW
   cropH.value = trimH
-  debouncedPreview()
+  previewFileSize.value = null
 }
 
 // -- Crop input handlers --
@@ -780,7 +779,7 @@ function autoTrimCrop() {
 function handleCropInputChange() {
   cropX.value = Math.max(0, Math.min(cropX.value || 0, sourceWidth.value - cropW.value))
   cropY.value = Math.max(0, Math.min(cropY.value || 0, sourceHeight.value - cropH.value))
-  debouncedPreview()
+  previewFileSize.value = null
 }
 
 /** Handles changes to Width/Height inputs — clamps and respects aspect ratio */
@@ -799,7 +798,7 @@ function handleCropSizeChange() {
     cropW.value = Math.max(1, cropW.value)
   }
 
-  debouncedPreview()
+  previewFileSize.value = null
 }
 
 /** Handles crop updates from the GifCropCanvas component (pointer drag / resize) */
@@ -808,7 +807,7 @@ function handleCanvasCropUpdate(crop: { x: number; y: number; w: number; h: numb
   cropY.value = crop.y
   cropW.value = crop.w
   cropH.value = crop.h
-  debouncedPreview()
+  previewFileSize.value = null
 }
 
 // -- File handling --
@@ -849,37 +848,13 @@ async function decodeGifFrames() {
   } catch {
     toastError('Failed to decode GIF. The file may be corrupted.')
     decodedFrames.value = []
+    if (gifUrl.value) {
+      URL.revokeObjectURL(gifUrl.value)
+      gifUrl.value = ''
+    }
   } finally {
     isDecoding.value = false
   }
-}
-
-// -- Debounced preview re-encode --
-
-function debouncedPreview() {
-  if (previewTimeout) clearTimeout(previewTimeout)
-  if (!decodedFrames.value.length) return
-
-  // If crop covers the full image, no need to re-encode — use original
-  if (!isCropped.value) {
-    if (previewUrl.value) {
-      URL.revokeObjectURL(previewUrl.value)
-      previewUrl.value = null
-    }
-    previewFileSize.value = null
-    return
-  }
-
-  previewTimeout = setTimeout(async () => {
-    try {
-      const blob = await encodeCroppedGif()
-      if (previewUrl.value) URL.revokeObjectURL(previewUrl.value)
-      previewUrl.value = URL.createObjectURL(blob)
-      previewFileSize.value = blob.size
-    } catch (e) {
-      if (import.meta.dev) console.error('Crop preview failed:', e)
-    }
-  }, 500)
 }
 
 /** Encodes the cropped GIF from decoded frames using canvas-based pixel extraction */
@@ -907,29 +882,34 @@ async function encodeCroppedGif(): Promise<Blob> {
 
   const croppedFrames: Array<{ data: Uint8ClampedArray; delay: number }> = []
 
-  for (const frame of frames) {
-    // Update source canvas dimensions if frames vary in size
-    if (srcCanvas.width !== frame.width || srcCanvas.height !== frame.height) {
-      srcCanvas.width = frame.width
-      srcCanvas.height = frame.height
+  try {
+    for (let i = 0; i < frames.length; i++) {
+      const frame = frames[i]
+      // Update source canvas dimensions if frames vary in size
+      if (srcCanvas.width !== frame.width || srcCanvas.height !== frame.height) {
+        srcCanvas.width = frame.width
+        srcCanvas.height = frame.height
+      }
+
+      srcCtx.putImageData(
+        new ImageData(new Uint8ClampedArray(frame.data), frame.width, frame.height),
+        0, 0,
+      )
+
+      // Extract the crop region
+      const cropped = srcCtx.getImageData(cx, cy, cw, ch)
+      croppedFrames.push({ data: cropped.data, delay: frame.delay || 100 })
+
+      // Yield to browser every 50 frames to prevent UI freeze
+      if (i % 50 === 0 && i > 0) {
+        await new Promise(resolve => setTimeout(resolve, 0))
+      }
     }
-
-    srcCtx.putImageData(
-      new ImageData(new Uint8ClampedArray(frame.data), frame.width, frame.height),
-      0, 0,
-    )
-
-    // Extract the crop region
-    const cropped = srcCtx.getImageData(cx, cy, cw, ch)
-    croppedFrames.push({ data: cropped.data, delay: frame.delay || 100 })
-
-    // Yield to browser to prevent UI freeze
-    await new Promise(resolve => setTimeout(resolve, 0))
+  } finally {
+    // Release canvas resources even if encoding throws
+    srcCanvas.width = 0
+    srcCanvas.height = 0
   }
-
-  // Release canvas resources
-  srcCanvas.width = 0
-  srcCanvas.height = 0
 
   const encoded = await encode({
     width: cw,
@@ -954,24 +934,12 @@ async function downloadCropped() {
     return
   }
 
-  // Reuse cached preview blob if available
-  if (previewUrl.value) {
-    isEncoding.value = true
-    try {
-      const response = await fetch(previewUrl.value)
-      const blob = await response.blob()
-      downloadBlob(blob, `cropped_${baseName}`)
-      toastSuccess('Cropped GIF downloaded!')
-    } finally {
-      isEncoding.value = false
-    }
-    return
-  }
-
-  // Encode fresh
+  // Encode the cropped GIF on demand — avoids blocking the animation loop
+  // with expensive background encodes during crop adjustments.
   isEncoding.value = true
   try {
     const blob = await encodeCroppedGif()
+    previewFileSize.value = blob.size
     downloadBlob(blob, `cropped_${baseName}`)
     toastSuccess('Cropped GIF downloaded!')
   } catch {
@@ -985,16 +953,10 @@ async function downloadCropped() {
 
 function resetState() {
   if (gifUrl.value) URL.revokeObjectURL(gifUrl.value)
-  if (previewUrl.value) URL.revokeObjectURL(previewUrl.value)
-  if (previewTimeout) {
-    clearTimeout(previewTimeout)
-    previewTimeout = null
-  }
   gifUrl.value = ''
   gifFileName.value = ''
   decodedFrames.value = []
   gifMetadata.value = null
-  previewUrl.value = null
   previewFileSize.value = null
   cropX.value = 0
   cropY.value = 0

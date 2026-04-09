@@ -176,6 +176,9 @@ const visibleHandles = computed(() => {
 let srcCanvas: HTMLCanvasElement | null = null
 let srcCtx: CanvasRenderingContext2D | null = null
 
+/** Cached ImageData to avoid allocating a new one every frame */
+let cachedImageData: ImageData | null = null
+
 /** ResizeObserver for tracking container dimensions */
 let resizeObserver: ResizeObserver | null = null
 
@@ -187,11 +190,16 @@ let accumulatedTime = 0
 /** Whether the user prefers reduced motion */
 const prefersReducedMotion = ref(false)
 
+/** Media query listener refs for cleanup */
+let mqlListener: ((e: MediaQueryListEvent) => void) | null = null
+let mql: MediaQueryList | null = null
+
 onMounted(() => {
   // Check reduced motion preference
-  const mql = window.matchMedia('(prefers-reduced-motion: reduce)')
+  mql = window.matchMedia('(prefers-reduced-motion: reduce)')
   prefersReducedMotion.value = mql.matches
-  mql.addEventListener('change', (e) => { prefersReducedMotion.value = e.matches })
+  mqlListener = (e) => { prefersReducedMotion.value = e.matches }
+  mql.addEventListener('change', mqlListener)
 
   // Set up ResizeObserver to track container dimensions
   if (containerRef.value) {
@@ -210,6 +218,13 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   stopAnimation()
+
+  // Clean up media query listener
+  if (mql && mqlListener) {
+    mql.removeEventListener('change', mqlListener)
+    mqlListener = null
+    mql = null
+  }
 
   // Clean up ResizeObserver
   resizeObserver?.disconnect()
@@ -232,6 +247,8 @@ onBeforeUnmount(() => {
     srcCanvas = null
     srcCtx = null
   }
+
+  cachedImageData = null
 })
 
 function startAnimation() {
@@ -250,12 +267,9 @@ function stopAnimation() {
 }
 
 function animationLoop(timestamp: number) {
-  if (!props.frames.length) {
-    animationId = requestAnimationFrame(animationLoop)
-    return
-  }
+  if (!props.frames.length) return // Don't reschedule — nothing to draw
 
-  // For reduced motion or single-frame GIFs, draw once and stop
+  // For reduced motion or single-frame GIFs, draw once and don't reschedule
   if (prefersReducedMotion.value || props.frames.length <= 1) {
     drawFrame(0)
     return
@@ -302,12 +316,12 @@ function drawFrame(index: number) {
   srcCanvas.width = frame.width
   srcCanvas.height = frame.height
 
-  const imageData = new ImageData(
-    new Uint8ClampedArray(frame.data),
-    frame.width,
-    frame.height,
-  )
-  srcCtx.putImageData(imageData, 0, 0)
+  // Reuse cached ImageData to avoid a full pixel-data allocation every frame
+  if (!cachedImageData || cachedImageData.width !== frame.width || cachedImageData.height !== frame.height) {
+    cachedImageData = new ImageData(frame.width, frame.height)
+  }
+  cachedImageData.data.set(frame.data)
+  srcCtx.putImageData(cachedImageData, 0, 0)
 
   // Draw scaled to the display canvas
   ctx.clearRect(0, 0, canvasWidth.value, canvasHeight.value)
@@ -316,6 +330,7 @@ function drawFrame(index: number) {
 
 // Restart animation when frames change
 watch(() => props.frames, () => {
+  cachedImageData = null
   startAnimation()
 })
 
@@ -357,6 +372,9 @@ function startDrag(event: PointerEvent, operation: HandleId) {
   // Safety timeout: auto-cancel drag after 10s if pointerup never fires
   dragSafetyTimeout = setTimeout(() => { activeOperation = null; capturedPointerId = null }, 10000)
 
+  // Remove before adding to prevent stacking if a prior pointerup was missed
+  target.removeEventListener('pointermove', handlePointerMove)
+  target.removeEventListener('pointerup', handlePointerUp)
   target.addEventListener('pointermove', handlePointerMove)
   target.addEventListener('pointerup', handlePointerUp)
 }
@@ -474,12 +492,10 @@ function handleResize(handle: HandleId, deltaX: number, deltaY: number) {
 
   // Clamp to image bounds
   if (newX < 0) {
-    const overflow = -newX
     newX = 0
     if (isLeft) newW = dragStartCropW + dragStartCropX // Max possible width from left edge
   }
   if (newY < 0) {
-    const overflow = -newY
     newY = 0
     if (isTop) newH = dragStartCropH + dragStartCropY
   }
