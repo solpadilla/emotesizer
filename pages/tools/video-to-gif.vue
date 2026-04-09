@@ -204,6 +204,94 @@
             </p>
           </div>
 
+          <!-- Loop Count -->
+          <div>
+            <h3 class="label mb-2">Loop Count</h3>
+            <div class="flex flex-wrap gap-1.5" role="radiogroup" aria-label="Loop count">
+              <button
+                role="radio"
+                :aria-checked="loopPreset === 'infinite'"
+                class="pill text-xs !px-3 !py-1.5 !min-h-[36px]"
+                :class="{ 'pill-active': loopPreset === 'infinite' }"
+                @click="setLoopPreset('infinite')"
+              >
+                Infinite
+              </button>
+              <button
+                role="radio"
+                :aria-checked="loopPreset === 'once'"
+                class="pill text-xs !px-3 !py-1.5 !min-h-[36px]"
+                :class="{ 'pill-active': loopPreset === 'once' }"
+                @click="setLoopPreset('once')"
+              >
+                Play Once
+              </button>
+              <button
+                role="radio"
+                :aria-checked="loopPreset === '3x'"
+                class="pill text-xs !px-3 !py-1.5 !min-h-[36px]"
+                :class="{ 'pill-active': loopPreset === '3x' }"
+                @click="setLoopPreset('3x')"
+              >
+                3x
+              </button>
+              <button
+                role="radio"
+                :aria-checked="loopPreset === 'custom'"
+                class="pill text-xs !px-3 !py-1.5 !min-h-[36px]"
+                :class="{ 'pill-active': loopPreset === 'custom' }"
+                @click="setLoopPreset('custom')"
+              >
+                Custom
+              </button>
+            </div>
+            <Transition
+              enter-active-class="transition duration-200 ease-out"
+              enter-from-class="opacity-0 -translate-y-2"
+              enter-to-class="opacity-100 translate-y-0"
+              leave-active-class="transition duration-150 ease-in"
+              leave-from-class="opacity-100 translate-y-0"
+              leave-to-class="opacity-0 -translate-y-2"
+            >
+              <div v-if="loopPreset === 'custom'" class="mt-2">
+                <input
+                  v-model.number="customLoopCount"
+                  type="number"
+                  min="1"
+                  max="65535"
+                  class="input text-center w-24"
+                  aria-label="Custom loop count"
+                  @input="handleCustomLoopInput"
+                />
+                <span class="text-xs text-surface-400 ml-2">loops</span>
+              </div>
+            </Transition>
+          </div>
+
+          <!-- Max Colors -->
+          <div>
+            <h3 class="label mb-2">Max Colors</h3>
+            <input
+              type="range"
+              min="16"
+              max="256"
+              step="16"
+              v-model.number="maxColors"
+              class="w-full accent-primary-500"
+              aria-label="Maximum color count"
+              :disabled="quality === 'small'"
+            />
+            <div class="flex items-center justify-between mt-1">
+              <span class="text-xs text-surface-400">16 (smallest)</span>
+              <span class="text-xs font-medium text-surface-600">{{ maxColors }} colors</span>
+              <span class="text-xs text-surface-400">256 (best)</span>
+            </div>
+            <p class="text-xs text-surface-400 mt-1.5">
+              <template v-if="quality === 'small'">Color count only applies to Balanced and Best quality modes.</template>
+              <template v-else>Fewer colors = smaller file size. 128-256 is ideal for most GIFs.</template>
+            </p>
+          </div>
+
           <!-- Estimated output size -->
           <div class="flex items-start gap-2 p-3 rounded-xl bg-primary-500/5 border border-primary-500/10">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-0.5 text-primary-500">
@@ -393,6 +481,8 @@
             <span>{{ formatDuration(videoDuration) }}</span>
             <span>{{ formatFileSize(videoFileSize) }}</span>
             <span v-if="trimDuration < videoDuration">Trim: {{ trimDuration.toFixed(1) }}s</span>
+            <span>Loop: {{ effectiveLoopCount === 0 ? 'Infinite' : effectiveLoopCount === -1 ? 'Once' : effectiveLoopCount + 'x' }}</span>
+            <span v-if="quality !== 'small'">Colors: {{ maxColors }}</span>
           </div>
         </template>
       </div>
@@ -694,6 +784,14 @@ const customFps = ref(15)
 const customWidthActive = ref(false)
 const customWidth = ref(480)
 
+// Loop count state
+const loopCount = ref(0)              // 0 = infinite
+const loopPreset = ref<'infinite' | 'once' | '3x' | 'custom'>('infinite')
+const customLoopCount = ref(3)
+
+// Max colors state (16-256, only applies to balanced/best quality)
+const maxColors = ref(256)
+
 const videoPlayerRef = ref<HTMLVideoElement | null>(null)
 
 // -- Presets --
@@ -722,6 +820,20 @@ const qualityOptions = [
 
 const trimDuration = computed(() => trimRange.value[1] - trimRange.value[0])
 
+/**
+ * Maps the loop preset to the FFmpeg -loop value.
+ * FFmpeg GIF loop semantics: 0 = infinite, -1 = no loop (play once), N = loop N times.
+ */
+const effectiveLoopCount = computed(() => {
+  switch (loopPreset.value) {
+    case 'infinite': return 0
+    case 'once': return -1
+    case '3x': return 3
+    case 'custom': return customLoopCount.value
+    default: return 0
+  }
+})
+
 /** Computed output height based on aspect ratio and selected width */
 const computedHeight = computed(() => {
   if (videoWidth.value <= 0 || videoHeight.value <= 0) return 0
@@ -738,6 +850,10 @@ const estimatedFrameCount = computed(() => {
  * GIF bytes per frame depends heavily on content complexity, but a reasonable
  * heuristic is: width * height * 0.5 bytes per frame for balanced quality,
  * scaled by a quality factor. This is intentionally conservative (high).
+ *
+ * Fewer colors reduce file size because the GIF LZW compression works better
+ * with a smaller palette. We scale linearly from ~0.6x at 16 colors to 1.0x
+ * at 256 colors. This only applies to balanced/best quality modes.
  */
 const estimatedSize = computed(() => {
   const w = outputWidth.value
@@ -745,7 +861,9 @@ const estimatedSize = computed(() => {
   if (w <= 0 || h <= 0) return 0
 
   const qualityFactor = quality.value === 'small' ? 0.3 : quality.value === 'balanced' ? 0.5 : 0.6
-  const bytesPerFrame = w * h * qualityFactor
+  // Color count scaling: fewer colors compress better (only for palette modes)
+  const colorFactor = quality.value === 'small' ? 1 : 0.6 + 0.4 * ((maxColors.value - 16) / (256 - 16))
+  const bytesPerFrame = w * h * qualityFactor * colorFactor
   return Math.round(bytesPerFrame * estimatedFrameCount.value)
 })
 
@@ -808,6 +926,17 @@ function handleCustomWidthInput() {
   const maxW = videoWidth.value || 3840
   const clamped = Math.max(50, Math.min(maxW, customWidth.value || 480))
   outputWidth.value = clamped
+}
+
+// -- Loop count controls --
+
+function setLoopPreset(preset: 'infinite' | 'once' | '3x' | 'custom') {
+  loopPreset.value = preset
+}
+
+function handleCustomLoopInput() {
+  const clamped = Math.max(1, Math.min(65535, customLoopCount.value || 3))
+  customLoopCount.value = clamped
 }
 
 // -- Trim controls --
@@ -937,6 +1066,10 @@ function resetState() {
   currentPlayTime.value = 0
   customFpsActive.value = false
   customWidthActive.value = false
+  loopCount.value = 0
+  loopPreset.value = 'infinite'
+  customLoopCount.value = 3
+  maxColors.value = 256
 }
 
 // -- File handling --
@@ -997,6 +1130,8 @@ async function convertVideo() {
       fps: fps.value,
       width: outputWidth.value,
       quality: quality.value,
+      loopCount: effectiveLoopCount.value,
+      maxColors: maxColors.value,
     })
 
     resultGifUrl.value = URL.createObjectURL(blob)

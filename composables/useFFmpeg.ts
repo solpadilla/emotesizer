@@ -8,6 +8,8 @@ export interface ConvertOptions {
   fps: number
   width: number
   quality: 'small' | 'balanced' | 'best'
+  loopCount: number   // 0 = infinite, -1 = no loop (play once), N = loop N times
+  maxColors: number   // 16-256, used in palettegen for balanced/best quality
 }
 
 /**
@@ -74,7 +76,7 @@ export function useFFmpeg() {
    * significantly better color reproduction than direct conversion.
    */
   async function convertToGif(options: ConvertOptions): Promise<Blob> {
-    const { inputFile, startTime, duration, fps, width, quality } = options
+    const { inputFile, startTime, duration, fps, width, quality, loopCount, maxColors } = options
 
     // Write the input video to FFmpeg's virtual filesystem
     await ffmpeg.writeFile('input.mp4', await fetchFile(inputFile))
@@ -91,6 +93,7 @@ export function useFFmpeg() {
           '-i', 'input.mp4',
           '-vf', `fps=${fps},scale=${width}:-1:flags=lanczos`,
           '-gifflags', '+transdiff',
+          '-loop', String(loopCount),
           '-y', 'output.gif',
         ])
       } else {
@@ -103,7 +106,7 @@ export function useFFmpeg() {
           '-ss', String(startTime),
           '-t', String(duration),
           '-i', 'input.mp4',
-          '-vf', `fps=${fps},scale=${width}:-1:flags=lanczos,palettegen=max_colors=256:stats_mode=diff`,
+          '-vf', `fps=${fps},scale=${width}:-1:flags=lanczos,palettegen=max_colors=${maxColors}:stats_mode=diff`,
           '-y', 'palette.png',
         ])
 
@@ -116,6 +119,7 @@ export function useFFmpeg() {
           '-i', 'input.mp4',
           '-i', 'palette.png',
           '-lavfi', `fps=${fps},scale=${width}:-1:flags=lanczos[x];[x][1:v]paletteuse=dither=${dither}`,
+          '-loop', String(loopCount),
           '-y', 'output.gif',
         ])
       }
