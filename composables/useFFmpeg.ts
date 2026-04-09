@@ -91,10 +91,17 @@ export function useFFmpeg() {
       // Load FFmpeg core from local public/ directory instead of a CDN.
       // Files are served from the same origin, so there are no CORS issues
       // and no dependency on external CDN availability or speed.
+      //
+      // classWorkerURL overrides the default worker created inside FFmpeg's
+      // load(). The library uses `new Worker(new URL("./worker.js", import.meta.url), { type: "module" })`,
+      // but Vite cannot resolve the worker's relative ES imports (./const.js,
+      // ./errors.js), causing the worker to silently fail and load() to hang.
+      // Our self-contained /ffmpeg/worker.js inlines those dependencies.
       await Promise.race([
         ffmpeg.load({
           coreURL: '/ffmpeg/ffmpeg-core.js',
           wasmURL: '/ffmpeg/ffmpeg-core.wasm',
+          classWorkerURL: '/ffmpeg/worker.js',
         }),
         timeout.promise,
       ])
