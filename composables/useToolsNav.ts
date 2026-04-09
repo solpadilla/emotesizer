@@ -41,6 +41,7 @@ export const useToolsNav = () => {
       icon: 'IconFrame',
       tools: [
         { to: '/tools/gif-to-png', label: 'GIF to PNG', icon: 'IconFrame', description: 'Extract individual frames as PNG images' },
+        { to: '/tools/gif-to-mp4', label: 'GIF to MP4', icon: 'IconVideo', description: 'Convert GIFs to MP4 video for smaller file size' },
         { to: '/tools/video-to-gif', label: 'Video to GIF', icon: 'IconVideo', description: 'Convert video clips to animated GIFs' },
       ],
     },
