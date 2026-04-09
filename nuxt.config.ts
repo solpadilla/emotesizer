@@ -103,6 +103,22 @@ export default defineNuxtConfig({
     },
   },
 
+  // FFmpeg.wasm requires SharedArrayBuffer, which needs Cross-Origin-Opener-Policy
+  // and Cross-Origin-Embedder-Policy headers. Using "credentialless" for COEP
+  // instead of "require-corp" to avoid breaking third-party resources (AdSense,
+  // CDN scripts) that don't set Cross-Origin-Resource-Policy headers.
+  // "credentialless" still enables SharedArrayBuffer in Chrome/Edge 96+.
+  nitro: {
+    routeRules: {
+      '/**': {
+        headers: {
+          'Cross-Origin-Opener-Policy': 'same-origin',
+          'Cross-Origin-Embedder-Policy': 'credentialless',
+        },
+      },
+    },
+  },
+
   css: ['~/assets/css/main.css'],
 
   // Flatten the icons/ subdirectory so components inside it are auto-imported

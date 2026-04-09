@@ -147,6 +147,7 @@ const iconMap: Record<string, ReturnType<typeof resolveComponent>> = {
   IconLoop: resolveComponent('IconLoop'),
   IconFrame: resolveComponent('IconFrame'),
   IconCompress: resolveComponent('IconCompress'),
+  IconVideo: resolveComponent('IconVideo'),
 }
 
 const expandedCategory = ref<string | null>(null)
