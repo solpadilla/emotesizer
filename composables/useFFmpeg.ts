@@ -14,6 +14,15 @@ export interface ConvertToMp4Options {
   crf: number  // 18 (best), 23 (better), or 28 (good)
 }
 
+// Must match the CORE_VERSION expected by the installed @ffmpeg/ffmpeg package.
+// Check node_modules/@ffmpeg/ffmpeg/dist/esm/const.js → CORE_VERSION to verify.
+const FFMPEG_CORE_VERSION = '0.12.9'
+const FFMPEG_CDN_BASE = `https://unpkg.com/@ffmpeg/core@${FFMPEG_CORE_VERSION}/dist/esm`
+
+// Maximum time (ms) to wait for FFmpeg WASM core to download and initialize.
+// 30 seconds is generous for CDN fetches; prevents infinite hang on slow/blocked CDNs.
+const LOAD_TIMEOUT_MS = 30_000
+
 /**
  * Composable for managing FFmpeg.wasm lifecycle, conversion, and cleanup.
  *
@@ -37,11 +46,37 @@ export function useFFmpeg() {
   const error = ref<string | null>(null)
   let progressListenerAttached = false
 
+  /**
+   * Creates a promise that rejects after `ms` milliseconds.
+   * Used to race against long-running FFmpeg CDN downloads.
+   */
+  function createTimeout(ms: number): { promise: Promise<never>; clear: () => void } {
+    let timeoutId: ReturnType<typeof setTimeout>
+    const promise = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(
+        () => reject(new Error(`FFmpeg loading timed out after ${ms / 1000} seconds. The CDN may be slow or blocked — please try again.`)),
+        ms,
+      )
+    })
+    return { promise, clear: () => clearTimeout(timeoutId) }
+  }
+
   async function load() {
     if (isReady.value || isLoading.value) return
     isLoading.value = true
     error.value = null
     loadProgress.value = 0
+
+    // Pre-flight: check SharedArrayBuffer availability before attempting
+    // the expensive WASM download, so we fail fast with a clear message.
+    if (typeof SharedArrayBuffer === 'undefined') {
+      error.value = 'Your browser does not support SharedArrayBuffer, which is required for video conversion. '
+        + 'Please use a modern browser (Chrome 92+, Edge 92+, Firefox 79+) and ensure the page is served over HTTPS with the correct security headers.'
+      isLoading.value = false
+      return
+    }
+
+    const timeout = createTimeout(LOAD_TIMEOUT_MS)
 
     try {
       // Dynamic imports — only resolved in the browser, never during SSR
@@ -59,24 +94,47 @@ export function useFFmpeg() {
         progressListenerAttached = true
       }
 
-      const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
+      // Convert CDN resources to blob URLs so the Web Worker can import them
+      // without CORS issues. Race against a timeout to prevent infinite hangs
+      // when the CDN is slow or unreachable.
+      const coreURL = await Promise.race([
+        toBlobURL(`${FFMPEG_CDN_BASE}/ffmpeg-core.js`, 'text/javascript'),
+        timeout.promise,
+      ])
+      const wasmURL = await Promise.race([
+        toBlobURL(`${FFMPEG_CDN_BASE}/ffmpeg-core.wasm`, 'application/wasm'),
+        timeout.promise,
+      ])
 
-      await ffmpeg.load({
-        coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-      })
+      await Promise.race([
+        ffmpeg.load({ coreURL, wasmURL }),
+        timeout.promise,
+      ])
 
       isReady.value = true
     } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Failed to load FFmpeg'
+      // Clean up partial FFmpeg state so the next load() starts fresh
+      if (ffmpeg) {
+        try { ffmpeg.terminate() } catch { /* already dead */ }
+        ffmpeg = null
+        progressListenerAttached = false
+      }
 
-      // Provide a more helpful message for SharedArrayBuffer issues
+      const msg = e instanceof Error ? e.message : String(e)
+
+      // Provide targeted messages for known failure modes
       if (msg.includes('SharedArrayBuffer') || msg.includes('crossOriginIsolated')) {
-        error.value = 'Your browser does not support SharedArrayBuffer, which is required for video conversion. Please use a modern browser (Chrome, Edge, Firefox) and ensure the page is served with the correct security headers.'
-      } else {
+        error.value = 'Your browser does not support SharedArrayBuffer, which is required for video conversion. '
+          + 'Please use a modern browser (Chrome 92+, Edge 92+, Firefox 79+) and ensure the page is served over HTTPS with the correct security headers.'
+      } else if (msg.includes('timed out')) {
         error.value = msg
+      } else if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('Load failed')) {
+        error.value = 'Failed to download the video engine. Please check your internet connection and try again.'
+      } else {
+        error.value = `Failed to load video engine: ${msg}`
       }
     } finally {
+      timeout.clear()
       isLoading.value = false
     }
   }
