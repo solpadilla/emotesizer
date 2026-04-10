@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
-    <!-- Source Preview -->
-    <div v-if="gifUrl && isValidMediaUrl(gifUrl)" class="space-y-3">
+    <!-- Source Preview (hidden when crop canvas is active in parent) -->
+    <div v-if="!hideSourcePreview && gifUrl && isValidMediaUrl(gifUrl)" class="space-y-3">
       <h3 class="text-sm font-semibold text-surface-700">Source Preview</h3>
       <div class="rounded-xl overflow-hidden bg-surface-100 border border-surface-200/50">
         <img
@@ -25,8 +25,8 @@
       </div>
     </div>
 
-    <!-- No source placeholder -->
-    <div v-else class="rounded-xl border-2 border-dashed border-surface-200 p-12 text-center">
+    <!-- No source placeholder (not shown when source preview is hidden by crop canvas) -->
+    <div v-else-if="!hideSourcePreview" class="rounded-xl border-2 border-dashed border-surface-200 p-12 text-center">
       <div class="text-surface-400">
         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3">
           <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
@@ -72,6 +72,95 @@
           <span class="text-xs text-surface-500">{{ size }}px</span>
         </div>
       </div>
+    </div>
+
+    <!-- Chat Preview -->
+    <div v-if="gifUrl && platform && platform.chatDisplaySizes?.length" class="space-y-3">
+        <div class="flex items-center gap-2">
+          <h3 class="text-sm font-semibold text-surface-700">Chat Preview</h3>
+          <span class="text-xs text-surface-400">&mdash;</span>
+          <span class="text-xs text-surface-500">{{ platform.name }}</span>
+        </div>
+        <p class="text-xs text-surface-500">How your emote appears to viewers</p>
+        <div class="flex flex-wrap gap-4">
+          <div
+            v-for="chatSize in platform.chatDisplaySizes"
+            :key="chatSize.label"
+            class="flex flex-col gap-2 min-w-[140px] max-w-[200px]"
+          >
+            <div
+              class="rounded-xl overflow-hidden border border-surface-200/50 p-3 bg-surface-100"
+              role="img"
+              :aria-label="`Simulated ${platform.name} chat showing emote at ${chatSize.size}px`"
+            >
+              <!-- Twitch badge template -->
+              <div v-if="platform.id.startsWith('twitch-badge')" class="flex items-center gap-1.5">
+                <img
+                  :src="previewSrc"
+                  :style="{ width: `${chatSize.size}px`, height: `${chatSize.size}px` }"
+                  class="inline-block align-middle"
+                  :alt="`Badge at ${chatSize.size}px`"
+                />
+                <span class="text-xs font-semibold text-primary-500">Subscriber</span>
+                <span class="text-xs text-surface-600">:</span>
+                <span class="text-xs text-surface-700">Hey chat!</span>
+              </div>
+
+              <!-- Twitch / Kick inline chat template -->
+              <div v-else-if="platform.id.startsWith('twitch') || platform.id.startsWith('kick')" class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-xs font-semibold text-primary-500">Viewer123</span>
+                <span class="text-xs text-surface-600">:</span>
+                <span class="text-xs text-surface-700">Nice</span>
+                <img
+                  :src="previewSrc"
+                  :style="{ width: `${chatSize.size}px`, height: `${chatSize.size}px` }"
+                  class="inline-block align-middle"
+                  :alt="`Emote at ${chatSize.size}px in ${platform.name} chat`"
+                />
+                <span class="text-xs text-surface-700">emote!</span>
+              </div>
+
+              <!-- Discord inline chat template -->
+              <div v-else-if="platform.id.startsWith('discord') && chatSize.label === 'Inline chat'" class="flex items-start gap-2">
+                <div class="w-5 h-5 rounded-full flex-shrink-0 mt-0.5 bg-primary-400" />
+                <div>
+                  <span class="text-xs font-semibold text-surface-700">User</span>
+                  <span class="text-[10px] text-surface-400 ml-1">Today at 4:20 PM</span>
+                  <div class="text-xs text-surface-600 mt-0.5 flex items-center gap-1 flex-wrap">
+                    <span>love this</span>
+                    <img
+                      :src="previewSrc"
+                      style="width: 22px; height: 22px"
+                      class="inline-block align-middle"
+                      alt="Emote at 22px in Discord chat"
+                    />
+                    <span>emote</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Discord emoji-only message template -->
+              <div v-else-if="platform.id.startsWith('discord') && chatSize.label === 'Emoji-only message'" class="flex items-start gap-2">
+                <div class="w-5 h-5 rounded-full flex-shrink-0 mt-0.5 bg-primary-500" />
+                <div>
+                  <span class="text-xs font-semibold text-surface-700">Viewer</span>
+                  <span class="text-[10px] text-surface-400 ml-1">Today at 4:21 PM</span>
+                  <div class="mt-0.5">
+                    <img
+                      :src="previewSrc"
+                      style="width: 48px; height: 48px"
+                      alt="Emote at 48px in Discord emoji-only message"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="text-center">
+              <span class="text-xs font-medium text-surface-700">{{ chatSize.label }}</span>
+              <span class="text-[10px] text-surface-500 block">{{ chatSize.size }}px</span>
+            </div>
+          </div>
+        </div>
     </div>
 
     <!-- Optimization Results -->
@@ -237,7 +326,7 @@ import type { DecodedFrame } from 'modern-gif'
 import type { Platform, OptimizationResult, ResizeMode } from '~/types/optimizer'
 import { isValidMediaUrl } from '~/utils/url'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   gifUrl: string
   platform: Platform | null
   results: OptimizationResult[]
@@ -249,7 +338,13 @@ const props = defineProps<{
   selectedFrame: DecodedFrame | null
   /** When set, overrides all other preview sources (used to show the compressed result) */
   previewOverrideUrl: string | null
-}>()
+  /** When true, the source preview section is hidden (replaced by crop canvas in parent) */
+  hideSourcePreview?: boolean
+  /** When true, Target Sizes and Chat Preview show a loading overlay (crop preview generating) */
+  isPreviewLoading?: boolean
+}>(), {
+  isPreviewLoading: false,
+})
 
 defineEmits<{
   'download-single': [result: OptimizationResult]

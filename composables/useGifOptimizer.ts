@@ -385,6 +385,7 @@ export function useGifOptimizer() {
     padColor: string = 'transparent',
     selectedFrame?: DecodedFrame,
     preDecodedFrames?: DecodedFrame[],
+    cropRegion?: { x: number; y: number; w: number; h: number },
   ): Promise<OptimizationResult[]> {
     isProcessing.value = true
     progress.value = 0
@@ -408,7 +409,7 @@ export function useGifOptimizer() {
       // For platforms that need PNG (e.g. Twitch Static Emote, Twitch Sub Badge),
       // the single-frame canvas approach is correct and efficient.
       if (!needsAnimatedGif) {
-        return await optimizeStatic(arrayBuffer, platform, resizeMode, padColor, selectedFrame)
+        return await optimizeStatic(arrayBuffer, platform, resizeMode, padColor, selectedFrame, cropRegion)
       }
 
       // --- Animated GIF path ---
@@ -466,6 +467,21 @@ export function useGifOptimizer() {
         // Build the resized frames array for encoding
         const encodingFrames: Array<{ data: Uint8ClampedArray; delay: number }> = []
 
+        // When cropping is active, create a temporary canvas to extract the
+        // crop region from each frame before resizing. Allocated once per size
+        // and reused across frames to avoid repeated allocation overhead.
+        let cropCanvas: HTMLCanvasElement | null = null
+        let cropCtx: CanvasRenderingContext2D | null = null
+        if (cropRegion) {
+          cropCanvas = document.createElement('canvas')
+          cropCanvas.width = cropRegion.w
+          cropCanvas.height = cropRegion.h
+          cropCtx = cropCanvas.getContext('2d')
+          if (!cropCtx) {
+            throw new Error('Failed to create crop canvas rendering context.')
+          }
+        }
+
         for (const frame of frames) {
           // Set source canvas to the decoded frame's actual dimensions.
           // Frames in a GIF can have varying sizes (partial updates), but
@@ -486,8 +502,27 @@ export function useGifOptimizer() {
           )
           srcCtx.putImageData(imageData, 0, 0)
 
+          // When a crop region is defined, extract just that portion before
+          // resizing. The cropped canvas becomes the source for drawResized()
+          // so that only the user-selected area is scaled to the target size.
+          let drawSource: CanvasImageSource = srcCanvas
+          let drawWidth = frame.width
+          let drawHeight = frame.height
+
+          if (cropRegion && cropCanvas && cropCtx) {
+            cropCtx.clearRect(0, 0, cropRegion.w, cropRegion.h)
+            cropCtx.drawImage(
+              srcCanvas,
+              cropRegion.x, cropRegion.y, cropRegion.w, cropRegion.h,
+              0, 0, cropRegion.w, cropRegion.h,
+            )
+            drawSource = cropCanvas
+            drawWidth = cropRegion.w
+            drawHeight = cropRegion.h
+          }
+
           // Resize onto the target canvas using the chosen resize mode
-          drawResized(ctx, srcCanvas, frame.width, frame.height, size, resizeMode, padColor)
+          drawResized(ctx, drawSource, drawWidth, drawHeight, size, resizeMode, padColor)
 
           // Extract the resized RGBA pixel data for encoding
           const resizedData = ctx.getImageData(0, 0, size, size)
@@ -507,6 +542,10 @@ export function useGifOptimizer() {
         srcCanvas.height = 0
         canvas.width = 0
         canvas.height = 0
+        if (cropCanvas) {
+          cropCanvas.width = 0
+          cropCanvas.height = 0
+        }
 
         // Re-encode all resized frames into an animated GIF.
         // The type assertion is necessary because TypeScript 5.7+ has stricter
@@ -559,6 +598,7 @@ export function useGifOptimizer() {
     resizeMode: ResizeMode,
     padColor: string,
     selectedFrame?: DecodedFrame,
+    cropRegion?: { x: number; y: number; w: number; h: number },
   ): Promise<OptimizationResult[]> {
     const optimizedResults: OptimizationResult[] = []
 
@@ -588,6 +628,30 @@ export function useGifOptimizer() {
       srcCtx.putImageData(imageData, 0, 0)
     }
 
+    // When a crop region is defined, apply it to the source canvas once
+    // so that all target sizes receive the cropped image. This creates a
+    // new canvas containing only the selected crop area.
+    let cropSrcCanvas: HTMLCanvasElement | null = null
+    if (cropRegion) {
+      const sourceCanvas = frameSrcCanvas
+      if (sourceCanvas) {
+        cropSrcCanvas = document.createElement('canvas')
+        cropSrcCanvas.width = cropRegion.w
+        cropSrcCanvas.height = cropRegion.h
+        const cropCtx = cropSrcCanvas.getContext('2d')
+        if (!cropCtx) throw new Error('Failed to create crop canvas rendering context.')
+        cropCtx.drawImage(
+          sourceCanvas,
+          cropRegion.x, cropRegion.y, cropRegion.w, cropRegion.h,
+          0, 0, cropRegion.w, cropRegion.h,
+        )
+        // Replace the source with the cropped version
+        frameSrcCanvas = cropSrcCanvas
+        frameSrcWidth = cropRegion.w
+        frameSrcHeight = cropRegion.h
+      }
+    }
+
     for (let i = 0; i < platform.sizes.length; i++) {
       const size = platform.sizes[i]
       progress.value = Math.round(((i + 1) / platform.sizes.length) * 100)
@@ -607,7 +671,7 @@ export function useGifOptimizer() {
       }
 
       if (frameSrcCanvas) {
-        // Use the pre-built source canvas from the selected frame
+        // Use the pre-built source canvas from the selected frame (possibly cropped)
         try {
           drawResized(ctx, frameSrcCanvas, frameSrcWidth, frameSrcHeight, size, resizeMode, padColor)
         } catch (_e) {
@@ -641,8 +705,31 @@ export function useGifOptimizer() {
           }
         }
 
+        // When crop is active but no selectedFrame was provided, apply
+        // crop to the loaded <img> via an intermediate canvas
+        let drawSource: CanvasImageSource = img
+        let drawWidth = img.width
+        let drawHeight = img.height
+
+        if (cropRegion) {
+          const imgCropCanvas = document.createElement('canvas')
+          imgCropCanvas.width = cropRegion.w
+          imgCropCanvas.height = cropRegion.h
+          const imgCropCtx = imgCropCanvas.getContext('2d')
+          if (imgCropCtx) {
+            imgCropCtx.drawImage(
+              img,
+              cropRegion.x, cropRegion.y, cropRegion.w, cropRegion.h,
+              0, 0, cropRegion.w, cropRegion.h,
+            )
+            drawSource = imgCropCanvas
+            drawWidth = cropRegion.w
+            drawHeight = cropRegion.h
+          }
+        }
+
         try {
-          drawResized(ctx, img, img.width, img.height, size, resizeMode, padColor)
+          drawResized(ctx, drawSource, drawWidth, drawHeight, size, resizeMode, padColor)
         } catch (_e) {
           throw new Error(
             `Failed to draw image at ${size}x${size}. The image may be tainted by CORS. ` +
@@ -686,10 +773,16 @@ export function useGifOptimizer() {
       })
     }
 
-    // Release the shared source canvas
+    // Release the shared source canvases
     if (frameSrcCanvas) {
       frameSrcCanvas.width = 0
       frameSrcCanvas.height = 0
+    }
+    // When crop replaced the original frameSrcCanvas, the original is now
+    // a separate reference — release it too to prevent a memory leak
+    if (cropSrcCanvas && cropSrcCanvas !== frameSrcCanvas) {
+      cropSrcCanvas.width = 0
+      cropSrcCanvas.height = 0
     }
 
     results.value = optimizedResults
@@ -729,6 +822,7 @@ export function useGifOptimizer() {
     onProgress: (strategy: string) => void,
     signal?: AbortSignal,
     preDecodedFrames?: DecodedFrame[],
+    cropRegion?: { x: number; y: number; w: number; h: number },
   ): Promise<{ blob: Blob; fileSize: number; strategiesApplied: string[]; success: boolean }> {
     if (targetSize <= 0) throw new Error('Target size must be positive')
     if (maxFileSize <= 0) throw new Error('Max file size must be positive')
@@ -788,6 +882,18 @@ export function useGifOptimizer() {
     const destCtx = destCanvas.getContext('2d', { willReadFrequently: true })!
     if (!destCtx) throw new Error('Failed to create canvas context.')
 
+    // When a crop region is provided, allocate a reusable canvas for extracting
+    // the crop area from each frame before resizing.
+    let scCropCanvas: HTMLCanvasElement | null = null
+    let scCropCtx: CanvasRenderingContext2D | null = null
+    if (cropRegion) {
+      scCropCanvas = document.createElement('canvas')
+      scCropCanvas.width = cropRegion.w
+      scCropCanvas.height = cropRegion.h
+      scCropCtx = scCropCanvas.getContext('2d')
+      if (!scCropCtx) throw new Error('Failed to create crop canvas context.')
+    }
+
     /**
      * Helper: re-encode the current working frames at `currentSize` dimensions
      * via modern-gif. Returns the raw encoded bytes (not a Blob) so they can
@@ -816,7 +922,25 @@ export function useGifOptimizer() {
           frame.height,
         )
         srcCtx.putImageData(imageData, 0, 0)
-        drawResized(destCtx, srcCanvas, frame.width, frame.height, currentSize, resizeMode, padColor)
+
+        // Apply crop region if defined — extract the selected area before resizing
+        let drawSource: CanvasImageSource = srcCanvas
+        let drawWidth = frame.width
+        let drawHeight = frame.height
+
+        if (cropRegion && scCropCanvas && scCropCtx) {
+          scCropCtx.clearRect(0, 0, cropRegion.w, cropRegion.h)
+          scCropCtx.drawImage(
+            srcCanvas,
+            cropRegion.x, cropRegion.y, cropRegion.w, cropRegion.h,
+            0, 0, cropRegion.w, cropRegion.h,
+          )
+          drawSource = scCropCanvas
+          drawWidth = cropRegion.w
+          drawHeight = cropRegion.h
+        }
+
+        drawResized(destCtx, drawSource, drawWidth, drawHeight, currentSize, resizeMode, padColor)
 
         const resizedData = destCtx.getImageData(0, 0, currentSize, currentSize)
         encodingFrames.push({ data: resizedData.data, delay: frame.delay })
@@ -1071,6 +1195,10 @@ export function useGifOptimizer() {
       srcCanvas.height = 0
       destCanvas.width = 0
       destCanvas.height = 0
+      if (scCropCanvas) {
+        scCropCanvas.width = 0
+        scCropCanvas.height = 0
+      }
     }
   }
 

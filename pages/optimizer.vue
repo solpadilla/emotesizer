@@ -64,6 +64,26 @@
           </div>
         </Transition>
 
+        <!-- Crop Image Toggle -->
+        <Transition
+          enter-active-class="transition duration-200 ease-out"
+          enter-from-class="opacity-0 -translate-y-2"
+          enter-to-class="opacity-100 translate-y-0"
+          leave-active-class="transition duration-150 ease-in"
+          leave-from-class="opacity-100 translate-y-0"
+          leave-to-class="opacity-0 -translate-y-2"
+        >
+          <div v-if="gifUrl && decodedFrames.length > 0" class="card flex items-center gap-3 cursor-pointer select-none" @click="toggleCrop" role="switch" :aria-checked="isCropActive" aria-label="Toggle crop mode">
+            <svg class="w-5 h-5 flex-shrink-0" :class="isCropActive ? 'text-primary-500' : 'text-surface-400'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2v4h12v12h4" /><path d="M18 22v-4H6V6H2" />
+            </svg>
+            <span class="text-sm font-medium text-surface-700 flex-1">Crop Image</span>
+            <span class="text-xs font-medium px-2.5 py-1 rounded-full transition-colors" :class="isCropActive ? 'bg-primary-500 text-white' : 'bg-surface-200 text-surface-500'">
+              {{ isCropActive ? 'On' : 'Off' }}
+            </span>
+          </div>
+        </Transition>
+
         <!-- Platform Selector -->
         <div>
           <h3 class="label">Target Platform</h3>
@@ -227,7 +247,47 @@
       </div>
 
       <!-- Right Column: Preview -->
-      <div class="lg:col-span-3">
+      <div class="lg:col-span-3 space-y-6">
+        <!-- Crop canvas (replaces source preview when active) -->
+        <div v-if="isCropActive && decodedFrames.length" class="space-y-3">
+          <h3 class="text-sm font-semibold text-surface-700">Crop Preview</h3>
+          <div class="relative rounded-2xl overflow-hidden border border-surface-200/50 checkerboard flex items-center justify-center min-h-[200px]">
+            <GifCropCanvas
+              :gif-url="effectiveGifUrl"
+              :frames="trimmedFrames.length ? trimmedFrames : decodedFrames"
+              :crop-x="cropX"
+              :crop-y="cropY"
+              :crop-w="cropW"
+              :crop-h="cropH"
+              :aspect-ratio="null"
+              @update:crop="handleCropUpdate"
+            />
+            <!-- Loading overlay while crop preview is generating -->
+            <Transition
+              enter-active-class="transition-opacity duration-200 ease-out"
+              enter-from-class="opacity-0"
+              enter-to-class="opacity-100"
+              leave-active-class="transition-opacity duration-200 ease-out"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0"
+            >
+              <div v-if="isCropGenerating" class="absolute inset-0 flex items-center justify-center bg-surface-900/30 rounded-2xl">
+                <svg class="w-8 h-8 animate-spin text-white/70" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+              </div>
+            </Transition>
+          </div>
+          <div class="flex justify-between items-center">
+            <p v-if="hasCropApplied" class="text-xs text-surface-500">
+              Crop: {{ cropW }} x {{ cropH }}px ({{ Math.round((cropW * cropH) / ((sourceWidth || 1) * (sourceHeight || 1)) * 100) }}% of original)
+            </p>
+            <p v-else class="text-xs text-surface-400 italic">Drag on the preview to crop</p>
+            <button v-if="hasCropApplied" class="text-xs text-primary-500 hover:underline" @click="resetCrop">Reset</button>
+          </div>
+        </div>
+
         <PreviewPanel
           :gif-url="effectiveGifUrl"
           :platform="selectedPlatform"
@@ -238,6 +298,8 @@
           :source-height="sourceHeight"
           :selected-frame="needsFramePicker ? sampledFrames[selectedFrameIndex] : null"
           :preview-override-url="previewOverrideUrl"
+          :hide-source-preview="isCropActive"
+          :is-preview-loading="isCropGenerating"
           @download-single="(result) => optimizer.downloadSingle(result, gifTitle || 'emote')"
           @smart-compress="handleSmartCompress"
           @smart-compress-cancel="handleSmartCompressCancel"
@@ -350,6 +412,15 @@ const isDecodingFrames = ref(false)
 // Trim range state: [startFrame, endFrame] inclusive
 const trimRange = ref<[number, number]>([0, 0])
 
+// Crop state — optional pre-processing step before optimization
+const isCropActive = ref(false)
+/** True while the debounced crop preview is being generated, used to show loading state in PreviewPanel */
+const isCropGenerating = ref(false)
+const cropX = ref(0)
+const cropY = ref(0)
+const cropW = ref(0)
+const cropH = ref(0)
+
 // Resize mode state
 const resizeMode = ref<ResizeMode>('crop')
 const padColor = ref('transparent')
@@ -365,6 +436,7 @@ const previewOverrideUrl = ref<string | null>(null)
 /** Active AbortController for the currently-running smart compression, if any */
 let smartCompressAbort: AbortController | null = null
 let trimPreviewTimeout: ReturnType<typeof setTimeout> | null = null
+let cropPreviewTimeout: ReturnType<typeof setTimeout> | null = null
 /** Stores the original blob before smart compression so Undo can restore it */
 const originalBlobs = new Map<number, { blob: Blob; fileSize: number }>()
 /** Whether any smart compression is currently in progress (disables the Optimize button) */
@@ -395,9 +467,20 @@ watch(isAnimatedSource, (animated) => {
 /** Effective GIF URL for preview — shows compressed result when available, otherwise the original */
 const effectiveGifUrl = computed(() => previewOverrideUrl.value || gifUrl.value)
 
+/** Whether the user has actually defined a crop region smaller than the full image */
+const hasCropApplied = computed(() => {
+  if (!isCropActive.value) return false
+  return cropX.value !== 0 || cropY.value !== 0
+    || cropW.value !== sourceWidth.value || cropH.value !== sourceHeight.value
+})
+
+/** Effective dimensions after crop (used for isNonSquare calculation) */
+const effectiveWidth = computed(() => isCropActive.value && hasCropApplied.value ? cropW.value : sourceWidth.value)
+const effectiveHeight = computed(() => isCropActive.value && hasCropApplied.value ? cropH.value : sourceHeight.value)
+
 /** Whether the loaded GIF is non-square (and thus the resize mode selector should be shown) */
 const isNonSquare = computed(() => {
-  return sourceWidth.value !== null && sourceHeight.value !== null && sourceWidth.value !== sourceHeight.value
+  return effectiveWidth.value !== null && effectiveHeight.value !== null && effectiveWidth.value !== effectiveHeight.value
 })
 
 /**
@@ -474,6 +557,47 @@ function handleCustomColor(event: Event) {
   const input = event.target as HTMLInputElement
   padColor.value = input.value
   padColorPreset.value = 'custom'
+}
+
+function toggleCrop() {
+  if (!isCropActive.value && (!sourceWidth.value || !sourceHeight.value)) return
+  isCropActive.value = !isCropActive.value
+  if (isCropActive.value && cropW.value === 0) {
+    // Initialize crop to full image on first activation
+    cropX.value = 0
+    cropY.value = 0
+    cropW.value = sourceWidth.value || 0
+    cropH.value = sourceHeight.value || 0
+  }
+  // When deactivating crop, clear the crop-generated preview so the
+  // original (or trim-adjusted) image is shown again
+  if (!isCropActive.value) {
+    isCropGenerating.value = false
+    if (previewOverrideUrl.value) {
+      URL.revokeObjectURL(previewOverrideUrl.value)
+      previewOverrideUrl.value = null
+    }
+  }
+}
+
+function resetCrop() {
+  cropX.value = 0
+  cropY.value = 0
+  cropW.value = sourceWidth.value || 0
+  cropH.value = sourceHeight.value || 0
+  isCropGenerating.value = false
+  // Clear the crop preview so the original (or trimmed) image is shown
+  if (previewOverrideUrl.value) {
+    URL.revokeObjectURL(previewOverrideUrl.value)
+    previewOverrideUrl.value = null
+  }
+}
+
+function handleCropUpdate(region: { x: number; y: number; w: number; h: number }) {
+  cropX.value = region.x
+  cropY.value = region.y
+  cropW.value = region.w
+  cropH.value = region.h
 }
 
 // Derive the selected platform object from the ID
@@ -615,6 +739,10 @@ watch(trimRange, () => {
   // (smart compress sets its own preview URL that should take priority)
   if (optimizer.results.value.length) return
 
+  // Don't override a crop preview with a trim preview — crop takes priority
+  // because it represents the latest spatial adjustment the user made
+  if (isCropActive.value && hasCropApplied.value) return
+
   // When the trimmer isn't active or there are no decoded frames, clear any
   // existing trim preview so the original animated GIF shows again
   if (!needsTrimmer.value || !decodedFrames.value.length) {
@@ -667,6 +795,109 @@ watch(trimRange, () => {
   }, 500)
 }, { deep: true })
 
+// Live crop preview: when the user adjusts the crop region, generate a
+// cropped preview image so Target Sizes and Chat Preview reflect the crop
+// instead of showing the original uncropped image. Debounced at 300ms for
+// a good balance between responsiveness and avoiding excessive re-encodes.
+watch([isCropActive, cropX, cropY, cropW, cropH], () => {
+  // Don't override when optimization results exist
+  if (optimizer.results.value.length) return
+
+  // When crop is not active or not meaningfully applied, clear any
+  // crop-generated preview and fall back to the trim preview or original
+  if (!isCropActive.value || !hasCropApplied.value) {
+    isCropGenerating.value = false
+    if (cropPreviewTimeout) {
+      clearTimeout(cropPreviewTimeout)
+      cropPreviewTimeout = null
+    }
+    // Only clear the override if we need to — if trim is active with a
+    // sub-range, let the trim watcher regenerate its own preview
+    if (previewOverrideUrl.value) {
+      URL.revokeObjectURL(previewOverrideUrl.value)
+      previewOverrideUrl.value = null
+    }
+    return
+  }
+
+  // Show loading state immediately when crop coordinates change,
+  // before the debounce fires, so the user gets instant visual feedback
+  isCropGenerating.value = true
+
+  if (cropPreviewTimeout) clearTimeout(cropPreviewTimeout)
+  cropPreviewTimeout = setTimeout(async () => {
+    try {
+      const frames = trimmedFrames.value?.length ? trimmedFrames.value : decodedFrames.value
+      if (!frames.length) return
+
+      const cx = cropX.value
+      const cy = cropY.value
+      const cw = cropW.value
+      const ch = cropH.value
+      if (cw <= 0 || ch <= 0) return
+
+      // Animated GIF: crop ALL frames so the preview plays back without
+      // skipping.  Processing is batched with main-thread yields between
+      // batches so the UI stays responsive even for GIFs with many frames.
+      if (frames.length > 1 && selectedPlatform.value?.maxFrames !== 1) {
+        const srcCanvas = new OffscreenCanvas(frames[0].width, frames[0].height)
+        const srcCtx = srcCanvas.getContext('2d')!
+        const cropCanvas = new OffscreenCanvas(cw, ch)
+        const cropCtx = cropCanvas.getContext('2d')!
+
+        // Process in batches of 5 frames, yielding between batches
+        const batchSize = 5
+        const croppedFrames: { data: Uint8ClampedArray; delay: number }[] = []
+        for (let i = 0; i < frames.length; i++) {
+          const frame = frames[i]
+          srcCtx.clearRect(0, 0, srcCanvas.width, srcCanvas.height)
+          const imgData = new ImageData(new Uint8ClampedArray(frame.data), frame.width, frame.height)
+          srcCtx.putImageData(imgData, 0, 0)
+          cropCtx.clearRect(0, 0, cw, ch)
+          cropCtx.drawImage(srcCanvas, cx, cy, cw, ch, 0, 0, cw, ch)
+          const croppedData = cropCtx.getImageData(0, 0, cw, ch)
+          croppedFrames.push({
+            data: croppedData.data,
+            delay: frame.delay || 100,
+          })
+          // Yield every batchSize frames to keep the UI responsive
+          if ((i + 1) % batchSize === 0) await new Promise(r => setTimeout(r, 0))
+        }
+
+        const encodedGif = await encode({
+          width: cw,
+          height: ch,
+          frames: croppedFrames,
+        })
+
+        const blob = new Blob([encodedGif], { type: 'image/gif' })
+        if (previewOverrideUrl.value) URL.revokeObjectURL(previewOverrideUrl.value)
+        previewOverrideUrl.value = URL.createObjectURL(blob)
+        isCropGenerating.value = false
+      } else {
+        // Static image: crop a single frame and produce a PNG blob
+        const frame = frames[selectedFrameIndex.value] || frames[0]
+        const srcCanvas = new OffscreenCanvas(frame.width, frame.height)
+        const srcCtx = srcCanvas.getContext('2d')!
+        const imgData = new ImageData(new Uint8ClampedArray(frame.data), frame.width, frame.height)
+        srcCtx.putImageData(imgData, 0, 0)
+
+        const cropCanvas = new OffscreenCanvas(cw, ch)
+        const cropCtx = cropCanvas.getContext('2d')!
+        cropCtx.drawImage(srcCanvas, cx, cy, cw, ch, 0, 0, cw, ch)
+
+        const blob = await cropCanvas.convertToBlob({ type: 'image/png' })
+        if (previewOverrideUrl.value) URL.revokeObjectURL(previewOverrideUrl.value)
+        previewOverrideUrl.value = URL.createObjectURL(blob)
+        isCropGenerating.value = false
+      }
+    } catch (e) {
+      isCropGenerating.value = false
+      if (import.meta.dev) console.error('Crop preview encode failed:', e)
+    }
+  }, 300)
+})
+
 // Clear optimization results and smart compress state when the user
 // switches platforms so stale previews from the previous platform
 // don't persist.
@@ -697,6 +928,12 @@ function handleFileSelected(file: File) {
   // Reset results and resize mode override for the new file
   optimizer.results.value = []
   userOverrodeMode.value = false
+  // Reset crop state for the new file
+  isCropActive.value = false
+  cropX.value = 0
+  cropY.value = 0
+  cropW.value = 0
+  cropH.value = 0
   padColor.value = 'transparent'
   padColorPreset.value = 'transparent'
   detectSourceDimensions(url)
@@ -726,10 +963,14 @@ function clearGif() {
     smartCompressAbort.abort()
     smartCompressAbort = null
   }
-  // Cancel any pending trim preview re-encode
+  // Cancel any pending trim or crop preview re-encode
   if (trimPreviewTimeout) {
     clearTimeout(trimPreviewTimeout)
     trimPreviewTimeout = null
+  }
+  if (cropPreviewTimeout) {
+    clearTimeout(cropPreviewTimeout)
+    cropPreviewTimeout = null
   }
   originalBlobs.clear()
 
@@ -745,6 +986,12 @@ function clearGif() {
   gifUrl.value = ''
   gifTitle.value = ''
   optimizer.results.value = []
+  // Reset crop state
+  isCropActive.value = false
+  cropX.value = 0
+  cropY.value = 0
+  cropW.value = 0
+  cropH.value = 0
   // Reset resize mode state
   sourceWidth.value = null
   sourceHeight.value = null
@@ -788,6 +1035,11 @@ async function handleSmartCompress(result: OptimizationResult) {
   const startTime = Date.now()
 
   try {
+    // Build crop region if the user has defined one
+    const scCropRegion = hasCropApplied.value
+      ? { x: cropX.value, y: cropY.value, w: cropW.value, h: cropH.value }
+      : undefined
+
     // Pass pre-decoded trimmed frames to skip re-fetching and respect user's trim selection
     const compressed = await optimizer.smartCompressGif(
       gifUrl.value,
@@ -805,6 +1057,7 @@ async function handleSmartCompress(result: OptimizationResult) {
       },
       smartCompressAbort.signal,
       framesToOptimize.value,
+      scCropRegion,
     )
 
     // Enforce minimum 400ms display time to prevent jarring flash
@@ -916,8 +1169,13 @@ async function handleOptimize() {
       ? sampledFrames.value[selectedFrameIndex.value]
       : undefined
 
+    // Build crop region if the user has defined one
+    const cropRegion = hasCropApplied.value
+      ? { x: cropX.value, y: cropY.value, w: cropW.value, h: cropH.value }
+      : undefined
+
     // Pass pre-decoded trimmed frames to skip re-fetching and respect user's trim selection
-    await optimizer.optimizeGif(gifUrl.value, selectedPlatform.value, resizeMode.value, padColor.value, selectedFrame, framesToOptimize.value)
+    await optimizer.optimizeGif(gifUrl.value, selectedPlatform.value, resizeMode.value, padColor.value, selectedFrame, framesToOptimize.value, cropRegion)
     toastSuccess('Optimization complete!')
   } catch (e: unknown) {
     if (import.meta.dev) console.error('Optimization failed:', e)

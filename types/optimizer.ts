@@ -1,5 +1,11 @@
 export type ResizeMode = 'crop' | 'pad' | 'stretch'
 
+export interface ChatDisplaySize {
+  label: string
+  size: number
+  context: string
+}
+
 export interface Platform {
   id: string
   name: string
@@ -13,6 +19,8 @@ export interface Platform {
   description?: string
   /** Override for the sizes display text (e.g. "112px (Twitch auto-resizes)") */
   sizesLabel?: string
+  /** Sizes at which this emote appears in actual platform chat UI */
+  chatDisplaySizes?: ChatDisplaySize[]
 }
 
 export interface SmartCompressState {
