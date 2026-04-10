@@ -90,7 +90,7 @@ export default defineNuxtConfig({
           innerHTML: `
             (function() {
               try {
-                var theme = localStorage.getItem('theme') || 'default';
+                var theme = localStorage.getItem('theme') || 'midnight';
                 var validThemes = ['default', 'midnight'];
                 if (!validThemes.includes(theme)) {
                   theme = 'default';

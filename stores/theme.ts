@@ -37,7 +37,7 @@ function getInitialThemeId(): string {
       return savedTheme
     }
   }
-  return 'default'
+  return 'midnight'
 }
 
 export const useThemeStore = defineStore('theme', {

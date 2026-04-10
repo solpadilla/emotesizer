@@ -5,6 +5,7 @@
       <h3 class="text-sm font-semibold text-surface-700">Source Preview</h3>
       <div class="rounded-xl overflow-hidden bg-surface-100 border border-surface-200/50">
         <img
+          :key="previewSrc"
           :src="previewSrc"
           alt="Source GIF preview"
           class="max-w-full max-h-[300px] mx-auto block"
@@ -57,6 +58,7 @@
             }"
           >
             <img
+              :key="previewSrc"
               :src="previewSrc"
               :alt="`Preview at ${size}x${size} pixels`"
               :style="{
@@ -96,6 +98,7 @@
               <!-- Twitch badge template -->
               <div v-if="platform.id.startsWith('twitch-badge')" class="flex items-center gap-1.5">
                 <img
+                  :key="previewSrc"
                   :src="previewSrc"
                   :style="{ width: `${chatSize.size}px`, height: `${chatSize.size}px` }"
                   class="inline-block align-middle"
@@ -112,6 +115,7 @@
                 <span class="text-xs text-surface-600">:</span>
                 <span class="text-xs text-surface-700">Nice</span>
                 <img
+                  :key="previewSrc"
                   :src="previewSrc"
                   :style="{ width: `${chatSize.size}px`, height: `${chatSize.size}px` }"
                   class="inline-block align-middle"
@@ -129,6 +133,7 @@
                   <div class="text-xs text-surface-600 mt-0.5 flex items-center gap-1 flex-wrap">
                     <span>love this</span>
                     <img
+                      :key="previewSrc"
                       :src="previewSrc"
                       style="width: 22px; height: 22px"
                       class="inline-block align-middle"
@@ -147,6 +152,7 @@
                   <span class="text-[10px] text-surface-400 ml-1">Today at 4:21 PM</span>
                   <div class="mt-0.5">
                     <img
+                      :key="previewSrc"
                       :src="previewSrc"
                       style="width: 48px; height: 48px"
                       alt="Emote at 48px in Discord emoji-only message"
