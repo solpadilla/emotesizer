@@ -23,6 +23,7 @@ export const useToolsNav = () => {
         { to: '/tools/resize', label: 'GIF Resize', icon: 'IconResize', description: 'Change GIF dimensions with crop, pad, or stretch' },
         { to: '/tools/crop', label: 'GIF Crop', icon: 'IconCrop', description: 'Crop a specific region from animated GIFs' },
         { to: '/tools/rotate', label: 'GIF Rotate', icon: 'IconRotate', description: 'Rotate or flip animated GIFs' },
+        { to: '/tools/add-text-to-gif', label: 'Add Text to GIF', icon: 'IconText', description: 'Add text, captions, and meme text to animated GIFs' },
       ],
     },
     {

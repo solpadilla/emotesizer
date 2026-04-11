@@ -99,21 +99,6 @@
       </NuxtLink>
     </div>
 
-    <!-- Secondary Links -->
-    <nav class="space-y-0.5">
-      <NuxtLink
-        v-for="link in secondaryNav"
-        :key="link.to"
-        :to="link.to"
-        class="block h-9 px-3 rounded-lg flex items-center text-xs font-medium text-surface-400 hover:text-surface-600 hover:bg-surface-200/50 transition-colors"
-      >
-        {{ link.label }}
-      </NuxtLink>
-    </nav>
-
-    <!-- Separator -->
-    <div class="border-t border-surface-200/30 my-4" />
-
     <!-- Theme Toggle -->
     <button
       class="h-11 px-3 rounded-xl flex items-center gap-3 text-sm font-medium text-surface-500 hover:bg-surface-200/50 hover:text-surface-700 transition-colors w-full"
@@ -148,6 +133,7 @@ const iconMap: Record<string, ReturnType<typeof resolveComponent>> = {
   IconFrame: resolveComponent('IconFrame'),
   IconCompress: resolveComponent('IconCompress'),
   IconVideo: resolveComponent('IconVideo'),
+  IconText: resolveComponent('IconText'),
 }
 
 const expandedCategory = ref<string | null>(null)
@@ -172,13 +158,6 @@ const primaryNav = computed(() => [
     isActive: route.path === '/optimizer',
   },
 ])
-
-const secondaryNav = [
-  { to: '/about', label: 'About' },
-  { to: '/privacy', label: 'Privacy' },
-  { to: '/terms', label: 'Terms' },
-  { to: '/contact', label: 'Contact' },
-]
 
 /** Check if a tool route is currently active */
 function isToolActive(toolPath: string): boolean {

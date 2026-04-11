@@ -48,6 +48,7 @@ const iconMap: Record<string, ReturnType<typeof resolveComponent>> = {
   IconFrame: resolveComponent('IconFrame'),
   IconCompress: resolveComponent('IconCompress'),
   IconVideo: resolveComponent('IconVideo'),
+  IconText: resolveComponent('IconText'),
 }
 
 useHead({
