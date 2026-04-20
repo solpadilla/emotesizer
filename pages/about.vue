@@ -114,7 +114,7 @@
     <!-- Who We Are -->
     <h2 class="text-lg font-bold text-surface-900 mt-10 mb-3">Who We Are</h2>
     <p class="text-sm text-surface-600 leading-relaxed mb-3">
-      EmoteSizer is an independent project run by a small team of streamers and web developers based in [COUNTRY]. We are not a venture-funded startup, we are not affiliated with Twitch, Discord, Kick, 7TV, BTTV, or FFZ, and we are not trying to build a "platform" — we are a couple of people who care about emotes and build tools we want to use ourselves. Every decision on the site, from the exact compression strategy used for Discord's 256 KB limit to the color of the download button, has been made by someone who has personally tried to upload a too-big GIF and sworn at the error message. If you have feedback, it lands in an inbox that an actual human reads.
+      EmoteSizer is an independent project run by a small team of streamers and web developers based in the United States. We are not a venture-funded startup, we are not affiliated with Twitch, Discord, Kick, 7TV, BTTV, or FFZ, and we are not trying to build a "platform" — we are a couple of people who care about emotes and build tools we want to use ourselves. Every decision on the site, from the exact compression strategy used for Discord's 256 KB limit to the color of the download button, has been made by someone who has personally tried to upload a too-big GIF and sworn at the error message. If you have feedback, it lands in an inbox that an actual human reads.
     </p>
 
     <!-- How We Keep Tools Free -->

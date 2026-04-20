@@ -1,12 +1,3 @@
-<!--
-  OWNER ACTION REQUIRED BEFORE GOING LIVE:
-  This file contains placeholder values that must be replaced before the
-  terms are considered legally accurate. Search for each of the following
-  tokens and fill in the correct value for your operating entity:
-    [JURISDICTION]           — the state/country whose law governs this agreement
-  The effective date (2026-04-20) is current as of the last edit. Update it
-  whenever material changes are made.
--->
 <template>
   <div class="max-w-3xl mx-auto px-4 py-8 md:py-12">
     <h1 class="text-2xl md:text-3xl font-extrabold text-surface-900 mb-2">
@@ -76,7 +67,7 @@
     <!-- Governing Law -->
     <h2 class="text-lg font-bold text-surface-900 mt-8 mb-3">Governing Law</h2>
     <p class="text-sm text-surface-600 leading-relaxed mb-4">
-      These Terms are governed by and construed in accordance with the laws of [JURISDICTION], without regard to its conflict-of-laws principles. Any disputes arising out of these Terms shall be resolved exclusively in the courts located in [JURISDICTION].
+      These Terms are governed by and construed in accordance with the laws of the State of Arizona, United States, without regard to its conflict-of-laws principles. Any disputes arising out of these Terms shall be resolved exclusively in the courts located in the State of Arizona, United States.
     </p>
 
     <!-- Changes to Terms -->

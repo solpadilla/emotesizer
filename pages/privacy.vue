@@ -1,12 +1,3 @@
-<!--
-  OWNER ACTION REQUIRED BEFORE GOING LIVE:
-  This file contains placeholder values that must be replaced before the
-  policy is considered legally accurate. Search for each of the following
-  tokens and fill in the correct value for your operating entity:
-    [COUNTRY]                — the country whose privacy law primarily governs us
-  The effective date (2026-04-20) is current as of the last edit. Update it
-  whenever material changes are made.
--->
 <template>
   <div class="max-w-3xl mx-auto px-4 py-8 md:py-12">
     <h1 class="text-2xl md:text-3xl font-extrabold text-surface-900 mb-2">
@@ -17,7 +8,7 @@
     <!-- Introduction -->
     <h2 class="text-lg font-bold text-surface-900 mt-8 mb-3">Introduction</h2>
     <p class="text-sm text-surface-600 leading-relaxed mb-4">
-      EmoteSizer ("EmoteSizer", "we", "us", or "our") operates the website located at <a href="https://emotesizer.com" class="link">emotesizer.com</a>, a free, browser-based suite of GIF editing and emote-optimization tools for streamers. We are based in [COUNTRY] and serve a global audience. This Privacy Policy describes how we collect, use, and disclose information when you visit or use our services, and it explains the choices you have about how that information is handled. By using EmoteSizer, you agree to the practices described here. If you do not agree, please discontinue use of the site.
+      EmoteSizer ("EmoteSizer", "we", "us", or "our") operates the website located at <a href="https://emotesizer.com" class="link">emotesizer.com</a>, a free, browser-based suite of GIF editing and emote-optimization tools for streamers. We are based in the United States and serve a global audience. This Privacy Policy describes how we collect, use, and disclose information when you visit or use our services, and it explains the choices you have about how that information is handled. By using EmoteSizer, you agree to the practices described here. If you do not agree, please discontinue use of the site.
     </p>
 
     <!-- Information We Collect -->
