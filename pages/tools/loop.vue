@@ -191,6 +191,17 @@
 
     </div>
 
+    <!-- Related tools — loop pairs well with speed, compress, reverse, and trim for emote tuning -->
+    <ToolRelated
+      current="/tools/loop"
+      :tools="[
+        { to: '/tools/speed', label: 'GIF Speed', icon: 'IconGauge', description: 'Speed up or slow down GIF animation' },
+        { to: '/tools/compress', label: 'GIF Compress', icon: 'IconCompress', description: 'Reduce GIF file size while preserving quality' },
+        { to: '/tools/reverse', label: 'GIF Reverse', icon: 'IconReverse', description: 'Play GIFs backwards or create boomerang loops' },
+        { to: '/tools/trim', label: 'GIF Trim', icon: 'IconScissors', description: 'Cut and shorten GIFs by removing frames' },
+      ]"
+    />
+
     <!-- SEO content section -->
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Change GIF Loop Count Online</h2>

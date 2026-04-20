@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /gifs/
+Disallow: /stickers/
+Disallow: /search?
 
 Sitemap: https://emotesizer.com/sitemap.xml

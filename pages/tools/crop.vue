@@ -244,6 +244,17 @@
 
     </div>
 
+    <!-- Related tools — crop pairs naturally with resize, rotate, compress, and trim -->
+    <ToolRelated
+      current="/tools/crop"
+      :tools="[
+        { to: '/tools/resize', label: 'GIF Resize', icon: 'IconResize', description: 'Change GIF dimensions with crop, pad, or stretch' },
+        { to: '/tools/rotate', label: 'GIF Rotate', icon: 'IconRotate', description: 'Rotate or flip animated GIFs' },
+        { to: '/tools/compress', label: 'GIF Compress', icon: 'IconCompress', description: 'Reduce GIF file size while preserving quality' },
+        { to: '/tools/trim', label: 'GIF Trim', icon: 'IconScissors', description: 'Cut and shorten GIFs by removing frames' },
+      ]"
+    />
+
     <!-- SEO content section -->
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Crop a GIF Online</h2>

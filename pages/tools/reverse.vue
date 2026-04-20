@@ -253,6 +253,17 @@
 
     </div>
 
+    <!-- Related tools — reverse chains well with speed, loop, compress, and trim for emote workflows -->
+    <ToolRelated
+      current="/tools/reverse"
+      :tools="[
+        { to: '/tools/speed', label: 'GIF Speed', icon: 'IconGauge', description: 'Speed up or slow down GIF animation' },
+        { to: '/tools/loop', label: 'GIF Loop', icon: 'IconLoop', description: 'Change how many times a GIF loops before stopping' },
+        { to: '/tools/compress', label: 'GIF Compress', icon: 'IconCompress', description: 'Reduce GIF file size while preserving quality' },
+        { to: '/tools/trim', label: 'GIF Trim', icon: 'IconScissors', description: 'Cut and shorten GIFs by removing frames' },
+      ]"
+    />
+
     <!-- SEO content section -->
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Reverse a GIF Online</h2>

@@ -154,6 +154,19 @@ export default defineNuxtConfig({
     url: 'https://emotesizer.com',
   },
 
+  // @nuxtjs/sitemap v8 — the third-party KLIPY-sourced detail pages under
+  // /gifs/** and /stickers/** contain no original editorial content, so we
+  // exclude them from the sitemap to keep Google's index focused on our
+  // tool pages and editorial content (AdSense "low value content" policy).
+  // The dynamic pages also carry a `robots: noindex, follow` page meta
+  // for defense in depth.
+  sitemap: {
+    exclude: [
+      '/gifs/**',
+      '/stickers/**',
+    ],
+  },
+
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',

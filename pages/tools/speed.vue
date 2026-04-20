@@ -351,6 +351,17 @@
 
     </div>
 
+    <!-- Related tools — speed changes pair with trim, reverse, loop, and compression -->
+    <ToolRelated
+      current="/tools/speed"
+      :tools="[
+        { to: '/tools/trim', label: 'GIF Trim', icon: 'IconScissors', description: 'Cut and shorten GIFs by removing frames' },
+        { to: '/tools/reverse', label: 'GIF Reverse', icon: 'IconReverse', description: 'Play GIFs backwards or create boomerang loops' },
+        { to: '/tools/loop', label: 'GIF Loop', icon: 'IconLoop', description: 'Change how many times a GIF loops before stopping' },
+        { to: '/tools/compress', label: 'GIF Compress', icon: 'IconCompress', description: 'Reduce GIF file size while preserving quality' },
+      ]"
+    />
+
     <!-- SEO content section -->
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Change GIF Speed Online</h2>

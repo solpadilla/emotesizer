@@ -725,6 +725,17 @@
 
     </div>
 
+    <!-- Related tools — GIF maker output often needs frame extraction, text, compression, or resize -->
+    <ToolRelated
+      current="/tools/gif-maker"
+      :tools="[
+        { to: '/tools/gif-to-png', label: 'GIF to PNG', icon: 'IconFrame', description: 'Extract individual frames as PNG images' },
+        { to: '/tools/add-text-to-gif', label: 'Add Text to GIF', icon: 'IconText', description: 'Add text, captions, and meme text to animated GIFs' },
+        { to: '/tools/compress', label: 'GIF Compress', icon: 'IconCompress', description: 'Reduce GIF file size while preserving quality' },
+        { to: '/tools/resize', label: 'GIF Resize', icon: 'IconResize', description: 'Change GIF dimensions with crop, pad, or stretch' },
+      ]"
+    />
+
     <!-- SEO content section -->
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Make a GIF from Pictures</h2>

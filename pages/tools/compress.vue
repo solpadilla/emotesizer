@@ -338,6 +338,17 @@
 
     </div>
 
+    <!-- Related tools — cross-link to adjacent workflows that pair well with compression -->
+    <ToolRelated
+      current="/tools/compress"
+      :tools="[
+        { to: '/tools/resize', label: 'GIF Resize', icon: 'IconResize', description: 'Change GIF dimensions with crop, pad, or stretch' },
+        { to: '/tools/trim', label: 'GIF Trim', icon: 'IconScissors', description: 'Cut and shorten GIFs by removing frames' },
+        { to: '/tools/crop', label: 'GIF Crop', icon: 'IconCrop', description: 'Crop a specific region from animated GIFs' },
+        { to: '/tools/speed', label: 'GIF Speed', icon: 'IconGauge', description: 'Speed up or slow down GIF animation' },
+      ]"
+    />
+
     <!-- SEO content section -->
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Compress a GIF Online</h2>

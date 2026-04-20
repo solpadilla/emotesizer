@@ -98,6 +98,17 @@
 
     </div>
 
+    <!-- Related tools — trim pairs naturally with compress, speed, reverse, and crop workflows -->
+    <ToolRelated
+      current="/tools/trim"
+      :tools="[
+        { to: '/tools/compress', label: 'GIF Compress', icon: 'IconCompress', description: 'Reduce GIF file size while preserving quality' },
+        { to: '/tools/speed', label: 'GIF Speed', icon: 'IconGauge', description: 'Speed up or slow down GIF animation' },
+        { to: '/tools/reverse', label: 'GIF Reverse', icon: 'IconReverse', description: 'Play GIFs backwards or create boomerang loops' },
+        { to: '/tools/crop', label: 'GIF Crop', icon: 'IconCrop', description: 'Crop a specific region from animated GIFs' },
+      ]"
+    />
+
     <!-- SEO content section -->
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Trim a GIF Online</h2>
@@ -108,23 +119,37 @@
         <li><strong>Download</strong> — click "Download Trimmed GIF" to save your shortened GIF. No watermark, no account needed.</li>
       </ol>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Use Our GIF Cutter?</h2>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">What You Can Do with a GIF Trimmer</h2>
+      <p class="text-sm text-surface-600 mb-3">
+        A GIF trimmer is a narrow but surprisingly versatile tool. The most common job is shortening a long screen capture or reaction clip down to the single expressive moment that actually carries the joke — the setup frames and the dead air at the end are almost always trimmable without hurting the animation. Trimming is also the fastest way to pull an emote-sized clip out of a multi-second GIF: pick the six or eight frames where the mouth drops open, discard the rest, and the file will typically land well under Twitch's 1 MB limit without touching quality. Beyond emotes, trimming is useful for cleaning up accidental mouse movement at the start of a tutorial GIF, cutting a transition frame that looks wrong, or turning a five-second loop into a two-second loop that feels punchier in a chat thread. Because our trimmer preserves exact frame data, none of this costs any visible quality.
+      </p>
+
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Trim vs. Crop vs. Speed Change — Which One Do You Need?</h2>
+      <p class="text-sm text-surface-600 mb-3">
+        These three operations are easy to confuse because all of them "shrink" a GIF, but they shrink it along different axes. <strong>Trimming</strong> reduces the GIF along the time axis — it removes frames from the start or end, shortening the animation's duration while leaving every remaining frame exactly as it was. Use it when you want to say "just keep the middle two seconds." The <NuxtLink to="/tools/crop" class="text-primary-500 hover:underline">crop tool</NuxtLink> works along the spatial axes instead, cutting off pixels from the edges of every frame — use it when the subject is in the corner of a widescreen capture and you want a tight square. A <NuxtLink to="/tools/speed" class="text-primary-500 hover:underline">speed change</NuxtLink> keeps all the frames and all the pixels but adjusts how fast they play back, which affects perceived duration without removing anything. For emote work, you'll often use two of these together: trim first to isolate the moment, then crop to square, and only change speed if the loop feels off.
+      </p>
+
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Tips for Making Great Emote Loops by Trimming</h2>
+      <p class="text-sm text-surface-600 mb-3">
+        A great emote loop feels seamless — the eye can't tell where the animation restarts. The most important rule for trimming toward that goal is to cut on matching poses. Scrub the frame slider until you find a start frame where the character is at rest or mid-motion, then find an end frame that visually continues back to that same pose. When frames one and N are nearly identical, the loop hides the seam. A second trick is to favor odd frame counts for organic motions — an 11-frame or 13-frame loop often feels more natural than a 12-frame one because the eye's rhythm detector lands on slightly different beats each pass. Third, keep an eye on total duration: emotes that run longer than about two seconds tend to feel slow in a fast-moving chat. If the source GIF is gorgeous but too long, trim aggressively and then use our <NuxtLink to="/tools/speed" class="text-primary-500 hover:underline">speed tool</NuxtLink> to tighten up the pace rather than cramming in more frames. Finally, always preview the trimmed GIF once as a real loop (not just scrubbed), because a seam that is invisible frame-by-frame can still catch your eye when the animation actually plays back.
+      </p>
+
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">How Trimming Affects File Size</h2>
+      <p class="text-sm text-surface-600 mb-3">
+        File-size savings from trimming scale almost linearly with the frames you remove. GIFs store frame data as paletted image strips — dropping half the frames typically drops close to half the final file size, minus a small fixed overhead for the header and palette. That makes trimming the single most effective lossless compression technique available for animated GIFs: unlike quality reduction or color-palette shrinking, it doesn't touch any pixel data, so the surviving frames look identical to the original. If your trimmed GIF is still too large for a target platform, layer our <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink> on top to apply lossless re-encoding or lossy strategies on the remaining frames.
+      </p>
+
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Use Our GIF Trimmer?</h2>
       <ul class="list-disc list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>100% free</strong> — no hidden costs, no premium tiers for basic trimming.</li>
-        <li><strong>No watermark</strong> — your trimmed GIF is clean, no branding added.</li>
-        <li><strong>Browser-based</strong> — all processing happens locally. Your GIF never leaves your device.</li>
-        <li><strong>Instant preview</strong> — see the trimmed animation before downloading.</li>
-        <li><strong>No signup required</strong> — just upload, trim, and download.</li>
+        <li><strong>Frame-accurate range selector</strong> — scrub to the exact start and end frame with a draggable slider instead of fighting second-level timestamps.</li>
+        <li><strong>Preserves original frame delays</strong> — the per-frame timing from the source GIF is kept intact so the trimmed clip plays back at the same speed.</li>
+        <li><strong>Live preview after 500ms debounce</strong> — the preview re-encodes on idle, so you see the real trimmed loop without burning CPU on every slider tick.</li>
+        <li><strong>Handles 20 MB GIFs client-side</strong> — decoding and re-encoding run entirely in your browser via WebAssembly, with no server round-trip.</li>
+        <li><strong>Outputs identical frames — no re-encoding artifacts</strong> — surviving frames are passed through unchanged, so the result is visually indistinguishable from the original for the parts you kept.</li>
       </ul>
 
       <p class="text-sm text-surface-500 mt-6">
-        Need more than just trimming? Try our <NuxtLink to="/optimizer" class="text-primary-500 hover:underline">full emote optimizer</NuxtLink> to resize and compress GIFs for Twitch, Discord, and Kick emotes.
-      </p>
-      <p class="text-sm text-surface-500 mt-6">
-        Need to edit more? Try our
-        <NuxtLink to="/tools/resize" class="text-primary-500 hover:underline">GIF resizer</NuxtLink>,
-        <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink>,
-        or <NuxtLink to="/tools/speed" class="text-primary-500 hover:underline">speed changer</NuxtLink>.
+        Need more than just trimming? Try our <NuxtLink to="/optimizer" class="text-primary-500 hover:underline">full emote optimizer</NuxtLink>, or jump straight to the <NuxtLink to="/tools/resize" class="text-primary-500 hover:underline">GIF resizer</NuxtLink>, <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink>, or <NuxtLink to="/tools/speed" class="text-primary-500 hover:underline">speed changer</NuxtLink>.
       </p>
     </section>
 
@@ -135,6 +160,26 @@
         <div>
           <h3 class="text-sm font-bold text-surface-900">How do I trim a GIF?</h3>
           <p class="text-sm text-surface-500 mt-1">Upload your GIF, drag the start and end handles to select the frames you want to keep, then click download. The trimmed GIF plays back exactly as you previewed it.</p>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-surface-900">How many frames can a Twitch emote have?</h3>
+          <p class="text-sm text-surface-500 mt-1">Twitch caps animated emotes at 60 frames. If your source GIF has more, trimming down to 60 (or fewer) is the cleanest way to meet the limit without touching image quality. You can also drop duplicate frames via our <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">compressor</NuxtLink> for additional savings.</p>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-surface-900">Does trimming preserve the original frame delays?</h3>
+          <p class="text-sm text-surface-500 mt-1">Yes. Each surviving frame retains its original delay value from the source GIF, so the playback speed of the trimmed range matches the original exactly. If you want a faster or slower result, use the <NuxtLink to="/tools/speed" class="text-primary-500 hover:underline">speed tool</NuxtLink> after trimming.</p>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-surface-900">Can I trim a GIF down to a single frame?</h3>
+          <p class="text-sm text-surface-500 mt-1">You can, but the result is usually better handled by our <NuxtLink to="/tools/gif-to-png" class="text-primary-500 hover:underline">GIF-to-PNG converter</NuxtLink>, which exports a static PNG with lossless compression and full alpha transparency. Use the trimmer when you want an animated result with two or more frames.</p>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-surface-900">Can I trim frames from the middle of a GIF?</h3>
+          <p class="text-sm text-surface-500 mt-1">Our trimmer keeps a contiguous range — you pick a start frame and an end frame, and everything between is kept. To remove a section from the middle, trim twice (save the head, trim again for the tail) or use a frame picker workflow via our <NuxtLink to="/tools/gif-to-png" class="text-primary-500 hover:underline">GIF-to-PNG tool</NuxtLink> and <NuxtLink to="/tools/gif-maker" class="text-primary-500 hover:underline">GIF maker</NuxtLink>.</p>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-surface-900">Why does my trimmed GIF still look choppy?</h3>
+          <p class="text-sm text-surface-500 mt-1">Choppy playback usually traces back to the source: if the original GIF has long per-frame delays, trimming doesn't make them any shorter. Try lowering playback delays with our <NuxtLink to="/tools/speed" class="text-primary-500 hover:underline">speed tool</NuxtLink>, or check whether the source GIF dropped duplicate frames before export (in which case no tool can recover the missing motion).</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit?</h3>
@@ -194,6 +239,46 @@ useHead({
             'acceptedAnswer': {
               '@type': 'Answer',
               'text': 'Upload your GIF, drag the start and end handles to select the frames you want to keep, then click download. The trimmed GIF plays back exactly as you previewed it.',
+            },
+          },
+          {
+            '@type': 'Question',
+            'name': 'How many frames can a Twitch emote have?',
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': 'Twitch caps animated emotes at 60 frames. If your source GIF has more, trimming down to 60 (or fewer) is the cleanest way to meet the limit without touching image quality. You can also drop duplicate frames via our compressor for additional savings.',
+            },
+          },
+          {
+            '@type': 'Question',
+            'name': 'Does trimming preserve the original frame delays?',
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': 'Yes. Each surviving frame retains its original delay value from the source GIF, so the playback speed of the trimmed range matches the original exactly. If you want a faster or slower result, use the speed tool after trimming.',
+            },
+          },
+          {
+            '@type': 'Question',
+            'name': 'Can I trim a GIF down to a single frame?',
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': 'You can, but the result is usually better handled by our GIF-to-PNG converter, which exports a static PNG with lossless compression and full alpha transparency. Use the trimmer when you want an animated result with two or more frames.',
+            },
+          },
+          {
+            '@type': 'Question',
+            'name': 'Can I trim frames from the middle of a GIF?',
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': 'Our trimmer keeps a contiguous range — you pick a start frame and an end frame, and everything between is kept. To remove a section from the middle, trim twice (save the head, trim again for the tail) or use a frame picker workflow via our GIF-to-PNG tool and GIF maker.',
+            },
+          },
+          {
+            '@type': 'Question',
+            'name': 'Why does my trimmed GIF still look choppy?',
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': 'Choppy playback usually traces back to the source: if the original GIF has long per-frame delays, trimming doesn\'t make them any shorter. Try lowering playback delays with our speed tool, or check whether the source GIF dropped duplicate frames before export (in which case no tool can recover the missing motion).',
             },
           },
           {

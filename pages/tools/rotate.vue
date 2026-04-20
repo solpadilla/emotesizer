@@ -241,6 +241,17 @@
 
     </div>
 
+    <!-- Related tools — rotate pairs naturally with resize, crop, compress, and text overlays -->
+    <ToolRelated
+      current="/tools/rotate"
+      :tools="[
+        { to: '/tools/resize', label: 'GIF Resize', icon: 'IconResize', description: 'Change GIF dimensions with crop, pad, or stretch' },
+        { to: '/tools/crop', label: 'GIF Crop', icon: 'IconCrop', description: 'Crop a specific region from animated GIFs' },
+        { to: '/tools/compress', label: 'GIF Compress', icon: 'IconCompress', description: 'Reduce GIF file size while preserving quality' },
+        { to: '/tools/add-text-to-gif', label: 'Add Text to GIF', icon: 'IconText', description: 'Add text, captions, and meme text to animated GIFs' },
+      ]"
+    />
+
     <!-- SEO content section -->
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Rotate or Flip a GIF Online</h2>

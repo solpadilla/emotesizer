@@ -46,6 +46,30 @@
     <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
       <h1 class="sr-only">Search {{ store.contentType === 'stickers' ? 'Stickers' : 'GIFs' }} for Streaming Emotes</h1>
 
+      <!--
+        Popular Categories pill row — only shown when there's no active query
+        or category, i.e. when the page is landing on trending/browse mode.
+        Gives users (and crawlers) a set of canonical entry points so the
+        bare /search page isn't a dead end of generic trending content.
+      -->
+      <section
+        v-if="!store.query && !store.selectedCategory"
+        class="mb-6"
+      >
+        <h2 class="text-sm font-bold text-surface-900 mb-3">Popular Categories</h2>
+        <div class="flex flex-wrap gap-2">
+          <button
+            v-for="category in popularCategories"
+            :key="category"
+            type="button"
+            class="pill text-xs !px-3 !py-1.5 !min-h-[36px] capitalize"
+            @click="jumpToCategory(category)"
+          >
+            {{ category }}
+          </button>
+        </div>
+      </section>
+
       <!-- Results Header -->
       <div class="mb-4">
         <h2 class="text-base font-bold text-surface-900">
@@ -133,6 +157,29 @@
 const route = useRoute()
 const router = useRouter()
 const store = useSearchStore()
+
+// Curated list of common emote-relevant search terms. Rendered as pills
+// above the trending grid when the visitor hasn't typed a query yet, so
+// the empty /search page has clear directions to go.
+const popularCategories = [
+  'happy',
+  'dance',
+  'cat',
+  'pepe',
+  'laugh',
+  'sad',
+  'angry',
+  'confused',
+  'love',
+  'fire',
+  'sparkle',
+  'party',
+] as const
+
+/** Programmatically issues a search for one of the popular-category pills. */
+function jumpToCategory(term: string) {
+  handleSearch(term)
+}
 
 // Reactive SEO: title, description, canonical, and OG tags adapt to the
 // active content type so search-engine crawlers and social previews

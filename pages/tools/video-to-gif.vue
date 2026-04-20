@@ -510,6 +510,17 @@
 
     </div>
 
+    <!-- Related tools — video-to-GIF pairs with MP4 roundtrip, trim, compression, and cropping -->
+    <ToolRelated
+      current="/tools/video-to-gif"
+      :tools="[
+        { to: '/tools/gif-to-mp4', label: 'GIF to MP4', icon: 'IconVideo', description: 'Convert GIFs to MP4 video for smaller file size' },
+        { to: '/tools/trim', label: 'GIF Trim', icon: 'IconScissors', description: 'Cut and shorten GIFs by removing frames' },
+        { to: '/tools/compress', label: 'GIF Compress', icon: 'IconCompress', description: 'Reduce GIF file size while preserving quality' },
+        { to: '/tools/crop', label: 'GIF Crop', icon: 'IconCrop', description: 'Crop a specific region from animated GIFs' },
+      ]"
+    />
+
     <!-- SEO content section -->
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Convert MP4 to GIF Online</h2>

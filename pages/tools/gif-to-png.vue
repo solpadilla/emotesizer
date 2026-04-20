@@ -172,6 +172,17 @@
 
     </div>
 
+    <!-- Related tools — frame extraction pairs with MP4 export, GIF building, compression, and trim -->
+    <ToolRelated
+      current="/tools/gif-to-png"
+      :tools="[
+        { to: '/tools/gif-to-mp4', label: 'GIF to MP4', icon: 'IconVideo', description: 'Convert GIFs to MP4 video for smaller file size' },
+        { to: '/tools/gif-maker', label: 'GIF Maker', icon: 'IconFrame', description: 'Combine images into an animated GIF' },
+        { to: '/tools/compress', label: 'GIF Compress', icon: 'IconCompress', description: 'Reduce GIF file size while preserving quality' },
+        { to: '/tools/trim', label: 'GIF Trim', icon: 'IconScissors', description: 'Cut and shorten GIFs by removing frames' },
+      ]"
+    />
+
     <!-- SEO content section -->
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Convert GIF to PNG or Extract All Frames</h2>

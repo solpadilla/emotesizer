@@ -48,7 +48,14 @@ const { data: item, pending } = await useAsyncData(
 // ---------------------------------------------------------------------------
 useHead(computed(() => {
   if (!item.value) {
-    return { title: `${slug} — EmoteSizer` }
+    return {
+      title: `${slug} — EmoteSizer`,
+      // Third-party sticker content from KLIPY has no original editorial value
+      // on our domain — we exclude these pages from Google's index to protect
+      // our AdSense "low value content" compliance while still allowing the
+      // crawler to follow outbound links for discovery.
+      meta: [{ key: 'robots', name: 'robots', content: 'noindex, follow' }],
+    }
   }
 
   const sticker = item.value
@@ -61,6 +68,8 @@ useHead(computed(() => {
     title: seoTitle,
     meta: [
       { key: 'description', name: 'description', content: seoDescription },
+      // Third-party KLIPY-sourced pages are excluded from the index — see note above.
+      { key: 'robots', name: 'robots', content: 'noindex, follow' },
       { key: 'og:title', property: 'og:title', content: `${sticker.title} — Sticker for Streaming Emotes` },
       { key: 'og:description', property: 'og:description', content: `Optimize "${sticker.title}" for Twitch, Discord, or Kick emotes. Free browser-based sticker resizer.` },
       { key: 'og:image', property: 'og:image', content: ogImage },

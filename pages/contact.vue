@@ -3,9 +3,29 @@
     <h1 class="text-2xl md:text-3xl font-extrabold text-surface-900 mb-2">
       Contact Us
     </h1>
-    <p class="text-sm text-surface-600 leading-relaxed mb-8">
+    <p class="text-sm text-surface-600 leading-relaxed mb-6">
       Have a question, found a bug, or want to suggest a feature? We'd love to hear from you.
     </p>
+
+    <!--
+      Info block shown above the form — gives visitors the direct email
+      option as a fallback and sets a clear response-time expectation.
+    -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+      <div class="card">
+        <p class="text-xs font-semibold uppercase tracking-wide text-surface-400 mb-1">Email</p>
+        <a
+          href="mailto:dev.spadilla@gmail.com"
+          class="link text-sm font-medium break-all"
+        >dev.spadilla@gmail.com</a>
+        <p class="text-xs text-surface-500 mt-1">For all inquiries — support, partnerships, or DMCA.</p>
+      </div>
+      <div class="card">
+        <p class="text-xs font-semibold uppercase tracking-wide text-surface-400 mb-1">Response time</p>
+        <p class="text-sm font-medium text-surface-900">Usually within 2 business days</p>
+        <p class="text-xs text-surface-500 mt-1">We read every message. Complex bugs may take a bit longer.</p>
+      </div>
+    </div>
 
     <!-- Session limit reached -->
     <div v-if="isSessionLimitReached" class="card text-center py-12">
@@ -97,11 +117,38 @@
       </button>
     </form>
 
-    <!-- Report Content section -->
+    <!-- DMCA / Copyright Claims -->
     <div class="mt-12 pt-8 border-t border-surface-200/50">
-      <h2 class="text-lg font-bold text-surface-900 mb-3">Report Content</h2>
+      <h2 class="text-lg font-bold text-surface-900 mb-3">DMCA / Copyright Claims</h2>
+      <p class="text-sm text-surface-600 leading-relaxed mb-3">
+        If you are a rights holder and believe material accessible through our site infringes your copyright, please send a written DMCA notification to our designated agent at <a href="mailto:dev.spadilla@gmail.com" class="link">dev.spadilla@gmail.com</a> with the subject line "DMCA Notice". To be effective under 17 U.S.C. &sect; 512, your notice must include:
+      </p>
+      <ol class="list-decimal list-outside pl-6 text-sm text-surface-600 leading-relaxed space-y-1.5 mb-3">
+        <li>Your physical or electronic signature (or that of an authorized agent).</li>
+        <li>Identification of the copyrighted work claimed to have been infringed.</li>
+        <li>The full URL on emotesizer.com where the allegedly infringing material is located.</li>
+        <li>Your full legal name, mailing address, telephone number, and email address.</li>
+        <li>A good-faith statement that use of the material is not authorized by the copyright owner, its agent, or the law.</li>
+        <li>A statement, under penalty of perjury, that the information in the notice is accurate and that you are authorized to act on behalf of the owner.</li>
+      </ol>
       <p class="text-sm text-surface-600 leading-relaxed">
-        If you believe any content on EmoteSizer infringes your rights, please use the form above with details and we will address it promptly.
+        For the full takedown procedure, counter-notification process, and statutory references, see our <NuxtLink to="/terms#dmca" class="link">Terms of Service &mdash; DMCA section</NuxtLink>.
+      </p>
+    </div>
+
+    <!-- General Inquiries & Partnership -->
+    <div class="mt-10">
+      <h2 class="text-lg font-bold text-surface-900 mb-3">General Inquiries &amp; Partnership</h2>
+      <p class="text-sm text-surface-600 leading-relaxed mb-3">
+        Press, business partnerships, integrations, and general questions are all welcome through the form above or directly at <a href="mailto:dev.spadilla@gmail.com" class="link">dev.spadilla@gmail.com</a>. If you're a creator, tool developer, or platform interested in collaborating, please include a brief description of what you have in mind and any relevant links (your channel, project, or company site) so we can respond with context. We review partnership requests weekly and reply to serious inquiries within two business days.
+      </p>
+    </div>
+
+    <!-- Bug Reports -->
+    <div class="mt-10">
+      <h2 class="text-lg font-bold text-surface-900 mb-3">Bug Reports</h2>
+      <p class="text-sm text-surface-600 leading-relaxed mb-3">
+        Found something broken? A great bug report saves us both time. Please include: (1) the URL or tool where the issue occurred, (2) your browser and operating system (e.g., "Chrome 132 on Windows 11"), (3) a description of what you expected to happen versus what actually happened, (4) steps to reproduce the issue from a fresh page load, and (5) if possible, a sample GIF or screenshot demonstrating the problem. If the tool threw an error in the browser console, a quick copy-paste of that message is especially helpful. Attach details to the form above or email them to us directly.
       </p>
     </div>
   </div>

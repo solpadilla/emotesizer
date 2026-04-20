@@ -254,6 +254,17 @@
 
     </div>
 
+    <!-- Related tools — GIF-to-MP4 pairs with video-to-GIF roundtrip, frame extraction, compression, and trim -->
+    <ToolRelated
+      current="/tools/gif-to-mp4"
+      :tools="[
+        { to: '/tools/video-to-gif', label: 'Video to GIF', icon: 'IconVideo', description: 'Convert video clips to animated GIFs' },
+        { to: '/tools/compress', label: 'GIF Compress', icon: 'IconCompress', description: 'Reduce GIF file size while preserving quality' },
+        { to: '/tools/gif-to-png', label: 'GIF to PNG', icon: 'IconFrame', description: 'Extract individual frames as PNG images' },
+        { to: '/tools/trim', label: 'GIF Trim', icon: 'IconScissors', description: 'Cut and shorten GIFs by removing frames' },
+      ]"
+    />
+
     <!-- SEO content section -->
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Convert GIF to MP4 Online</h2>
