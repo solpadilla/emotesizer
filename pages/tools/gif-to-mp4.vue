@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
     <div class="mb-6">
-      <h1 class="page-title">GIF to MP4 Converter — Convert GIF to Video Online Free</h1>
+      <h1 class="page-title">GIF to MP4 Converter</h1>
       <p class="page-subtitle mt-1">Convert animated GIFs to MP4 video for 80-90% smaller file size — browser-based, no upload to servers, no watermark, no signup.</p>
     </div>
 
@@ -269,21 +269,25 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Convert GIF to MP4 Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB. All processing is browser-based, so your file never leaves your device.</li>
+        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB.</li>
         <li><strong>Choose quality</strong> — pick Good (smallest file), Better (balanced), or Best (highest quality). The default "Better" setting works well for most GIFs.</li>
         <li><strong>Convert and download</strong> — click "Convert to MP4" and watch the progress. Preview the result side-by-side with the original GIF, then download your MP4 video. Completely free, no watermark, no account needed.</li>
       </ol>
+      <p class="text-xs text-surface-400 mt-2">All processing happens in your browser — <NuxtLink to="/tools#how-it-works" class="text-primary-500 hover:underline">see how the in-browser pipeline works</NuxtLink>.</p>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Convert GIF to MP4?</h2>
-      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>80-90% smaller file size</strong> — MP4 uses H.264 inter-frame compression, which is dramatically more efficient than GIF's frame-by-frame LZW encoding. A 5 MB GIF often becomes 300-500 KB as an MP4.</li>
-        <li><strong>Better visual quality</strong> — GIF is limited to 256 colors per frame. MP4 supports millions of colors with no banding or dithering artifacts, so quality is preserved or improved when you convert GIF to video.</li>
-        <li><strong>Faster page loads</strong> — smaller files mean faster loading times on websites. Google Lighthouse specifically recommends replacing animated GIFs with video for better web performance.</li>
-        <li><strong>Supported everywhere</strong> — MP4 is the universal video format, natively supported by every modern browser, operating system, and device. Hardware-accelerated playback keeps things smooth even on mobile.</li>
-        <li><strong>Social media compatibility</strong> — Instagram does not support GIF uploads at all; you must convert to MP4 first. Twitter, Facebook, Discord, and TikTok all prefer or require MP4 video.</li>
-        <li><strong>Private and browser-based</strong> — all conversion happens locally in your browser using FFmpeg compiled to WebAssembly. Your files are never uploaded to a server. No software to install, no signup required.</li>
-        <li><strong>Free with no watermark</strong> — EmoteSizer never adds watermarks. The output MP4 is clean and ready to use anywhere.</li>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">GIF vs. MP4 File Size — What to Expect</h2>
+      <p class="text-sm text-surface-600">
+        The headline number is "80–90% smaller", but the actual ratio depends on the source. Knowing roughly where your GIF lands on the spectrum helps you decide whether MP4 is worth converting to in your specific case.
+      </p>
+      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2 mt-3">
+        <li><strong>Typical talking-head / live-action source</strong> — H.264 inter-frame compression is brutally efficient on this content because adjacent frames share most of their pixels. Expect 90%+ savings; a 5 MB GIF often lands at 300–500 KB as MP4.</li>
+        <li><strong>High-motion / scene-cut source</strong> — when nearly every pixel changes between frames (e.g. fast cuts, rapid zooms), inter-frame compression has less to exploit. Expect 60–80% savings.</li>
+        <li><strong>Cartoon / cel-animation source</strong> — large flat color regions compress well in both formats but MP4 still wins decisively because GIF caps the palette at 256 colors per frame and re-encodes the whole frame each time.</li>
+        <li><strong>Source with transparency</strong> — H.264 MP4 has no alpha channel. Converting drops transparency and replaces it with whatever color the encoder picks for the alpha pixels. Stick with GIF if transparency matters.</li>
       </ul>
+      <p class="text-sm text-surface-600 mt-3">
+        At the encoder level, the three CRF presets (Good / Better / Best) trade file size against perceptual quality. "Best" can match the source so closely that the difference is invisible at typical viewing distance, while "Good" prioritizes the smallest file that still looks acceptable on a phone screen.
+      </p>
 
       <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">GIF to MP4 for Social Media &amp; Messaging</h2>
       <p class="text-sm text-surface-600 mb-3">
@@ -334,7 +338,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. All processing happens entirely in your browser — your files stay private and are never uploaded to a server.</p>
+          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. The encoder runs as WebAssembly in the browser, so very large or long GIFs may take a few extra seconds to decode and re-encode as MP4.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Does this add a watermark?</h3>
@@ -369,15 +373,15 @@
 import { useFFmpeg } from '~/composables/useFFmpeg'
 
 useHead({
-  title: 'GIF to MP4 Converter — Convert GIF to Video Online Free | EmoteSizer',
+  title: 'GIF to MP4 Converter — EmoteSizer',
   meta: [
     { key: 'description', name: 'description', content: 'Free online GIF to MP4 converter. Convert animated GIFs to MP4 video for 80-90% smaller files. Browser-based, no upload, no watermark, no signup. Works on any device.' },
-    { key: 'og:title', property: 'og:title', content: 'GIF to MP4 Converter — Convert GIF to Video Online Free | EmoteSizer' },
+    { key: 'og:title', property: 'og:title', content: 'GIF to MP4 Converter — EmoteSizer' },
     { key: 'og:description', property: 'og:description', content: 'Free online GIF to MP4 converter. Convert animated GIFs to MP4 video for 80-90% smaller files. Browser-based, no upload, no watermark, no signup. Works on any device.' },
     { key: 'og:url', property: 'og:url', content: 'https://emotesizer.com/tools/gif-to-mp4' },
     { key: 'og:type', property: 'og:type', content: 'website' },
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
-    { key: 'twitter:title', name: 'twitter:title', content: 'GIF to MP4 Converter — Convert GIF to Video Online Free | EmoteSizer' },
+    { key: 'twitter:title', name: 'twitter:title', content: 'GIF to MP4 Converter — EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Free online GIF to MP4 converter. Convert animated GIFs to MP4 video for 80-90% smaller files. Browser-based, no upload, no watermark, no signup. Works on any device.' },
     { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
@@ -395,16 +399,11 @@ useHead({
         'operatingSystem': 'Any (browser-based)',
         'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
         'featureList': [
-          'Convert GIF to MP4',
-          '80-90% file size reduction',
-          'GIF to video converter',
-          'Browser-based FFmpeg',
-          'Quality presets (CRF)',
-          'No watermark',
-          'No signup',
-          'Works on any device',
-          'GIF to MP4 for Instagram',
-          'GIF to MP4 for Discord',
+          'Browser-based FFmpeg encoding',
+          'Quality presets via CRF (Good, Better, Best)',
+          'Typically 80-90% smaller file size than the source GIF',
+          'H.264 MP4 output compatible with Instagram and X',
+          'No upload required — runs locally',
         ],
       }),
     },
@@ -459,7 +458,7 @@ useHead({
             'name': 'Is there a file size limit?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload GIFs up to 20 MB. All processing happens entirely in your browser — your files stay private and are never uploaded to a server.',
+              'text': 'You can upload GIFs up to 20 MB. The encoder runs as WebAssembly in the browser, so very large or long GIFs may take a few extra seconds to decode and re-encode as MP4.',
             },
           },
           {
@@ -525,7 +524,7 @@ useHead({
             '@type': 'HowToStep',
             'position': 1,
             'name': 'Upload your animated GIF',
-            'text': 'Drag and drop or click to browse for a GIF file (up to 20 MB). Your file is processed entirely in your browser and never leaves your device — completely private.',
+            'text': 'Drag and drop or click to browse for a GIF file (up to 20 MB).',
           },
           {
             '@type': 'HowToStep',

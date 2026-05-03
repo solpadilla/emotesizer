@@ -1,8 +1,8 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
     <div class="mb-6">
-      <h1 class="page-title">GIF Resizer — Resize Animated GIFs Online Free</h1>
-      <p class="page-subtitle mt-1">Free online GIF resizer — resize animated GIFs to exact pixel dimensions for Discord emoji, Twitch emotes, Kick, 7TV, BTTV, Slack, and more. No watermark, no signup, works in your browser.</p>
+      <h1 class="page-title">GIF Resizer</h1>
+      <p class="page-subtitle mt-1">Set exact pixel dimensions for any animated GIF. Platform presets for Discord, Twitch, Kick, 7TV, BTTV, and Slack — or type custom width and height up to 4096px with optional aspect-ratio lock.</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -303,11 +303,12 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Resize a GIF Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> — drag & drop or click to browse. Supports animated GIFs up to 20 MB. Your file never leaves your device.</li>
+        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB.</li>
         <li><strong>Pick a platform preset or enter custom dimensions</strong> — one-click presets for Twitch (112x112), Discord (128x128), Kick, 7TV, BTTV, YouTube, or Slack. Or type any custom width and height up to 4096px.</li>
         <li><strong>Preview the resized GIF</strong> — see your resized animated GIF at the target dimensions before downloading. Animation, transparency, and frame timing are preserved.</li>
-        <li><strong>Download your resized GIF</strong> — click to save instantly. Free, no watermark, no account needed.</li>
+        <li><strong>Download your resized GIF</strong> — click to save instantly.</li>
       </ol>
+      <p class="text-xs text-surface-400 mt-2">All processing happens in your browser — <NuxtLink to="/tools#how-it-works" class="text-primary-500 hover:underline">see how the in-browser pipeline works</NuxtLink>.</p>
 
       <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Emote Size Guide by Platform</h2>
       <div class="overflow-x-auto rounded-xl border border-surface-200/80">
@@ -367,16 +368,18 @@
         </table>
       </div>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Use Our GIF Resizer?</h2>
-      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>100% free, no watermark</strong> — resize GIFs without hidden costs or branding.</li>
-        <li><strong>No signup or account needed</strong> — upload, resize, and download in seconds.</li>
-        <li><strong>Browser-based & private</strong> — all GIF processing happens locally in your browser. Your files never leave your device.</li>
-        <li><strong>Platform presets</strong> — one-click sizing for Twitch emotes (112x112), Discord emoji (128x128), Kick, 7TV, BTTV, YouTube, and Slack.</li>
-        <li><strong>Preserves animation & quality</strong> — every frame is resized with high-quality interpolation. Frame timing, transparency, and loop settings are kept intact.</li>
-        <li><strong>Aspect ratio control</strong> — lock or unlock the aspect ratio for precise custom dimensions.</li>
-        <li><strong>Works on any device</strong> — resize GIFs on desktop, tablet, or mobile. No software to install.</li>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Resize Modes — Crop, Pad, or Stretch?</h2>
+      <p class="text-sm text-surface-600">
+        When the source aspect ratio doesn't match the target, the resizer offers three modes that produce visibly different output. Picking the right one is usually more important than picking the right pixel dimensions.
+      </p>
+      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2 mt-3">
+        <li><strong>Crop (Fill &amp; Crop)</strong> — scales the source to cover the target rectangle and discards the overflow on each side. Best for portrait or wide source clips where the subject is centered: nothing visually distorts, you just lose some background. Default for moderately non-square sources.</li>
+        <li><strong>Pad (Fit &amp; Pad)</strong> — scales the source to fit inside the target rectangle and fills the remaining strip with a chosen color (or transparency). Best when every pixel of the source matters and you don't want anything cropped out. Recommended for very tall or very wide sources where Crop would discard too much content.</li>
+        <li><strong>Stretch</strong> — scales the source to fill the target rectangle exactly, distorting the aspect ratio if it doesn't match. Only use this for designs where you specifically want the squashed look.</li>
       </ul>
+      <p class="text-sm text-surface-600 mt-3">
+        The mode selector only appears when the target aspect ratio differs from the source — for square-to-square resizes there's nothing to choose.
+      </p>
 
       <p class="text-sm text-surface-500 mt-6">
         Need to compress a GIF under 256 KB? Try our <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink> or <NuxtLink to="/optimizer" class="text-primary-500 hover:underline">emote optimizer</NuxtLink> for smart compression. Want to cut frames? Use the <NuxtLink to="/tools/trim" class="text-primary-500 hover:underline">GIF trimmer</NuxtLink> to shorten animations. Need to remove edges? Use the <NuxtLink to="/tools/crop" class="text-primary-500 hover:underline">GIF cropper</NuxtLink>. Or <NuxtLink to="/search" class="text-primary-500 hover:underline">search our GIF library</NuxtLink> to find the perfect emote.
@@ -413,7 +416,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit for uploads?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to process. Your GIF never leaves your device.</p>
+          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to process.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Does resizing add a watermark?</h3>
@@ -438,16 +441,16 @@ import type { DecodedFrame, UnencodedFrame } from 'modern-gif'
 import type { ResizeMode } from '~/types/optimizer'
 
 useHead({
-  title: 'Free GIF Resizer — Resize Animated GIFs Online | EmoteSizer',
+  title: 'GIF Resizer — Set Exact Pixel Dimensions | EmoteSizer',
   meta: [
-    { key: 'description', name: 'description', content: 'Resize animated GIFs online free — no watermark, no signup. Resize GIF for Discord emoji (128x128), Twitch emotes (112x112), Kick, 7TV, BTTV, Slack. Compress & reduce GIF file size instantly.' },
-    { key: 'og:title', property: 'og:title', content: 'Free GIF Resizer — Resize Animated GIFs Online | EmoteSizer' },
-    { key: 'og:description', property: 'og:description', content: 'Free online GIF resizer — resize animated GIFs to exact pixel dimensions for Discord, Twitch, Kick, 7TV, BTTV, and Slack. No watermark, no signup, works in your browser.' },
+    { key: 'description', name: 'description', content: 'Set exact pixel dimensions for any animated GIF. Platform presets for Discord (128x128), Twitch (112x112), Kick, 7TV, BTTV, and Slack — or pick a custom size with aspect-ratio lock.' },
+    { key: 'og:title', property: 'og:title', content: 'GIF Resizer — EmoteSizer' },
+    { key: 'og:description', property: 'og:description', content: 'Set exact pixel dimensions for any animated GIF, with platform presets and crop/pad/stretch modes for non-square sources.' },
     { key: 'og:url', property: 'og:url', content: 'https://emotesizer.com/tools/resize' },
     { key: 'og:type', property: 'og:type', content: 'website' },
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
-    { key: 'twitter:title', name: 'twitter:title', content: 'Free GIF Resizer — Resize Animated GIFs Online | EmoteSizer' },
-    { key: 'twitter:description', name: 'twitter:description', content: 'Resize animated GIFs to exact emote sizes for Discord, Twitch, Kick, and more. Free browser-based GIF resizer — no watermark, no signup.' },
+    { key: 'twitter:title', name: 'twitter:title', content: 'GIF Resizer — EmoteSizer' },
+    { key: 'twitter:description', name: 'twitter:description', content: 'Set exact pixel dimensions for animated GIFs, with platform presets and crop/pad/stretch modes.' },
     { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com/tools/resize' }],
@@ -464,21 +467,13 @@ useHead({
         'operatingSystem': 'Any (browser-based)',
         'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
         'featureList': [
-          'Resize animated GIFs online',
-          'Free GIF resizer no watermark',
-          'Resize GIF for Discord emoji (128x128)',
-          'Resize GIF for Twitch emotes (112x112)',
-          'Resize GIF for Kick',
-          'Resize GIF for 7TV and BTTV',
-          'Resize GIF for Slack emoji',
-          'Custom GIF dimensions',
-          'Lock aspect ratio',
-          'Scale down GIF',
-          'Shrink GIF file size',
-          'Resize GIF without losing animation',
-          'Browser-based GIF processing',
-          'No signup required',
-          'Batch-ready platform presets',
+          'Platform presets for Twitch, Discord, Kick, 7TV, BTTV, Slack',
+          'Custom width and height up to 4096px',
+          'Aspect ratio lock for proportional scaling',
+          'Crop, pad, and stretch resize modes',
+          'Custom pad color picker',
+          'Animation, transparency, and frame timing preserved',
+          'Browser-based — no upload required',
         ],
       }),
     },
@@ -541,7 +536,7 @@ useHead({
             'name': 'Is there a file size limit for uploads?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to process. Your GIF never leaves your device.',
+              'text': 'You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to process.',
             },
           },
           {

@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
     <div class="mb-6">
-      <h1 class="page-title">Add Text to GIF — Free Online GIF Caption &amp; Meme Text Editor</h1>
+      <h1 class="page-title">Add Text to GIF</h1>
       <p class="page-subtitle mt-1">Add custom text, captions, subtitles, and meme text to animated GIFs. Choose from 18 fonts, customize colors and outlines, add text animations — no watermark, no signup.</p>
     </div>
 
@@ -658,7 +658,7 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Add Text to a GIF Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your animated GIF</strong> -- drag and drop or click to browse. Supports animated GIFs up to 20 MB. All processing is browser-based and private, so your file never leaves your device.</li>
+        <li><strong>Upload your animated GIF</strong> -- drag and drop or click to browse. Supports animated GIFs up to 20 MB.</li>
         <li><strong>Add and customize text</strong> -- type your text, choose from 18 fonts, set colors, outlines, and shadows. Use quick-style presets for meme text, captions, subtitles, and more.</li>
         <li><strong>Position and animate</strong> -- drag text directly on the canvas to position it. Add fade-in, typewriter, or slide-up animations. Set frame ranges to show text on specific frames only.</li>
         <li><strong>Download</strong> -- click "Download GIF with Text" to save your GIF with text baked in. Free, no watermark, no signup.</li>
@@ -670,16 +670,18 @@
         <NuxtLink to="/tools/speed" class="text-primary-500 hover:underline">adjust the speed</NuxtLink> before adding text.
         After adding text, <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">compress your GIF</NuxtLink> to reduce file size.
       </p>
+      <p class="text-xs text-surface-400 mt-2">All processing happens in your browser -- <NuxtLink to="/tools#how-it-works" class="text-primary-500 hover:underline">see how the in-browser pipeline works</NuxtLink>.</p>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Add Text to Your GIFs?</h2>
-      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Create meme GIFs</strong> -- add classic Impact text with white fill and black outline for instant meme-style captions. The meme text preset applies the perfect formatting in one click.</li>
-        <li><strong>Add captions and subtitles</strong> -- overlay text captions on GIFs for social media, messaging, and presentations. Make your GIFs accessible and informative.</li>
-        <li><strong>Multiple text layers</strong> -- add up to 5 independent text layers, each with its own font, color, position, and animation. Perfect for meme top/bottom text or complex compositions.</li>
-        <li><strong>Animate your text</strong> -- choose from fade-in, fade-out, typewriter, and slide-up animations. Control which frames your text appears on for precise timing.</li>
-        <li><strong>18 fonts included</strong> -- choose from sans-serif, serif, monospace, and display fonts including Impact, Bangers, Pacifico, and Press Start 2P. Fonts load on demand from Google Fonts.</li>
-        <li><strong>100% free, no watermark</strong> -- add text to any GIF online free with no hidden costs, no signup, and no branding added to your output.</li>
-        <li><strong>Private and browser-based</strong> -- all processing happens locally. Your files are never uploaded to a server.</li>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Text Layers, Animations, and Frame Range Control</h2>
+      <p class="text-sm text-surface-600">
+        The editor stacks text on top of the source GIF as independent layers, each with its own typography, position, animation, and per-layer frame range. The combination of those four controls covers nearly every text-on-GIF use case without needing to round-trip through Photoshop.
+      </p>
+      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2 mt-3">
+        <li><strong>Up to 5 layers per GIF</strong> — enough for "meme top + meme bottom + small attribution" or for sequenced dialogue where two captions take turns over different frame ranges.</li>
+        <li><strong>18 fonts</strong> — sans-serif, serif, monospace, and display faces including Impact (the canonical meme font), Bangers, Pacifico, and Press Start 2P. Fonts load on demand from Google Fonts.</li>
+        <li><strong>Outline, shadow, and background box</strong> — the three legibility hacks that make text survive on top of busy or fast-changing GIF backgrounds. The meme preset turns on outline by default with the classic Impact white-on-black look.</li>
+        <li><strong>Per-layer animation</strong> — fade in, fade out, typewriter, and slide. The animation runs across the layer's frame range, so a typewriter caption finishing at frame 30 of a 60-frame GIF is one click.</li>
+        <li><strong>Frame range slider</strong> — text doesn't have to appear on every frame. Set a start and end frame for each layer to add timed dialogue, sequence-based captions, or a credit that only shows at the end.</li>
       </ul>
     </section>
 
@@ -724,7 +726,7 @@
       <div class="space-y-4">
         <div>
           <h3 class="text-sm font-bold text-surface-900">How do I add text to a GIF?</h3>
-          <p class="text-sm text-surface-500 mt-1">Upload your GIF, type your text in the editor, customize the font, color, and style, then drag it into position on the canvas. Click "Download GIF with Text" to save. All processing happens in your browser -- free, no signup, no watermark.</p>
+          <p class="text-sm text-surface-500 mt-1">Upload your GIF, type your text in the editor, customize the font, color, and style, then drag it into position on the canvas. Click "Download GIF with Text" to save. The text is composited onto each frame and re-encoded so it bakes into the animation rather than overlaying as HTML.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Can I add multiple text overlays to a GIF?</h3>
@@ -816,15 +818,15 @@ type AnimationType = TextLayer['animation']
 // -- SEO --
 
 useHead({
-  title: 'Add Text to GIF Online Free — GIF Caption Maker & Text Editor | EmoteSizer',
+  title: 'Add Text to GIF — Caption & Meme Editor | EmoteSizer',
   meta: [
     { key: 'description', name: 'description', content: 'Free online GIF text editor — add text, captions, and meme text to animated GIFs. Custom fonts, colors, outlines, text animations. No watermark, no signup, no download required. Works on any device.' },
-    { key: 'og:title', property: 'og:title', content: 'Add Text to GIF Online Free — GIF Caption Maker & Text Editor | EmoteSizer' },
+    { key: 'og:title', property: 'og:title', content: 'Add Text to GIF — Caption & Meme Editor | EmoteSizer' },
     { key: 'og:description', property: 'og:description', content: 'Free online GIF text editor — add text, captions, and meme text to animated GIFs. Custom fonts, colors, outlines, text animations. No watermark, no signup, no download required. Works on any device.' },
     { key: 'og:url', property: 'og:url', content: 'https://emotesizer.com/tools/add-text-to-gif' },
     { key: 'og:type', property: 'og:type', content: 'website' },
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
-    { key: 'twitter:title', name: 'twitter:title', content: 'Add Text to GIF Online Free — GIF Caption Maker & Text Editor | EmoteSizer' },
+    { key: 'twitter:title', name: 'twitter:title', content: 'Add Text to GIF — Caption & Meme Editor | EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Free online GIF text editor — add text, captions, and meme text to animated GIFs. Custom fonts, colors, outlines, text animations. No watermark, no signup. Works on any device.' },
     { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
@@ -842,24 +844,13 @@ useHead({
         'operatingSystem': 'Any (browser-based)',
         'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
         'featureList': [
-          'Add text to animated GIF',
-          'Meme text generator for GIFs',
-          'GIF caption editor',
-          'Multiple text layers (up to 5)',
-          '18 font choices including Impact, Bangers, Pacifico',
-          'Text outline and shadow effects',
-          'Background box with opacity control',
-          'Text animations: fade, typewriter, slide',
-          'Frame range control',
+          'Up to 5 independent text layers per GIF',
+          '18 font choices including Impact, Bangers, and Pacifico',
+          'Text outline, shadow, and background box with opacity',
+          'Animations: fade, typewriter, and slide',
+          'Per-layer frame range control',
           'Drag-to-position text placement',
-          'No watermark',
-          'No signup required',
-          'Browser-based — files never leave your device',
-          'GIF caption maker — add captions and subtitles to any animated GIF',
-          'GIF meme text generator with Impact font and classic meme styling',
-          'Works on iPhone, Android, tablet, and desktop — no app download needed',
-          'No file upload to servers — 100% client-side processing for complete privacy',
-          'EZGIF alternative with more text styling options and no watermark',
+          'Browser-based — no upload required',
         ],
       }),
     },
@@ -874,7 +865,7 @@ useHead({
             'name': 'How do I add text to a GIF?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'Upload your GIF, type your text in the editor, customize the font, color, and style, then drag it into position on the canvas. Click "Download GIF with Text" to save. All processing happens in your browser.',
+              'text': 'Upload your GIF, type your text in the editor, customize the font, color, and style, then drag it into position on the canvas. Click "Download GIF with Text" to save. The text is composited onto each frame and re-encoded so it bakes into the animation rather than overlaying as HTML.',
             },
           },
           {
@@ -980,7 +971,7 @@ useHead({
             '@type': 'HowToStep',
             'position': 1,
             'name': 'Upload your animated GIF',
-            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB. All processing is browser-based and private — your file never leaves your device.',
+            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB.',
           },
           {
             '@type': 'HowToStep',

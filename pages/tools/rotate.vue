@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
     <div class="mb-6">
-      <h1 class="page-title">GIF Rotate & Flip — Rotate or Mirror GIFs Online Free</h1>
+      <h1 class="page-title">GIF Rotate &amp; Flip</h1>
       <p class="page-subtitle mt-1">Rotate GIFs 90&deg;, 180&deg;, or 270&deg; and flip horizontally or vertically &mdash; all online and free. Instant preview, no watermark, no signup.</p>
     </div>
 
@@ -256,22 +256,26 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Rotate or Flip a GIF Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. This free online GIF rotator supports animated GIFs up to 20 MB. All processing is browser-based and private, so your file never leaves your device.</li>
+        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB.</li>
         <li><strong>Pick a rotation angle or flip direction</strong> — rotate your GIF 90 degrees, 180 degrees, or 270 degrees clockwise. Flip the GIF horizontally to mirror it, or flip vertically to turn it upside down. Rotation and flip controls combine freely for any orientation.</li>
         <li><strong>Preview instantly</strong> — see your rotated or flipped GIF side-by-side with the original. The preview uses an instant CSS transform so there is no wait and no re-encoding until you download.</li>
         <li><strong>Download</strong> — click the download button to save your rotated or flipped GIF. Completely free, no watermark, no signup, no account needed.</li>
       </ol>
+      <p class="text-xs text-surface-400 mt-2">All processing happens in your browser — <NuxtLink to="/tools#how-it-works" class="text-primary-500 hover:underline">see how the in-browser pipeline works</NuxtLink>.</p>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Rotate or Flip Your GIFs?</h2>
-      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Fix orientation</strong> — correct GIFs that were recorded sideways or upside down from screen captures and phone recordings. Rotate an animated GIF to the right angle without losing quality.</li>
-        <li><strong>Mirror for design &amp; emotes</strong> — flip a GIF horizontally to create a mirrored version facing the opposite direction. Many Twitch and Discord streamers create mirrored emote pairs from a single piece of art.</li>
-        <li><strong>Lossless rotation</strong> — our GIF rotator uses pixel reindexing instead of interpolation, so colors, transparency, and animation timing are preserved exactly. Rotate or flip an animated GIF without losing frames.</li>
-        <li><strong>Creative effects</strong> — rotate GIFs to unusual angles for visual interest, or flip vertically for surreal, upside-down animations.</li>
-        <li><strong>Combine transforms</strong> — rotate and flip in a single step. For example, a 90-degree rotation plus a horizontal flip is equivalent to a transpose operation.</li>
-        <li><strong>100% free, no watermark</strong> — rotate or flip any GIF online free with no hidden costs and no branding added to your output.</li>
-        <li><strong>Private &amp; browser-based</strong> — all GIF processing happens locally in your browser. Your files are never uploaded to a server, keeping your content secure.</li>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Rotate vs. Flip — Visual Comparison</h2>
+      <p class="text-sm text-surface-600">
+        Rotation and flipping are easy to confuse — both leave the canvas dimensions the same and both move pixels around — but the resulting image is different in a way that matters for things like text in the GIF.
+      </p>
+      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2 mt-3">
+        <li><strong>Rotate 90° / 180° / 270°</strong> — pivots the entire image around its center. After a 90° rotation, the top of the source becomes the right side of the output. Text remains readable in the rotated direction (you tilt your head 90°). Width and height swap on 90° and 270° rotations.</li>
+        <li><strong>Flip horizontally (mirror)</strong> — reflects the image across a vertical axis. The left and right sides swap, the top and bottom don't. Any text in the GIF becomes a mirror image (unreadable). Used most often to create directional emote pairs (left-facing / right-facing) from a single source.</li>
+        <li><strong>Flip vertically</strong> — reflects across a horizontal axis. Top and bottom swap. Text becomes upside-down-mirrored. Less common in emote work but useful for surreal effects.</li>
+        <li><strong>Combine transforms</strong> — rotation and flip can be applied in a single pass. A 90° rotation plus horizontal flip, for example, is equivalent to a matrix transpose.</li>
       </ul>
+      <p class="text-sm text-surface-600 mt-3">
+        All of these operations are pixel-reindexing rather than interpolation, so colors, transparency, and frame timing are preserved exactly — there's no quality loss regardless of how many times you rotate or flip.
+      </p>
 
       <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Rotate &amp; Flip GIFs for Twitch, Discord &amp; Streaming Emotes</h2>
       <p class="text-sm text-surface-600 mb-3">
@@ -293,7 +297,7 @@
       <div class="space-y-4">
         <div>
           <h3 class="text-sm font-bold text-surface-900">How do I rotate a GIF online?</h3>
-          <p class="text-sm text-surface-500 mt-1">Upload your GIF, select a rotation angle (90&deg;, 180&deg;, or 270&deg;), preview the result instantly, and download. It's completely free — no signup, no watermark, no server upload.</p>
+          <p class="text-sm text-surface-500 mt-1">Upload your GIF, select a rotation angle (90&deg;, 180&deg;, or 270&deg;), preview the result instantly, and download. The preview uses an instant CSS transform so you see the result before any re-encoding happens.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">How do I flip a GIF horizontally?</h3>
@@ -321,7 +325,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit?</h3>
-          <p class="text-sm text-surface-500 mt-1">Up to 20 MB. All processing happens in your browser — private and secure. Your GIF is never uploaded to a server.</p>
+          <p class="text-sm text-surface-500 mt-1">Up to 20 MB per file. Larger GIFs may take a moment to decode and re-encode in the browser, especially on lower-end mobile devices.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Does rotating or flipping add a watermark?</h3>
@@ -341,15 +345,15 @@ import { decode, decodeFrames, encode } from 'modern-gif'
 import type { DecodedFrame } from 'modern-gif'
 
 useHead({
-  title: 'Rotate & Flip GIF Online Free — GIF Rotator & Mirror Tool | EmoteSizer',
+  title: 'GIF Rotate & Flip — EmoteSizer',
   meta: [
     { key: 'description', name: 'description', content: 'Rotate GIFs 90\u00B0, 180\u00B0, or 270\u00B0 and flip horizontally or vertically \u2014 all online and free. Instant preview, no watermark, no signup. Perfect for Twitch & Discord emotes.' },
-    { key: 'og:title', property: 'og:title', content: 'Rotate & Flip GIF Online Free \u2014 GIF Rotator & Mirror Tool | EmoteSizer' },
+    { key: 'og:title', property: 'og:title', content: 'GIF Rotate & Flip \u2014 EmoteSizer' },
     { key: 'og:description', property: 'og:description', content: 'Rotate GIFs 90\u00B0, 180\u00B0, or 270\u00B0 and flip horizontally or vertically \u2014 all online and free. Instant preview, no watermark, no signup. Perfect for Twitch & Discord emotes.' },
     { key: 'og:url', property: 'og:url', content: 'https://emotesizer.com/tools/rotate' },
     { key: 'og:type', property: 'og:type', content: 'website' },
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
-    { key: 'twitter:title', name: 'twitter:title', content: 'Rotate & Flip GIF Online Free \u2014 GIF Rotator & Mirror Tool | EmoteSizer' },
+    { key: 'twitter:title', name: 'twitter:title', content: 'GIF Rotate & Flip \u2014 EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Rotate GIFs 90\u00B0, 180\u00B0, or 270\u00B0 and flip horizontally or vertically \u2014 all online and free. Instant preview, no watermark, no signup. Perfect for Twitch & Discord emotes.' },
     { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
@@ -389,7 +393,7 @@ useHead({
             'name': 'How do I rotate a GIF online?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'Upload your GIF, select a rotation angle (90\u00B0, 180\u00B0, or 270\u00B0), preview the result instantly, and download. It\'s completely free \u2014 no signup, no watermark, no server upload.',
+              'text': 'Upload your GIF, select a rotation angle (90\u00B0, 180\u00B0, or 270\u00B0), preview the result instantly, and download. The preview uses an instant CSS transform so you see the result before any re-encoding happens.',
             },
           },
           {
@@ -445,7 +449,7 @@ useHead({
             'name': 'Is there a file size limit?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'Up to 20 MB. All processing happens in your browser \u2014 private and secure. Your GIF is never uploaded to a server.',
+              'text': 'Up to 20 MB per file. Larger GIFs may take a moment to decode and re-encode in the browser, especially on lower-end mobile devices.',
             },
           },
           {
@@ -479,7 +483,7 @@ useHead({
             '@type': 'HowToStep',
             'position': 1,
             'name': 'Upload your animated GIF',
-            'text': 'Drag and drop or click to browse. This free GIF rotator supports animated GIFs up to 20 MB. Your file is processed entirely in your browser and never leaves your device.',
+            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB.',
           },
           {
             '@type': 'HowToStep',

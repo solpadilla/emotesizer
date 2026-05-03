@@ -181,16 +181,21 @@ function jumpToCategory(term: string) {
   handleSearch(term)
 }
 
-// Reactive SEO: title, description, canonical, and OG tags adapt to the
-// active content type so search-engine crawlers and social previews
-// always reflect whether the user is browsing GIFs or Stickers.
+// Reactive SEO: title, description, and OG tags adapt to the active content
+// type so social previews always reflect whether the user is browsing GIFs
+// or Stickers. The page is intentionally noindexed (per AdSense low-value
+// content review) because the rendered content is dominated by third-party
+// KLIPY media; the canonical is collapsed to /search regardless of the
+// query so the GIFs and Stickers variants don't compete as separate
+// canonical URLs even if the noindex is ever lifted.
 useHead(computed(() => {
   const isStickers = store.contentType === 'stickers'
   const typeLabel = isStickers ? 'Stickers' : 'GIFs'
-  const canonicalUrl = isStickers ? 'https://emotesizer.com/search?type=stickers' : 'https://emotesizer.com/search'
+  const canonicalUrl = 'https://emotesizer.com/search'
   return {
     title: `Search ${typeLabel} for Twitch, Discord & Kick Emotes — EmoteSizer`,
     meta: [
+      { key: 'robots', name: 'robots', content: 'noindex, follow' },
       { name: 'description', content: `Search thousands of trending ${typeLabel.toLowerCase()} to use as Twitch emotes, Discord emoji, or Kick emotes. Find the perfect ${isStickers ? 'sticker' : 'GIF'} and resize it instantly.` },
       { property: 'og:title', content: `Search ${typeLabel} for Streaming Emotes — EmoteSizer` },
       { property: 'og:description', content: `Search thousands of ${typeLabel.toLowerCase()} and convert them into emotes for Twitch, Discord, and Kick.` },

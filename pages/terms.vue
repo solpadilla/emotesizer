@@ -3,7 +3,7 @@
     <h1 class="text-2xl md:text-3xl font-extrabold text-surface-900 mb-2">
       Terms of Service
     </h1>
-    <p class="text-xs text-surface-400 mb-8">Effective date: April 20, 2026 &middot; Last updated: April 20, 2026</p>
+    <p class="text-xs text-surface-400 mb-8">Effective date: May 3, 2026 &middot; Last updated: May 3, 2026</p>
 
     <!-- Acceptance of Terms -->
     <h2 class="text-lg font-bold text-surface-900 mt-8 mb-3">Acceptance of Terms</h2>

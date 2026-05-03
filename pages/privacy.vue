@@ -3,7 +3,7 @@
     <h1 class="text-2xl md:text-3xl font-extrabold text-surface-900 mb-2">
       Privacy Policy
     </h1>
-    <p class="text-xs text-surface-400 mb-8">Effective date: April 20, 2026 &middot; Last updated: April 20, 2026</p>
+    <p class="text-xs text-surface-400 mb-8">Effective date: May 3, 2026 &middot; Last updated: May 3, 2026</p>
 
     <!-- Introduction -->
     <h2 class="text-lg font-bold text-surface-900 mt-8 mb-3">Introduction</h2>
@@ -41,6 +41,9 @@
     </p>
     <p class="text-sm text-surface-600 leading-relaxed mb-3">
       Users may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" class="link">Google's Ads Settings</a>. You can also review the complete list of Google's advertising technologies and partners at <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" class="link">https://policies.google.com/technologies/ads</a>. Our Google AdSense publisher ID is <strong>ca-pub-5451666136881781</strong>, which can be verified in our site's <code>/ads.txt</code> file. We do not receive any personally identifiable information about you from Google's ad serving. If a third-party ad creative includes a tracking pixel or beacon, it is subject to that advertiser's own privacy practices and is outside EmoteSizer's control.
+    </p>
+    <p class="text-sm text-surface-600 leading-relaxed mb-3">
+      Beyond Google's settings, you can opt out of personalized advertising from participating networks via the Network Advertising Initiative consumer opt-out at <a href="https://optout.networkadvertising.org/" target="_blank" rel="noopener noreferrer" class="link">https://optout.networkadvertising.org/</a> and via the Digital Advertising Alliance opt-out at <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" class="link">https://www.aboutads.info/choices/</a>. European Economic Area users can opt out via <a href="https://www.youronlinechoices.eu/" target="_blank" rel="noopener noreferrer" class="link">https://www.youronlinechoices.eu/</a>.
     </p>
 
     <!-- Your Rights (GDPR / CCPA) -->

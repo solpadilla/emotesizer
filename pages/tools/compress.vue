@@ -1,8 +1,8 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
     <div class="mb-6">
-      <h1 class="page-title">GIF Compressor — Compress Animated GIFs Online Free</h1>
-      <p class="page-subtitle mt-1">Free online GIF compressor and file size reducer — make your GIF smaller without losing quality. Smart auto-compression to meet platform limits for Twitch, Discord, Kick, and 7TV emotes, or use manual strategies for full control. No watermark, no signup, no upload — processed entirely in your browser.</p>
+      <h1 class="page-title">GIF Compressor</h1>
+      <p class="page-subtitle mt-1">Reduce GIF file size with eleven compression strategies — start lossless, escalate only as much as your target size demands. Built-in platform presets for Twitch, Discord, Kick, and 7TV.</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -353,22 +353,20 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Compress a GIF Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> — drag & drop or click to browse. Supports animated GIFs up to 20 MB. Your file never leaves your device.</li>
+        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB.</li>
         <li><strong>Choose a compression mode</strong> — use Smart Compress for automatic optimization with platform presets (Twitch, Discord, Kick, 7TV), or switch to Manual mode to pick individual strategies.</li>
         <li><strong>Compress and preview</strong> — see the compressed GIF alongside file size savings. Smart Compress tries strategies from lossless to aggressive until the target size is reached.</li>
-        <li><strong>Download your compressed GIF</strong> — click to save instantly. Free, no watermark, no account needed.</li>
+        <li><strong>Download your compressed GIF</strong> — click to save instantly.</li>
       </ol>
+      <p class="text-xs text-surface-400 mt-2">All processing happens in your browser — <NuxtLink to="/tools#how-it-works" class="text-primary-500 hover:underline">see how the in-browser pipeline works</NuxtLink>.</p>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Use Our GIF Compressor?</h2>
-      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>100% free, no watermark</strong> — compress GIFs without hidden costs or branding.</li>
-        <li><strong>No signup or account needed</strong> — upload, compress, and download in seconds.</li>
-        <li><strong>Browser-based & private</strong> — all GIF processing happens locally in your browser. Your files never leave your device.</li>
-        <li><strong>Smart auto-compression</strong> — one click to meet platform file size limits for Twitch (1 MB), Discord (256 KB), Kick (1 MB), and 7TV/BTTV (1 MB).</li>
-        <li><strong>11 compression strategies</strong> — from lossless optimization to aggressive color reduction. Full manual control when you need it.</li>
-        <li><strong>Preserves dimensions</strong> — unlike resizing, compression reduces file size without changing the GIF's width and height (unless you choose resolution reduction).</li>
-        <li><strong>Works on any device</strong> — compress GIFs on desktop, tablet, or mobile. No software to install.</li>
-      </ul>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Choosing the Right Compression Strategy</h2>
+      <p class="text-sm text-surface-600">
+        Compression on the GIF format is a series of trade-offs between palette depth, frame count, and per-frame quality. The right strategy depends on what your source has the most "fat" in. A GIF that's already at a small resolution but has dozens of nearly identical frames will benefit dramatically from frame deduplication and not at all from color reduction. A GIF with a wide gradient and only a few frames is the opposite — palette reduction is the cheapest way to drop bytes, but dropping frames will make the animation visibly stutter.
+      </p>
+      <p class="text-sm text-surface-600 mt-3">
+        That's why Smart Compress runs strategies in escalating order rather than applying a fixed pipeline: lossless re-encoding first (no quality cost), then duplicate-frame removal, then progressively more aggressive lossy compression and color reduction, with resolution reduction reserved for the last resort. The compressor exits at the first strategy that brings the file under the target, so a small over-budget file might only need lossless re-encoding while a large one walks the entire ladder.
+      </p>
 
       <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">GIF Compression Strategies Explained</h2>
       <p class="text-sm text-surface-600 mb-3">
@@ -440,7 +438,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit for uploads?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to process. Your GIF never leaves your device.</p>
+          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to process.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Can I undo compression?</h3>
@@ -452,7 +450,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Can I compress a GIF in my browser without uploading it to a server?</h3>
-          <p class="text-sm text-surface-500 mt-1">Yes. EmoteSizer processes your GIF entirely in your browser using client-side WebAssembly and Canvas APIs. Your file never leaves your device — there is no server upload, no cloud processing, and no data collection. This makes it faster and more private than server-based GIF compressors.</p>
+          <p class="text-sm text-surface-500 mt-1">Yes. The compressor runs in the browser via WebAssembly and Canvas APIs — no upload step, no progress bar waiting on a server. <NuxtLink to="/tools#how-it-works" class="text-primary-500 hover:underline">See how the in-browser pipeline works</NuxtLink> for the technical detail.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">What are the GIF file size limits for Discord, Twitch, Kick, and 7TV?</h3>
@@ -486,13 +484,13 @@ useHead({
   title: 'GIF Compressor — Compress & Reduce GIF Size Free | EmoteSizer',
   meta: [
     { key: 'description', name: 'description', content: 'Free GIF compressor — reduce file size without losing quality. Compress for Discord (256 KB), Twitch (1 MB), Kick & 7TV. No watermark, no signup, no upload.' },
-    { key: 'og:title', property: 'og:title', content: 'GIF Compressor — Reduce GIF File Size Online Free | EmoteSizer' },
-    { key: 'og:description', property: 'og:description', content: 'Free GIF compressor — reduce file size for Discord, Twitch, Kick & 7TV. Lossless and lossy strategies. No watermark, no signup.' },
+    { key: 'og:title', property: 'og:title', content: 'GIF Compressor — EmoteSizer' },
+    { key: 'og:description', property: 'og:description', content: 'Reduce GIF file size with eleven compression strategies and platform presets for Discord, Twitch, Kick, and 7TV.' },
     { key: 'og:url', property: 'og:url', content: 'https://emotesizer.com/tools/compress' },
     { key: 'og:type', property: 'og:type', content: 'website' },
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
-    { key: 'twitter:title', name: 'twitter:title', content: 'GIF Compressor — Reduce GIF File Size Online Free | EmoteSizer' },
-    { key: 'twitter:description', name: 'twitter:description', content: 'Free GIF compressor — reduce file size for Discord, Twitch, Kick & 7TV. Lossless and lossy strategies. No watermark, no signup.' },
+    { key: 'twitter:title', name: 'twitter:title', content: 'GIF Compressor — EmoteSizer' },
+    { key: 'twitter:description', name: 'twitter:description', content: 'Reduce GIF file size with eleven strategies and platform presets for Discord, Twitch, Kick, and 7TV.' },
     { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com/tools/compress' }],
@@ -509,30 +507,12 @@ useHead({
         'operatingSystem': 'Any (browser-based)',
         'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
         'featureList': [
-          'Compress animated GIFs online free',
-          'GIF compressor no watermark',
-          'Reduce GIF file size without losing quality',
-          'Make GIF smaller online',
-          'GIF file size reducer',
-          'GIF optimizer online free',
-          'Smart auto-compression for platform limits',
-          'Compress GIF for Discord emoji under 256 KB',
-          'Compress GIF for Twitch emotes under 1 MB',
-          'Compress GIF for Kick emotes',
-          'Compress GIF for 7TV and BTTV emotes',
-          'Discord GIF compressor',
-          'Twitch emote compressor',
-          'Lossless GIF optimization',
-          'Lossy GIF compression',
-          'GIF color reduction',
-          'GIF frame deduplication',
-          'Drop duplicate frames from GIF',
-          'Reduce GIF resolution',
-          'Compress GIF to specific file size',
-          'Browser-based GIF compression — no upload required',
-          '11 compression strategies',
-          'No signup required',
-          'Client-side processing — files never leave your device',
+          'Smart Compress with platform presets',
+          'Eleven compression strategies, lossless to aggressive',
+          'Manual mode for hand-picking strategies',
+          'Real-time file size comparison',
+          'Custom target size in KB',
+          'Browser-based — no upload required',
         ],
       }),
     },
@@ -595,7 +575,7 @@ useHead({
             'name': 'Is there a file size limit for uploads?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to process. Your GIF never leaves your device.',
+              'text': 'You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to process.',
             },
           },
           {
@@ -619,7 +599,7 @@ useHead({
             'name': 'Can I compress a GIF in my browser without uploading it to a server?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'Yes. EmoteSizer processes your GIF entirely in your browser using client-side WebAssembly and Canvas APIs. Your file never leaves your device — there is no server upload, no cloud processing, and no data collection. This makes it faster and more private than server-based GIF compressors.',
+              'text': 'Yes. The compressor runs in the browser via WebAssembly and Canvas APIs — no upload step, no progress bar waiting on a server. See /tools#how-it-works for the technical detail.',
             },
           },
           {
@@ -657,7 +637,7 @@ useHead({
         'name': 'How to Compress a GIF Online',
         'description': 'Compress animated GIFs for free using EmoteSizer. Reduce GIF file size for Discord, Twitch, Kick, and 7TV with smart auto-compression or manual strategies.',
         'step': [
-          { '@type': 'HowToStep', 'position': 1, 'name': 'Upload your GIF', 'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB. Your file never leaves your device — all processing happens in your browser.' },
+          { '@type': 'HowToStep', 'position': 1, 'name': 'Upload your GIF', 'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB.' },
           { '@type': 'HowToStep', 'position': 2, 'name': 'Choose a compression mode', 'text': 'Use Smart Compress with platform presets (Discord 256 KB, Twitch 1 MB, Kick, 7TV) for automatic optimization, or switch to Manual mode to pick from 11 individual compression strategies.' },
           { '@type': 'HowToStep', 'position': 3, 'name': 'Preview and compare', 'text': 'See the compressed GIF alongside file size savings in real time. Smart Compress tries strategies from lossless to aggressive until the target size is reached.' },
           { '@type': 'HowToStep', 'position': 4, 'name': 'Download the compressed GIF', 'text': 'Click download to save your compressed GIF instantly. Free, no watermark, no account needed.' },

@@ -313,7 +313,7 @@ const toolIconMap: Record<string, ReturnType<typeof resolveComponent>> = {
 useHead({
   title: 'EmoteSizer — Free Twitch Emote Resizer, GIF & Sticker Optimizer',
   meta: [
-    { name: 'description', content: 'Free emote maker, gif compressor, and gif tools — search thousands of GIFs and stickers, compress gif online, then resize them into emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ. Browser-based animated emote maker — no signup required.' },
+    { name: 'description', content: 'Free in-browser emote maker for streamers — search trending GIFs and stickers, then resize and compress them into emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ. No signup, no watermark.' },
     { property: 'og:title', content: 'EmoteSizer — Free Twitch Emote Resizer, GIF & Sticker Optimizer' },
     { property: 'og:description', content: 'Free emote maker — search GIFs and stickers, then resize them into emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ.' },
     { property: 'og:url', content: 'https://emotesizer.com' },
@@ -331,7 +331,14 @@ useHead({
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "Any (browser-based)",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "featureList": ["GIF search", "Sticker search", "Twitch emote resizer (28x28, 56x56, 112x112)", "Discord emoji resizer (128x128, under 256KB)", "Kick emote resizer (500x500, under 1MB)", "7TV emote resizer", "BTTV emote resizer", "FFZ emote resizer", "GIF compressor", "Compress animated GIF", "Animated GIF resizer", "GIF trimmer and cutter", "Reduce GIF file size", "GIF to PNG converter", "Twitch sub badge resizer", "Animated emote maker", "Smart compression", "Online GIF editor", "GIF size reducer", "Emote size converter", "Image to Twitch emote", "No signup required"]
+        "featureList": [
+          "Search trending GIFs and stickers",
+          "Resize GIFs into emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ",
+          "Smart compression to platform file size limits",
+          "Trim, crop, rotate, and reverse animated GIFs",
+          "Convert between GIF, MP4, and PNG",
+          "Browser-based — no upload, no signup, no watermark"
+        ]
       }),
     },
     {

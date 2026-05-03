@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
     <div class="mb-6">
-      <h1 class="page-title">GIF Cropper — Crop Animated GIFs Online Free</h1>
+      <h1 class="page-title">GIF Cropper</h1>
       <p class="page-subtitle mt-1">Crop animated GIFs online for free. Draw a crop region, lock aspect ratios, and download — no watermark, no signup.</p>
     </div>
 
@@ -259,23 +259,27 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Crop a GIF Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your animated GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB. All processing is browser-based and private, so your file never leaves your device.</li>
-        <li><strong>Draw your crop region or autocrop</strong> — drag the crop handles or enter exact pixel values to crop your animated GIF. Use the Autocrop button to trim transparent edges automatically, or lock an aspect ratio for square emotes and social media formats.</li>
-        <li><strong>Preview the cropped GIF</strong> — see the animated crop preview in real time. The cropped file size is displayed so you can verify platform limits before downloading.</li>
-        <li><strong>Download</strong> — click "Download Cropped GIF" to save. Crop a GIF online free — no watermark, no signup, no account needed.</li>
+        <li><strong>Upload your animated GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB.</li>
+        <li><strong>Draw your crop region or autocrop</strong> — drag the crop handles or enter exact pixel values. Use the Autocrop button to trim transparent edges automatically, or lock an aspect ratio for square emotes and social formats.</li>
+        <li><strong>Preview the cropped GIF</strong> — the cropped animation plays in real time, with the projected file size shown so you can verify platform limits before downloading.</li>
+        <li><strong>Download</strong> — click "Download Cropped GIF" to save the result.</li>
       </ol>
+      <p class="text-xs text-surface-400 mt-2">All processing happens in your browser — <NuxtLink to="/tools#how-it-works" class="text-primary-500 hover:underline">see how the in-browser pipeline works</NuxtLink>.</p>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Crop Your GIFs?</h2>
-      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Focus on what matters</strong> — remove unwanted borders, backgrounds, or distracting elements from your animated GIF. Trim GIF edges to isolate exactly the content you need.</li>
-        <li><strong>Remove GIF borders automatically</strong> — use the Autocrop feature to detect and trim transparent edges in one click. Autocrop is ideal for cleaning up GIFs exported with extra padding.</li>
-        <li><strong>Crop GIF without losing quality</strong> — cropping is lossless. It removes pixels from the edges without recompressing the remaining content, so colors, transparency, and animation are preserved exactly.</li>
-        <li><strong>Prepare emotes</strong> — crop to a square region before resizing for Twitch, Discord, or Kick emotes. A clean crop ensures no important details are lost during resize.</li>
-        <li><strong>Reduce file size</strong> — a smaller crop area means fewer pixels per frame, which directly reduces GIF file size without losing quality or frames.</li>
-        <li><strong>Social media ready</strong> — crop to specific aspect ratios (1:1, 4:3, 16:9) for different platforms and feeds. Crop a GIF to square for profile pictures or emotes.</li>
-        <li><strong>100% free, no watermark</strong> — crop any GIF online free with no hidden costs, no signup, and no branding added to your output.</li>
-        <li><strong>Private &amp; browser-based</strong> — all processing happens locally. Your files are never uploaded to a server.</li>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Aspect Ratio Presets for Streaming Platforms</h2>
+      <p class="text-sm text-surface-600">
+        The aspect-ratio lock isn't just a constraint — it's a shortcut to the dimensions that streaming and social platforms actually accept. Knowing which preset maps to which platform saves you from a second resize step downstream.
+      </p>
+      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2 mt-3">
+        <li><strong>1:1 (square)</strong> — what every emote slot wants. Twitch (112x112), Discord (128x128), Kick, 7TV, BTTV, and FFZ all expect a square source. Use this when the final destination is any chat emote.</li>
+        <li><strong>4:5 (portrait)</strong> — Instagram feed posts and Pinterest pins. Tighter than the source's natural aspect for most clips, so be deliberate about what you frame.</li>
+        <li><strong>9:16 (vertical)</strong> — TikTok, Instagram Reels, YouTube Shorts, and Twitter / X mobile feeds. Crop tightly around the subject's vertical center of mass.</li>
+        <li><strong>4:3 / 16:9 (landscape)</strong> — embedded video and presentation slides. 16:9 is the default for almost all modern web video; 4:3 is closer to what older content was shot at.</li>
+        <li><strong>Custom</strong> — type any width and height when you have a specific target that doesn't match a preset (banner ads, profile cover photos, custom emote sizes for non-standard servers).</li>
       </ul>
+      <p class="text-sm text-surface-600 mt-3">
+        Cropping is lossless — pixels outside the crop rectangle are discarded, but everything inside it passes through unchanged. Quality, transparency, and frame timing are preserved exactly.
+      </p>
 
       <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Crop vs. Resize: What's the Difference?</h2>
       <p class="text-sm text-surface-600 mb-3">
@@ -308,7 +312,7 @@
       <div class="space-y-4">
         <div>
           <h3 class="text-sm font-bold text-surface-900">How do I crop a GIF online?</h3>
-          <p class="text-sm text-surface-500 mt-1">Upload your GIF, drag the crop handles to select the region you want to keep, then click download. All processing happens in your browser — free, no signup, no watermark.</p>
+          <p class="text-sm text-surface-500 mt-1">Upload your GIF, drag the crop handles to select the region you want to keep, then click download. The crop runs across every frame in the animation, so the output stays in sync.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Can I crop a GIF to a specific aspect ratio?</h3>
@@ -328,7 +332,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to decode. Your GIF never leaves your device.</p>
+          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to decode.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Does this add a watermark?</h3>
@@ -360,15 +364,15 @@ import { decode, decodeFrames, encode } from 'modern-gif'
 import type { DecodedFrame, UnencodedFrame } from 'modern-gif'
 
 useHead({
-  title: 'GIF Cropper — Crop Animated GIFs Online Free | EmoteSizer',
+  title: 'GIF Cropper — EmoteSizer',
   meta: [
     { key: 'description', name: 'description', content: 'Free online GIF cropper. Crop animated GIFs with aspect ratio presets, autocrop transparent edges, and precise pixel controls. No watermark, no signup. Perfect for Twitch & Discord emotes.' },
-    { key: 'og:title', property: 'og:title', content: 'GIF Cropper — Crop Animated GIFs Online Free | EmoteSizer' },
+    { key: 'og:title', property: 'og:title', content: 'GIF Cropper — EmoteSizer' },
     { key: 'og:description', property: 'og:description', content: 'Free online GIF cropper. Crop animated GIFs with aspect ratio presets, autocrop transparent edges, and precise pixel controls. No watermark, no signup. Perfect for Twitch & Discord emotes.' },
     { key: 'og:url', property: 'og:url', content: 'https://emotesizer.com/tools/crop' },
     { key: 'og:type', property: 'og:type', content: 'website' },
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
-    { key: 'twitter:title', name: 'twitter:title', content: 'GIF Cropper — Crop Animated GIFs Online Free | EmoteSizer' },
+    { key: 'twitter:title', name: 'twitter:title', content: 'GIF Cropper — EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Free online GIF cropper. Crop animated GIFs with aspect ratio presets, autocrop transparent edges, and precise pixel controls. No watermark, no signup. Perfect for Twitch & Discord emotes.' },
     { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
@@ -386,17 +390,13 @@ useHead({
         'operatingSystem': 'Any (browser-based)',
         'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
         'featureList': [
-          'Crop animated GIF online',
-          'Free GIF cropper',
-          'Interactive visual crop editor',
-          '10 aspect ratio presets (1:1, 4:3, 16:9, custom, and more)',
+          'Interactive visual crop editor with drag handles',
+          'Ten aspect-ratio presets (1:1, 4:3, 16:9, and more)',
           'Exact pixel crop inputs',
-          'Center square auto-crop',
-          'Autocrop transparent edges',
-          'Cropped file size display',
-          'No watermark',
-          'No signup required',
-          'Browser-based GIF processing — files never leave your device',
+          'Center-square auto-crop helper',
+          'Autocrop for transparent edges',
+          'Cropped file size display before download',
+          'Browser-based — no upload required',
         ],
       }),
     },
@@ -411,7 +411,7 @@ useHead({
             'name': 'How do I crop a GIF online?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'Upload your GIF, drag the crop handles to select the region you want to keep, then click download. All processing happens in your browser — free, no signup, no watermark.',
+              'text': 'Upload your GIF, drag the crop handles to select the region you want to keep, then click download. The crop runs across every frame in the animation, so the output stays in sync.',
             },
           },
           {
@@ -451,7 +451,7 @@ useHead({
             'name': 'Is there a file size limit?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to decode. Your GIF never leaves your device.',
+              'text': 'You can upload GIFs up to 20 MB. Since all processing happens in your browser, larger files may take a moment to decode.',
             },
           },
           {
@@ -509,7 +509,7 @@ useHead({
             '@type': 'HowToStep',
             'position': 1,
             'name': 'Upload your animated GIF',
-            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB. All processing is browser-based and private — your file never leaves your device.',
+            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB.',
           },
           {
             '@type': 'HowToStep',

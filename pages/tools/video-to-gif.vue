@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
     <div class="mb-6">
-      <h1 class="page-title">Video to GIF Converter — Convert MP4 to GIF Online Free</h1>
+      <h1 class="page-title">Video to GIF Converter</h1>
       <p class="page-subtitle mt-1">Convert video clips to animated GIFs in your browser — trim, set frame rate, resize, and download. No upload to servers, no watermark, no signup.</p>
     </div>
 
@@ -525,20 +525,27 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Convert MP4 to GIF Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your video file</strong> — drag and drop or click to browse. This free online video to GIF converter accepts MP4, WebM, MOV, and AVI files up to 200 MB. Everything runs in your browser using FFmpeg.wasm, so your video never leaves your device.</li>
+        <li><strong>Upload your video file</strong> — drag and drop or click to browse. Accepts MP4, WebM, MOV, and AVI files up to 200 MB.</li>
         <li><strong>Trim the clip</strong> — use the trim slider to select the exact start and end points. Shorter clips produce smaller, more shareable GIFs. For best results, keep your selection under 10-15 seconds.</li>
         <li><strong>Adjust GIF settings</strong> — set the frame rate (FPS), output width, quality preset, max colors, and loop count. The Balanced and Best modes use 2-pass palette encoding for superior color accuracy.</li>
         <li><strong>Convert and download</strong> — click "Convert to GIF" and watch the progress in real time. Preview the result side-by-side with the original video, then download your GIF. Completely free, no watermark, no signup required.</li>
       </ol>
+      <p class="text-xs text-surface-400 mt-2">All processing happens in your browser — <NuxtLink to="/tools#how-it-works" class="text-primary-500 hover:underline">see how the in-browser pipeline works</NuxtLink>.</p>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Convert Video to GIF?</h2>
-      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Share anywhere, no player needed</strong> — GIFs play natively in social media, messaging apps, forums, emails, and websites. Unlike video files, they auto-play and loop without requiring a dedicated player.</li>
-        <li><strong>Create animated emotes</strong> — turn video clips into animated emotes for Twitch, Discord, Kick, 7TV, BTTV, and FFZ. Pair with our <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink> and <NuxtLink to="/tools/resize" class="text-primary-500 hover:underline">resizer</NuxtLink> to meet platform size limits.</li>
-        <li><strong>Perfect for short clips</strong> — reaction GIFs, tutorials, product demos, and memes are more engaging as auto-playing loops than static images or video links.</li>
-        <li><strong>Private and browser-based</strong> — your video never leaves your browser. FFmpeg.wasm processes everything locally using WebAssembly. No server upload, no cloud processing, complete privacy.</li>
-        <li><strong>100% free, no watermark, no signup</strong> — convert any video to GIF online free with no hidden costs, no account required, and no branding on your output.</li>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Video Codec, Frame Rate, and Quality Tradeoffs</h2>
+      <p class="text-sm text-surface-600">
+        Converting video to GIF is mostly about giving up encoder efficiency. Video codecs (H.264, VP9, AV1) compress aggressively across frames; GIF stores each frame as a paletted bitmap with a 256-color cap. The settings on this page each move different sliders along that tradeoff.
+      </p>
+      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2 mt-3">
+        <li><strong>Source codec doesn't matter for quality</strong> — MP4 (H.264), MOV, WebM (VP9 / AV1), and AVI all decode to identical raw frames. Pick by what you have, not what you think will compress better.</li>
+        <li><strong>FPS sets the "frame budget"</strong> — every frame is a fixed cost in the output GIF. 15 FPS for talking heads and reaction clips is usually invisible against the source; 20–24 FPS is closer to "smooth" but multiplies output size; below 10 FPS the motion starts to look stuttery.</li>
+        <li><strong>Output width caps how much detail survives</strong> — GIF compression is less efficient at larger sizes because the palette has to cover more pixels. 480px is a good upper bound for general use; 128–256px for emotes.</li>
+        <li><strong>Quality preset controls palette generation</strong> — Best uses two-pass palette generation (one pass to analyze, one to encode with dithering) which dramatically reduces banding on gradients but takes longer. Good is single-pass with a generic palette.</li>
+        <li><strong>Max colors slider</strong> — leave at 256 unless you specifically need to shrink the file at the cost of more visible posterization.</li>
       </ul>
+      <p class="text-sm text-surface-600 mt-3">
+        For cell-animation or graphical sources, the differences between Good / Balanced / Best are small. For live-action with skin tones and gradients, Best is almost always worth the extra encode time.
+      </p>
 
       <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Convert MOV, WebM, and AVI to GIF</h2>
       <p class="text-sm text-surface-600 mb-3">
@@ -627,15 +634,15 @@
 import { useFFmpeg } from '~/composables/useFFmpeg'
 
 useHead({
-  title: 'Video to GIF Converter — Convert MP4 to GIF Online Free | EmoteSizer',
+  title: 'Video to GIF Converter — EmoteSizer',
   meta: [
     { key: 'description', name: 'description', content: 'Free online video to GIF converter. Convert MP4, WebM, MOV, or AVI to animated GIF — trim, set FPS, resize, and control quality. Browser-based, no watermark, no signup. Works on any device.' },
-    { key: 'og:title', property: 'og:title', content: 'Video to GIF Converter — Convert MP4 to GIF Online Free | EmoteSizer' },
+    { key: 'og:title', property: 'og:title', content: 'Video to GIF Converter — EmoteSizer' },
     { key: 'og:description', property: 'og:description', content: 'Free online video to GIF converter. Convert MP4, WebM, MOV, or AVI to animated GIF — trim, set FPS, resize, and control quality. Browser-based, no watermark, no signup. Works on any device.' },
     { key: 'og:url', property: 'og:url', content: 'https://emotesizer.com/tools/video-to-gif' },
     { key: 'og:type', property: 'og:type', content: 'website' },
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
-    { key: 'twitter:title', name: 'twitter:title', content: 'Video to GIF Converter — Convert MP4 to GIF Online Free | EmoteSizer' },
+    { key: 'twitter:title', name: 'twitter:title', content: 'Video to GIF Converter — EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Free online video to GIF converter. Convert MP4, WebM, MOV, or AVI to animated GIF — trim, set FPS, resize, and control quality. Browser-based, no watermark, no signup. Works on any device.' },
     { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
@@ -653,22 +660,13 @@ useHead({
         'operatingSystem': 'Any (browser-based)',
         'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
         'featureList': [
-          'Convert MP4 to GIF',
-          'Convert MOV to GIF',
-          'Convert WebM to GIF',
-          'Convert AVI to GIF',
-          'Video to GIF no watermark',
-          'Browser-based FFmpeg',
-          'Custom FPS',
-          'Trim video clip',
-          'GIF loop count control',
-          'Max colors slider',
-          '2-pass palette encoding',
-          'Adjustable output width and resize',
-          '3 quality presets (Small, Balanced, Best)',
-          'Side-by-side video vs GIF preview',
-          'No signup required',
-          'Works on any device — Mac, Windows, iPhone, Android',
+          'Browser-based FFmpeg encoding for MP4, MOV, WebM, AVI',
+          'Trim video clip to a sub-range before conversion',
+          'Custom FPS and output width',
+          'Two-pass palette encoding for cleaner gradients',
+          'Max colors slider and three quality presets',
+          'Loop count control',
+          'Side-by-side video vs. GIF preview',
         ],
       }),
     },

@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
     <div class="mb-6">
-      <h1 class="page-title">GIF Loop Changer &mdash; Change GIF Loop Count Online Free</h1>
+      <h1 class="page-title">GIF Loop Changer</h1>
       <p class="page-subtitle mt-1">Set your GIF to loop forever, play once, or any custom repeat count &mdash; free, no watermark, no signup.</p>
     </div>
 
@@ -206,23 +206,25 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Change GIF Loop Count Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> &mdash; drag and drop or click to browse. This free GIF loop changer accepts animated GIFs up to 20 MB. All processing is browser-based and private, so your file never leaves your device.</li>
+        <li><strong>Upload your GIF</strong> &mdash; drag and drop or click to browse. Supports animated GIFs up to 20 MB.</li>
         <li><strong>Choose a GIF loop count</strong> &mdash; select Infinite to make your GIF loop forever, Play Once to stop it from looping, or pick a preset (2x, 3x, 5x, 10x). Need a specific number? Use the Custom option and enter any repeat count from 1 to 65,535.</li>
         <li><strong>Preview the change</strong> &mdash; a summary banner shows the before and after loop count so you know exactly how many times the GIF will repeat. The preview plays the animation so you can verify it looks correct.</li>
         <li><strong>Download</strong> &mdash; click the download button to save your modified GIF. Completely free online, no watermark, no signup required.</li>
       </ol>
+      <p class="text-xs text-surface-400 mt-2">All processing happens in your browser &mdash; <NuxtLink to="/tools#how-it-works" class="text-primary-500 hover:underline">see how the in-browser pipeline works</NuxtLink>.</p>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Change GIF Loop Count?</h2>
-      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Stop a GIF from looping</strong> &mdash; set the GIF to play once so it runs through a single time and stops. This is ideal for instructional animations, splash screens, and notifications that should not repeat endlessly.</li>
-        <li><strong>Make a GIF loop forever</strong> &mdash; many GIF editors export with a single-play setting. Set the loop count to 0 (infinite) so your animation replays continuously on web pages and social media.</li>
-        <li><strong>Set a GIF to play once</strong> &mdash; for onboarding flows, product demos, or email headers where a one-shot animation is more effective than an infinite loop.</li>
-        <li><strong>Platform requirements</strong> &mdash; platforms like Discord, Slack, and email clients honor the GIF loop count metadata. Changing the loop count ensures your animation behaves as intended across different apps and messaging platforms.</li>
-        <li><strong>Presentation &amp; tutorial GIFs</strong> &mdash; set a specific repeat count (e.g., 3 times) for GIFs embedded in slide decks, documentation, or tutorials so they don't distract after demonstrating the concept.</li>
-        <li><strong>Lossless &mdash; no quality loss</strong> &mdash; this GIF loop changer only modifies a single header byte. Frame data, colors, transparency, and timing are all preserved exactly. No re-compression, no quality degradation, no change to file size.</li>
-        <li><strong>100% free, no watermark</strong> &mdash; change any GIF's loop count online free with no hidden costs, no branding added to your output, and no signup required.</li>
-        <li><strong>Private &amp; browser-based</strong> &mdash; all GIF processing happens locally in your browser. Your files are never uploaded to a server, keeping your content secure and private.</li>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Loop Counts and Platform Behavior</h2>
+      <p class="text-sm text-surface-600">
+        The GIF spec stores loop count as a single byte in the Netscape application extension block. The value is interpreted as: <strong>0</strong> means loop forever, any positive integer means play that many times then stop. Most modern browsers and chat clients honor this header byte exactly, but a handful of older renderers ignore it and play the animation once regardless. The most common practical effects of changing the loop count:
+      </p>
+      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2 mt-3">
+        <li><strong>Loop count 0 (infinite)</strong> — what most emote and meme GIFs want. Twitch, Discord, 7TV, BTTV, and FFZ all expect infinite loops; a one-shot emote that freezes on the last frame is one of the more common upload mistakes.</li>
+        <li><strong>Loop count 1 (play once)</strong> — useful for instructional / tutorial GIFs in documentation, product demos, and email headers where the animation should run, communicate its message, and stop.</li>
+        <li><strong>Loop count N (custom)</strong> — useful in slide decks and onboarding flows where a small fixed number of repetitions hits the right balance between drawing the eye and being distracting.</li>
       </ul>
+      <p class="text-sm text-surface-600 mt-3">
+        Changing the loop count is a metadata-only operation: the byte gets rewritten, every frame and palette entry passes through unchanged, and file size is essentially unaffected. No re-encoding, no compression artifacts.
+      </p>
 
       <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">GIF Loop Count for Twitch, Discord &amp; Streaming Emotes</h2>
       <p class="text-sm text-surface-600 mb-3">
@@ -293,15 +295,15 @@ import type { DecodedFrame } from 'modern-gif'
 import { formatFileSize } from '~/utils/format'
 
 useHead({
-  title: 'GIF Loop Changer \u2014 Change GIF Loop Count Online Free | EmoteSizer',
+  title: 'GIF Loop Changer — EmoteSizer',
   meta: [
     { key: 'description', name: 'description', content: 'Free online GIF loop changer. Set your GIF to loop forever, play once, or repeat a custom number of times. No watermark, no signup. Works in your browser.' },
-    { key: 'og:title', property: 'og:title', content: 'GIF Loop Changer \u2014 Change GIF Loop Count Online Free | EmoteSizer' },
+    { key: 'og:title', property: 'og:title', content: 'GIF Loop Changer — EmoteSizer' },
     { key: 'og:description', property: 'og:description', content: 'Free online GIF loop changer. Set your GIF to loop forever, play once, or repeat a custom number of times. No watermark, no signup. Works in your browser.' },
     { key: 'og:url', property: 'og:url', content: 'https://emotesizer.com/tools/loop' },
     { key: 'og:type', property: 'og:type', content: 'website' },
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
-    { key: 'twitter:title', name: 'twitter:title', content: 'GIF Loop Changer \u2014 Change GIF Loop Count Online Free | EmoteSizer' },
+    { key: 'twitter:title', name: 'twitter:title', content: 'GIF Loop Changer — EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Free online GIF loop changer. Set your GIF to loop forever, play once, or repeat a custom number of times. No watermark, no signup. Works in your browser.' },
     { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
@@ -431,7 +433,7 @@ useHead({
             '@type': 'HowToStep',
             'position': 1,
             'name': 'Upload your GIF',
-            'text': 'Drag and drop or click to browse. This free GIF loop changer accepts animated GIFs up to 20 MB. All processing is browser-based and private \u2014 your file never leaves your device.',
+            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB.',
           },
           {
             '@type': 'HowToStep',

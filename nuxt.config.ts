@@ -164,6 +164,10 @@ export default defineNuxtConfig({
     exclude: [
       '/gifs/**',
       '/stickers/**',
+      // /search renders mostly third-party KLIPY media with minimal original
+      // editorial; excluded from sitemap and noindexed at the page level
+      // so it's not a candidate for "low value content" flags.
+      '/search',
     ],
   },
 

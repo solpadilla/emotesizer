@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
     <div class="mb-6">
-      <h1 class="page-title">GIF Speed Changer — Speed Up or Slow Down GIFs Online Free</h1>
+      <h1 class="page-title">GIF Speed Changer</h1>
       <p class="page-subtitle mt-1">Speed up, slow down, or adjust GIF animation speed online — free, no watermark, no signup.</p>
     </div>
 
@@ -366,20 +366,24 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Change GIF Speed Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB. Your file never leaves your device.</li>
+        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB.</li>
         <li><strong>Adjust the speed</strong> — use preset buttons to speed up a GIF (2x, 4x, 8x) or slow down a GIF (0.5x, 0.25x, 0.1x). Switch to FPS mode to target a specific frame rate, or Duration mode to set an exact playback length. Fine-tune with the slider, or enter a custom frame delay in the advanced section for precise control over GIF animation speed.</li>
         <li><strong>Download</strong> — click "Download Modified GIF" to save your speed-adjusted GIF. Free online, no watermark, no account needed.</li>
       </ol>
+      <p class="text-xs text-surface-400 mt-2">All processing happens in your browser — <NuxtLink to="/tools#how-it-works" class="text-primary-500 hover:underline">see how the in-browser pipeline works</NuxtLink>.</p>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Change GIF Speed?</h2>
-      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Slow-motion effects</strong> — slow down fast animations to highlight details or create dramatic pauses.</li>
-        <li><strong>Speed up long GIFs</strong> — compress viewing time without removing frames, keeping the full animation intact.</li>
-        <li><strong>Fix timing issues</strong> — correct GIFs that play too fast or too slow for their intended purpose.</li>
-        <li><strong>Create emote effects</strong> — adjust GIF speed for more expressive Twitch, Discord, or Kick emotes.</li>
-        <li><strong>100% free, no watermark</strong> — no hidden costs, no branding added to your GIF.</li>
-        <li><strong>Browser-based & private</strong> — all processing happens locally in your browser. Your GIF never leaves your device — no upload to server.</li>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Speed, FPS, or Duration — Which Mode Should I Use?</h2>
+      <p class="text-sm text-surface-600">
+        The speed changer exposes the same underlying transform — rewriting per-frame delays — through three different mental models. Pick the one that matches how you're actually thinking about the change:
+      </p>
+      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2 mt-3">
+        <li><strong>Speed multiplier</strong> — the right choice when you're thinking in relative terms ("I want this twice as fast"). The slider runs from 0.1x to 8x and applies uniformly to every frame, so a GIF with variable per-frame delays preserves its relative pacing — a frame that was twice as long as its neighbor in the source is still twice as long in the output.</li>
+        <li><strong>Target FPS</strong> — the right choice when you have a specific frame rate in mind, often dictated by a platform's preference (12 FPS for clean Twitch emotes, 24 FPS for smooth motion). The tool computes the per-frame delay needed to hit your target FPS exactly.</li>
+        <li><strong>Target duration</strong> — the right choice when you have a fixed total length in mind, often because the platform has a duration cap or you need the GIF to sync with something external. Enter the desired duration in seconds and every frame's delay is scaled to fit.</li>
       </ul>
+      <p class="text-sm text-surface-600 mt-3">
+        The advanced section under the slider exposes raw frame-delay editing in milliseconds when you need finer control than any of the three modes provide.
+      </p>
 
       <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Adjust GIF Speed for Twitch, Discord & 7TV Emotes</h2>
       <p class="text-sm text-surface-600 mb-3">
@@ -452,7 +456,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. All processing happens entirely in your browser — your files stay private and are never uploaded to a server.</p>
+          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. Since the speed change is metadata-only on per-frame delays, even larger GIFs process almost instantly — there is no re-encoding of the pixel data.</p>
         </div>
       </div>
     </section>
@@ -490,24 +494,13 @@ useHead({
         'operatingSystem': 'Any (browser-based)',
         'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
         'featureList': [
-          'Speed up GIF',
-          'Slow down GIF',
-          'Change GIF animation speed',
-          'GIF frame delay editor',
-          'Adjust GIF FPS',
-          'Target FPS mode',
-          'Target duration mode',
-          'Speed range 0.1x to 8x',
-          'Side-by-side preview',
-          'Free online GIF speed changer',
-          'No watermark',
-          'Preset speed multipliers (0.1x to 8x)',
-          'Fine-tune speed slider',
-          'Custom frame delay in milliseconds',
+          'Preset speed multipliers from 0.1x to 8x',
+          'Target FPS mode and target duration mode',
+          'Custom per-frame delay in milliseconds',
           'Variable frame delay support',
-          'Live preview',
-          'No signup required',
-          'Browser-based GIF processing — files never leave your device',
+          'Side-by-side before/after preview',
+          'Live preview while adjusting',
+          'Browser-based — no upload required',
         ],
       }),
     },
@@ -594,7 +587,7 @@ useHead({
             'name': 'Is there a file size limit?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload GIFs up to 20 MB. All processing happens entirely in your browser — your files stay private and are never uploaded to a server.',
+              'text': 'You can upload GIFs up to 20 MB. Since the speed change is metadata-only on per-frame delays, even larger GIFs process almost instantly — there is no re-encoding of the pixel data.',
             },
           },
         ],
@@ -612,7 +605,7 @@ useHead({
             '@type': 'HowToStep',
             'position': 1,
             'name': 'Upload your GIF',
-            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB. Your file is processed entirely in your browser and never leaves your device.',
+            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB.',
           },
           {
             '@type': 'HowToStep',

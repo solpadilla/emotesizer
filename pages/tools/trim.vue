@@ -118,6 +118,7 @@
         <li><strong>Preview the result</strong> — see your trimmed animation play in real time before downloading.</li>
         <li><strong>Download</strong> — click "Download Trimmed GIF" to save your shortened GIF. No watermark, no account needed.</li>
       </ol>
+      <p class="text-xs text-surface-400 mt-2">All processing happens in your browser — <NuxtLink to="/tools#how-it-works" class="text-primary-500 hover:underline">see how the in-browser pipeline works</NuxtLink>.</p>
 
       <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">What You Can Do with a GIF Trimmer</h2>
       <p class="text-sm text-surface-600 mb-3">
@@ -199,16 +200,16 @@ import { decode, decodeFrames, encode } from 'modern-gif'
 import type { DecodedFrame } from 'modern-gif'
 
 useHead({
-  title: 'GIF Trimmer — Cut, Trim & Shorten GIFs Online Free | EmoteSizer',
+  title: 'GIF Trimmer — Frame-Accurate Cut & Shorten | EmoteSizer',
   meta: [
-    { key: 'description', name: 'description', content: 'Trim and cut animated GIFs online for free. Remove frames from the start and end, shorten GIF duration, and download instantly. No signup, no watermark — works in your browser.' },
-    { key: 'og:title', property: 'og:title', content: 'Free GIF Cutter — Trim & Cut Animated GIFs Online' },
-    { key: 'og:description', property: 'og:description', content: 'Cut and shorten GIF animations online. Remove unwanted frames, trim duration, preview changes, and download — free, no watermark.' },
+    { key: 'description', name: 'description', content: 'Frame-accurate GIF trimmer. Drag the start and end handles to keep exactly the frames you want, preserve original frame delays, and download a re-encoded clip.' },
+    { key: 'og:title', property: 'og:title', content: 'GIF Trimmer — EmoteSizer' },
+    { key: 'og:description', property: 'og:description', content: 'Pick the exact start and end frames of any animated GIF and download a re-encoded clip.' },
     { key: 'og:url', property: 'og:url', content: 'https://emotesizer.com/tools/trim' },
     { key: 'og:type', property: 'og:type', content: 'website' },
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
-    { key: 'twitter:title', name: 'twitter:title', content: 'Free GIF Trimmer — Cut & Shorten GIFs Online' },
-    { key: 'twitter:description', name: 'twitter:description', content: 'Trim animated GIFs online. Cut frames, shorten duration, download instantly. Free browser-based tool.' },
+    { key: 'twitter:title', name: 'twitter:title', content: 'GIF Trimmer — EmoteSizer' },
+    { key: 'twitter:description', name: 'twitter:description', content: 'Pick the exact start and end frames of any animated GIF and download a re-encoded clip.' },
     { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
   link: [{ rel: 'canonical', href: 'https://emotesizer.com/tools/trim' }],

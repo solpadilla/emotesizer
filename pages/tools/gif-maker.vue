@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
     <div class="mb-6">
-      <h1 class="page-title">GIF Maker — Create Animated GIFs from Images Online Free</h1>
+      <h1 class="page-title">GIF Maker</h1>
       <p class="page-subtitle mt-1">Free animated GIF maker — combine PNG, JPG, or WebP images into a single GIF. Drag to reorder frames, set timing, adjust dimensions, and download. No upload to servers, no watermark, no signup.</p>
     </div>
 
@@ -740,7 +740,7 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Make a GIF from Pictures</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your images</strong> — drag and drop or click to browse. This free online GIF maker accepts PNG, JPG, WebP, and GIF images up to 20 MB each. The image to GIF conversion runs entirely in your browser, so your pictures never leave your device.</li>
+        <li><strong>Upload your images</strong> — drag and drop or click to browse. This free online GIF maker accepts PNG, JPG, WebP, and GIF images up to 20 MB each.</li>
         <li><strong>Arrange the frames</strong> — drag thumbnails in the filmstrip to reorder your image sequence. Remove unwanted frames with the delete button, duplicate frames for emphasis, or add more images at any time. This frame-by-frame GIF maker gives you full control over every step of the animation.</li>
         <li><strong>Set timing and options</strong> — choose a global frame delay or set per-frame timing to control the GIF speed. Adjust the output dimensions, quality level (which controls the GIF color palette and 256-color encoding), and loop count to match your needs.</li>
         <li><strong>Create and download</strong> — click "Create GIF" and watch the GIF encoder process each frame in real time. Download your animated GIF instantly. Completely free, no watermark, no signup required.</li>
@@ -748,16 +748,22 @@
       <p class="text-sm text-surface-600 mt-3">
         After creating your GIF, continue editing with our other free tools. Use the <NuxtLink to="/tools/compress" class="text-primary-500 hover:underline">GIF compressor</NuxtLink> to reduce file size for sharing, the <NuxtLink to="/tools/resize" class="text-primary-500 hover:underline">GIF resizer</NuxtLink> to hit exact pixel dimensions, the <NuxtLink to="/tools/crop" class="text-primary-500 hover:underline">GIF cropper</NuxtLink> to trim the canvas, or the <NuxtLink to="/tools/speed" class="text-primary-500 hover:underline">GIF speed changer</NuxtLink> to fine-tune animation timing. Need to start from a video instead? Try our <NuxtLink to="/tools/video-to-gif" class="text-primary-500 hover:underline">video to GIF converter</NuxtLink>.
       </p>
+      <p class="text-xs text-surface-400 mt-2">All processing happens in your browser — <NuxtLink to="/tools#how-it-works" class="text-primary-500 hover:underline">see how the in-browser pipeline works</NuxtLink>.</p>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Use EmoteSizer's Free Online GIF Maker?</h2>
-      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Create animated emotes</strong> — combine hand-drawn frames, screenshots, or pixel art into animated emotes for Discord, Twitch, Kick, 7TV, BTTV, and FFZ. This animated emote maker gives you frame-by-frame control over every detail of your emote animation.</li>
-        <li><strong>Build GIF slideshows</strong> — turn a series of photos, product images, or illustrations into an auto-playing GIF slideshow for presentations, social media posts, or websites. Set per-frame delays to control how long each slide stays visible.</li>
-        <li><strong>Frame-by-frame animation</strong> — create pixel art animations, flipbook-style cartoons, or stop-motion sequences from an image sequence. Artists and illustrators can import their individual frames and fine-tune the timing for each one independently.</li>
-        <li><strong>No software needed</strong> — forget Photoshop, GIMP, or desktop apps. This GIF maker from images runs entirely in your web browser. Just open the page, upload your pictures, and create your animated GIF in seconds.</li>
-        <li><strong>100% free and private</strong> — no watermark, no signup, no server upload. Your images are processed entirely on your device using client-side JavaScript. Nothing is stored, nothing leaves your browser. Close the tab and everything is gone.</li>
-        <li><strong>Works on any device</strong> — use this image to GIF converter on your desktop, laptop, tablet, or phone. It runs in any modern browser on Windows, Mac, Linux, iOS, and Android.</li>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Frame Timing and Loop Modes</h2>
+      <p class="text-sm text-surface-600">
+        How frame timing is set up determines whether the resulting GIF feels like a slideshow, a flipbook, or a smooth animation. The maker exposes both global and per-frame controls, plus three playback modes that change how the assembled sequence loops.
+      </p>
+      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2 mt-3">
+        <li><strong>Global delay (one value for every frame)</strong> — best when every frame deserves equal screen time, e.g. a character animation cycle or a flipbook. Express it as a per-frame delay in milliseconds, or as a target FPS — the tool converts between the two.</li>
+        <li><strong>Per-frame delay (custom timing per frame)</strong> — best for slideshows where some images deserve longer exposure, or for animations with hold-frames at expressive moments. Click any frame on the timeline and edit its delay independently.</li>
+        <li><strong>Normal playback</strong> — frames play in the order shown on the timeline, then loop back to frame one. Standard mode.</li>
+        <li><strong>Reverse playback</strong> — frames play from last to first, then loop. Equivalent to a single pass through our reverse tool but built into the export so you don't have to round-trip.</li>
+        <li><strong>Ping-pong (boomerang) playback</strong> — plays forward, then backward, with no duplicate frame at the turnaround. Loop count effectively doubles, file size grows accordingly, but the result is a seamless back-and-forth animation.</li>
       </ul>
+      <p class="text-sm text-surface-600 mt-3">
+        The loop count input controls how many full cycles the GIF plays before stopping — set to 0 for infinite (the default for most use cases), or to a small integer for a one-shot or N-shot animation.
+      </p>
     </section>
 
     <section class="mt-8 mb-8 max-w-3xl mx-auto">
@@ -813,7 +819,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">What is the best free GIF maker online?</h3>
-          <p class="text-sm text-surface-500 mt-1">EmoteSizer is a fully free, browser-based GIF maker with no watermark, no signup, and no server upload. Unlike most online GIF creators, your images are processed entirely on your device using client-side JavaScript, giving you complete privacy. You get per-frame timing controls, multiple playback modes, quality presets, and custom loop settings.</p>
+          <p class="text-sm text-surface-500 mt-1">The right pick depends on what you actually need. EmoteSizer's GIF maker is built around per-frame control: per-frame delays, three playback modes (loop, play once, ping-pong), drag-to-reorder timeline, and quality presets that map directly to the 256-color GIF palette ceiling. If your workflow is "drop in a few PNGs, get a clean loop out," that combination tends to be faster than tools that hide the timing controls behind a wizard.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Can I create a GIF without a watermark?</h3>
@@ -891,22 +897,13 @@ useHead({
         'operatingSystem': 'Any (browser-based)',
         'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
         'featureList': [
-          'Create GIF from images',
-          'PNG to GIF conversion',
-          'JPG to GIF conversion',
-          'WebP to GIF conversion',
-          'Animated GIF maker no watermark',
-          'Frame-by-frame GIF editor',
-          'Drag to reorder frames',
-          'Per-frame delay control',
-          'Global and per-frame timing (ms and fps)',
+          'Combine PNG, JPG, or WebP images into an animated GIF',
+          'Drag-to-reorder frame timeline',
+          'Global and per-frame timing in milliseconds or FPS',
           'Custom output dimensions',
           'Quality presets (64, 128, 256 colors)',
-          'GIF loop count control',
-          'Normal, Reverse, and Ping-Pong playback',
-          'Browser-based client-side processing',
-          'No signup required',
-          'Works on any device — Mac, Windows, iPhone, Android',
+          'Loop count and Normal / Reverse / Ping-Pong playback',
+          'Browser-based — no upload required',
         ],
       }),
     },
@@ -929,7 +926,7 @@ useHead({
             'name': 'What is the best free GIF maker online?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'EmoteSizer is a fully free, browser-based GIF maker with no watermark, no signup, and no server upload. Unlike most online GIF creators, your images are processed entirely on your device using client-side JavaScript, giving you complete privacy. You get per-frame timing controls, multiple playback modes, quality presets, and custom loop settings.',
+              'text': 'The right pick depends on what you actually need. EmoteSizer\'s GIF maker is built around per-frame control: per-frame delays, three playback modes (loop, play once, ping-pong), drag-to-reorder timeline, and quality presets that map directly to the 256-color GIF palette ceiling. If your workflow is "drop in a few PNGs, get a clean loop out," that combination tends to be faster than tools that hide the timing controls behind a wizard.',
             },
           },
           {
@@ -1027,7 +1024,7 @@ useHead({
             '@type': 'HowToStep',
             'position': 1,
             'name': 'Upload your images',
-            'text': 'Drag and drop or click to browse. This free GIF maker accepts PNG, JPG, WebP, and GIF images up to 20 MB each. The image to GIF conversion runs entirely in your browser, so your pictures never leave your device.',
+            'text': 'Drag and drop or click to browse. This free GIF maker accepts PNG, JPG, WebP, and GIF images up to 20 MB each.',
           },
           {
             '@type': 'HowToStep',

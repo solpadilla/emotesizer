@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
     <div class="mb-6">
-      <h1 class="page-title">GIF Reverser — Reverse & Boomerang GIFs Online Free</h1>
+      <h1 class="page-title">GIF Reverser</h1>
       <p class="page-subtitle mt-1">Play GIFs backwards or create seamless boomerang loops — free, no watermark, no signup</p>
     </div>
 
@@ -268,22 +268,14 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Reverse a GIF Online</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB. All processing is browser-based, so your file never leaves your device.</li>
+        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB.</li>
         <li><strong>Choose a mode</strong> — select "Reverse" to play the GIF backwards, or "Boomerang" to create a seamless forward-backward ping-pong loop. Optionally adjust playback speed.</li>
         <li><strong>Preview the result</strong> — see your reversed or boomerang GIF play side-by-side with the original animation.</li>
         <li><strong>Download</strong> — click the download button to save your modified GIF. Completely free, no watermark, no account needed.</li>
       </ol>
+      <p class="text-xs text-surface-400 mt-2">All processing happens in your browser — <NuxtLink to="/tools#how-it-works" class="text-primary-500 hover:underline">see how the in-browser pipeline works</NuxtLink>.</p>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Reverse Your GIFs?</h2>
-      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Creative effects</strong> — reversed GIFs create unexpected, humorous, or surreal visuals from ordinary animations. Play any GIF backwards for comedic timing or artistic flair.</li>
-        <li><strong>Seamless loops</strong> — boomerang mode turns any animated GIF into a smooth, infinitely looping animation that plays forward then backward — perfect for memes and emotes.</li>
-        <li><strong>Emote enhancement</strong> — make Twitch, Discord, and Kick emotes more dynamic with a ping-pong GIF loop that feels alive and eye-catching.</li>
-        <li><strong>100% free, no watermark</strong> — reverse any GIF online free with no hidden costs and no branding added to your output.</li>
-        <li><strong>Private &amp; browser-based</strong> — all GIF processing happens locally in your browser. Your files are never uploaded to a server.</li>
-      </ul>
-
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Reverse vs. Boomerang: What's the Difference?</h2>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Reverse vs. Boomerang — When to Use Each</h2>
       <p class="text-sm text-surface-600 mb-3">
         <strong>Reverse</strong> plays the entire animation backward — frame 10, 9, 8, ..., 1. The frame count stays the same, and the file size is nearly identical to the original. This is what you want when you simply need a GIF to play backwards.
       </p>
@@ -314,7 +306,7 @@
       <div class="space-y-4">
         <div>
           <h3 class="text-sm font-bold text-surface-900">How do I reverse a GIF online?</h3>
-          <p class="text-sm text-surface-500 mt-1">Upload your GIF, choose Reverse mode, preview the result side-by-side with the original, and download. It's completely free — no signup, no watermark, no server upload.</p>
+          <p class="text-sm text-surface-500 mt-1">Upload your GIF, choose Reverse mode, preview the result side-by-side with the original, and download. The frame order is rewritten in place, so the reversed clip plays back at the same speed and quality as the source.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">How do I make a boomerang GIF?</h3>
@@ -342,7 +334,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. All processing happens entirely in your browser — your files stay private and are never uploaded to a server.</p>
+          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. Reverse mode keeps the original frame count, while Boomerang mode roughly doubles it — keep that in mind on very long source GIFs.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Does this add a watermark?</h3>
@@ -362,15 +354,15 @@ import { decode, decodeFrames, encode } from 'modern-gif'
 import type { DecodedFrame } from 'modern-gif'
 
 useHead({
-  title: 'Reverse GIF Online Free — GIF Reverser & Boomerang Maker | EmoteSizer',
+  title: 'GIF Reverser & Boomerang Maker — EmoteSizer',
   meta: [
     { key: 'description', name: 'description', content: 'Reverse any GIF online for free — no watermark, no signup. Play GIFs backwards or create boomerang ping-pong loops. Perfect for Discord emotes, Twitch animations & memes.' },
-    { key: 'og:title', property: 'og:title', content: 'Reverse GIF Online Free — GIF Reverser & Boomerang Maker | EmoteSizer' },
+    { key: 'og:title', property: 'og:title', content: 'GIF Reverser & Boomerang Maker — EmoteSizer' },
     { key: 'og:description', property: 'og:description', content: 'Reverse any GIF online for free — no watermark, no signup. Play GIFs backwards or create boomerang ping-pong loops. Perfect for Discord emotes, Twitch animations & memes.' },
     { key: 'og:url', property: 'og:url', content: 'https://emotesizer.com/tools/reverse' },
     { key: 'og:type', property: 'og:type', content: 'website' },
     { key: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
-    { key: 'twitter:title', name: 'twitter:title', content: 'Reverse GIF Online Free — GIF Reverser & Boomerang Maker | EmoteSizer' },
+    { key: 'twitter:title', name: 'twitter:title', content: 'GIF Reverser & Boomerang Maker — EmoteSizer' },
     { key: 'twitter:description', name: 'twitter:description', content: 'Reverse any GIF online for free — no watermark, no signup. Play GIFs backwards or create boomerang ping-pong loops. Perfect for Discord emotes, Twitch animations & memes.' },
     { key: 'og:image', property: 'og:image', content: 'https://emotesizer.com/og-image.png' },
   ],
@@ -388,17 +380,12 @@ useHead({
         'operatingSystem': 'Any (browser-based)',
         'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
         'featureList': [
-          'Reverse GIF',
-          'Boomerang GIF maker',
-          'Ping-pong GIF loop',
-          'Play GIF backwards',
-          'Free online GIF reverser',
-          'No watermark',
-          'Side-by-side preview',
+          'Reverse playback (play backwards)',
+          'Boomerang / ping-pong loop creation',
+          'Side-by-side original vs. reversed preview',
           'Adjustable playback speed',
-          'Seamless loop creation',
-          'No signup required',
-          'Browser-based GIF processing — files never leave your device',
+          'Seamless loop output',
+          'Browser-based — no upload required',
         ],
       }),
     },
@@ -413,7 +400,7 @@ useHead({
             'name': 'How do I reverse a GIF online?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'Upload your GIF, choose Reverse mode, preview the result side-by-side with the original, and download. It\'s completely free — no signup, no watermark, no server upload.',
+              'text': 'Upload your GIF, choose Reverse mode, preview the result side-by-side with the original, and download. The frame order is rewritten in place, so the reversed clip plays back at the same speed and quality as the source.',
             },
           },
           {
@@ -469,7 +456,7 @@ useHead({
             'name': 'Is there a file size limit?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload GIFs up to 20 MB. All processing happens entirely in your browser — your files stay private and are never uploaded to a server.',
+              'text': 'You can upload GIFs up to 20 MB. Reverse mode keeps the original frame count, while Boomerang mode roughly doubles it — keep that in mind on very long source GIFs.',
             },
           },
           {
@@ -503,7 +490,7 @@ useHead({
             '@type': 'HowToStep',
             'position': 1,
             'name': 'Upload your GIF',
-            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB. Your file is processed entirely in your browser and never leaves your device.',
+            'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB.',
           },
           {
             '@type': 'HowToStep',

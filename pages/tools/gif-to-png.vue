@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 md:px-6 py-6">
     <div class="mb-6">
-      <h1 class="page-title">GIF to PNG Converter & Frame Extractor — Split GIFs into PNG Frames Online Free</h1>
+      <h1 class="page-title">GIF to PNG Converter</h1>
       <p class="page-subtitle mt-1">Extract single frames or split entire GIFs into PNG images — download individually or as a ZIP. Lossless quality, transparency preserved, no watermark.</p>
     </div>
 
@@ -187,22 +187,25 @@
     <section class="mt-12 mb-8 max-w-3xl mx-auto">
       <h2 class="text-base font-bold text-surface-900 mb-3">How to Convert GIF to PNG or Extract All Frames</h2>
       <ol class="list-decimal list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB. Your file never leaves your device — all processing is browser-based and private.</li>
+        <li><strong>Upload your GIF</strong> — drag and drop or click to browse. Supports animated GIFs up to 20 MB.</li>
         <li><strong>Choose your mode</strong> — use <em>Single Frame</em> to pick one frame with the slider, or switch to <em>Multiple Frames</em> to select several frames or extract all frames from the GIF at once.</li>
         <li><strong>Select frames</strong> — in Single Frame mode, scrub the slider to find the perfect still image. In Multiple Frames mode, click individual thumbnails or hit "Select All" to use our GIF splitter to grab every frame.</li>
         <li><strong>Download as PNG or ZIP</strong> — save a single frame as a lossless PNG, or download multiple GIF frames as a ZIP of PNGs. No watermark, no signup required.</li>
       </ol>
+      <p class="text-xs text-surface-400 mt-2">All processing happens in your browser — <NuxtLink to="/tools#how-it-works" class="text-primary-500 hover:underline">see how the in-browser pipeline works</NuxtLink>.</p>
 
-      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Why Convert GIF to PNG?</h2>
-      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2">
-        <li><strong>Lossless quality</strong> — PNG preserves every pixel. Colors, transparency, and pixel data are kept exactly as they appear in the original GIF frame.</li>
-        <li><strong>Transparency preserved</strong> — PNG supports full alpha channel transparency, an upgrade from GIF's binary on/off approach. Transparent backgrounds stay transparent.</li>
-        <li><strong>Perfect for thumbnails and profile pictures</strong> — extract the best moment from any animated GIF and use it as a still capture wherever you need one.</li>
-        <li><strong>Smaller file size for single frames</strong> — a single PNG frame is typically smaller than the full animated GIF, making it faster to load on web pages and social profiles.</li>
-        <li><strong>Great for emotes</strong> — convert an animated GIF to a static PNG emote for platforms that require still images, like Twitch static emotes or Discord emoji.</li>
-        <li><strong>100% free, no watermark</strong> — download clean PNG files every time. No branding, no account, no limits.</li>
-        <li><strong>Browser-based and private</strong> — your GIF never leaves your device. No server upload means your files stay secure.</li>
+      <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">Single Frame vs. Sprite Sheet vs. ZIP — Pick Your Output</h2>
+      <p class="text-sm text-surface-600">
+        The converter exposes three different export shapes, each suited to a different downstream use. Pick based on what you're going to do with the frames after extraction:
+      </p>
+      <ul class="list-disc list-inside text-sm text-surface-600 space-y-2 mt-3">
+        <li><strong>Single PNG</strong> — extract one frame chosen with the slider. Right for static emote prep (Twitch static, Discord static), profile pictures, thumbnails, and any case where you need a clean still capture of one moment from an animation.</li>
+        <li><strong>Sprite sheet</strong> — every frame laid out in a single PNG grid. Right for game engines, CSS animations using <code>steps()</code>, and any tool that wants every frame in one file with a known cell size.</li>
+        <li><strong>ZIP of all frames</strong> — every frame as a separately numbered PNG, bundled into a downloadable archive. Right for frame-by-frame retouching in Photoshop, hand-editing a few frames before reassembling with our <NuxtLink to="/tools/gif-maker" class="text-primary-500 hover:underline">GIF maker</NuxtLink>, or any workflow where you need each frame addressable as its own file.</li>
       </ul>
+      <p class="text-sm text-surface-600 mt-3">
+        Every output mode preserves alpha transparency and writes lossless PNG, regardless of whether the source GIF used binary or palette transparency.
+      </p>
 
       <h2 class="text-base font-bold text-surface-900 mt-8 mb-3">GIF to PNG for Streaming Emotes & Thumbnails</h2>
       <p class="text-sm text-surface-600 mb-3">Many streaming and chat platforms require static images in PNG format. Twitch static emotes must be PNG files at specific sizes. Discord emoji work best as PNGs with transparent backgrounds. If you have an animated emote and need a static version, our GIF to PNG converter lets you pick the best frame and save it as a clean, lossless PNG — ready to upload as a Twitch static emote, Discord emoji, or profile picture.</p>
@@ -256,7 +259,7 @@
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Is there a file size limit?</h3>
-          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. All processing happens in your browser — private and secure. Larger files may take a moment to decode.</p>
+          <p class="text-sm text-surface-500 mt-1">You can upload GIFs up to 20 MB. Larger files may take a moment to decode in the browser.</p>
         </div>
         <div>
           <h3 class="text-sm font-bold text-surface-900">Does this add a watermark?</h3>
@@ -306,25 +309,12 @@ useHead({
         'operatingSystem': 'Any (browser-based)',
         'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
         'featureList': [
-          'Convert animated GIF to PNG',
-          'GIF splitter',
-          'GIF frame extractor',
-          'Extract all frames as ZIP',
-          'Single frame extraction',
-          'Multi-frame selection',
-          'Lossless PNG conversion',
-          'Transparency preserved',
-          'No watermark',
-          'GIF to PNG online free',
-          'GIF frame picker with slider',
-          'Download GIF frames as ZIP',
-          'Save GIF frames as PNG',
-          'GIF to still image converter',
-          'GIF to PNG emote converter',
-          'GIF frame for thumbnail',
-          'Browser-based processing — private and secure',
-          'No signup required',
-          'Client-side — files never leave your device',
+          'Single-frame extraction with frame picker slider',
+          'Multi-frame selection for sprite sheets',
+          'Bulk export of all frames as a ZIP',
+          'Lossless PNG conversion with transparency preserved',
+          'Sprite sheet output for animation tools',
+          'Browser-based — no upload required',
         ],
       }),
     },
@@ -403,7 +393,7 @@ useHead({
             'name': 'Is there a file size limit?',
             'acceptedAnswer': {
               '@type': 'Answer',
-              'text': 'You can upload GIFs up to 20 MB. All processing happens in your browser — private and secure. Larger files may take a moment to decode.',
+              'text': 'You can upload GIFs up to 20 MB. Larger files may take a moment to decode in the browser.',
             },
           },
           {
@@ -441,7 +431,7 @@ useHead({
         'name': 'How to Convert GIF to PNG or Extract All Frames',
         'description': 'Extract a single frame or split all frames from an animated GIF into lossless PNG images using EmoteSizer\'s free GIF to PNG converter and GIF splitter.',
         'step': [
-          { '@type': 'HowToStep', 'position': 1, 'name': 'Upload your GIF', 'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB. Your file never leaves your device — all processing is browser-based and private.' },
+          { '@type': 'HowToStep', 'position': 1, 'name': 'Upload your GIF', 'text': 'Drag and drop or click to browse. Supports animated GIFs up to 20 MB.' },
           { '@type': 'HowToStep', 'position': 2, 'name': 'Choose your mode', 'text': 'Use Single Frame mode to pick one frame with the slider, or switch to Multiple Frames mode to select several frames or extract all frames from the GIF at once.' },
           { '@type': 'HowToStep', 'position': 3, 'name': 'Select frames', 'text': 'In Single Frame mode, scrub the slider to find the perfect still image. In Multiple Frames mode, click individual thumbnails or hit Select All to grab every frame.' },
           { '@type': 'HowToStep', 'position': 4, 'name': 'Download as PNG or ZIP', 'text': 'Save a single frame as a lossless PNG, or download multiple GIF frames as a ZIP of PNGs. No watermark, no signup required.' },
