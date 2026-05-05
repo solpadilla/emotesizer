@@ -3,7 +3,7 @@
     <h1 class="text-2xl md:text-3xl font-extrabold text-surface-900 mb-2">
       Privacy Policy
     </h1>
-    <p class="text-xs text-surface-400 mb-8">Effective date: May 3, 2026 &middot; Last updated: May 3, 2026</p>
+    <p class="text-xs text-surface-400 mb-8">Effective date: May 3, 2026 &middot; Last updated: May 4, 2026</p>
 
     <!-- Introduction -->
     <h2 class="text-lg font-bold text-surface-900 mt-8 mb-3">Introduction</h2>
@@ -32,6 +32,7 @@
       <li><strong>Google AdSense advertising cookies.</strong> Our ad partner Google, including its DoubleClick DART cookie, may set cookies on your browser to serve and measure ads. These cookies help Google show more relevant advertisements based on your prior visits to this and other websites on the internet.</li>
       <li><strong>KLIPY session identifier.</strong> Our GIF/sticker search is powered by KLIPY. KLIPY generates an anonymous session ID which is cached in your browser's sessionStorage so search results can be deduplicated within a session.</li>
       <li><strong>Google Search Console.</strong> We use Search Console to understand how visitors discover our site. Search Console receives aggregate, anonymized query data directly from Google — no browser cookies are set by us for this purpose.</li>
+      <li><strong>Cloudflare Web Analytics.</strong> We use Cloudflare's privacy-first Web Analytics to measure aggregate page views and traffic sources. It is cookieless, sets no client-side identifiers, does not fingerprint visitors, and does not collect any personal data. Cloudflare processes only aggregate, anonymized request metadata. See <a href="https://www.cloudflare.com/web-analytics/" target="_blank" rel="noopener noreferrer" class="link">Cloudflare's Web Analytics privacy docs</a> for details.</li>
     </ul>
 
     <!-- Google AdSense and Third-Party Advertising -->
