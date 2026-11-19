@@ -130,15 +130,46 @@ export default defineNuxtConfig({
   // instead of "require-corp" to avoid breaking third-party resources (AdSense,
   // CDN scripts) that don't set Cross-Origin-Resource-Policy headers.
   // "credentialless" still enables SharedArrayBuffer in Chrome/Edge 96+.
-  nitro: {
-    routeRules: {
-      '/**': {
-        headers: {
-          'Cross-Origin-Opener-Policy': 'same-origin',
-          'Cross-Origin-Embedder-Policy': 'credentialless',
-        },
+  //
+  // Rendering strategy (bandwidth / hosting-cost control):
+  // Server-rendering every request burned through Vercel Hobby's Fast Origin
+  // Transfer quota (deployment paused Aug 2026). Pages with no per-request
+  // data are prerendered to static HTML at build time and served straight
+  // from the CDN. The KLIPY detail pages are the only routes that fetch data
+  // during SSR; they're cached with stale-while-revalidate (ISR on Vercel,
+  // in-memory cache on node-server) so repeat hits — mostly bots — never
+  // re-run the server function.
+  routeRules: {
+    '/**': {
+      headers: {
+        'Cross-Origin-Opener-Policy': 'same-origin',
+        'Cross-Origin-Embedder-Policy': 'credentialless',
       },
     },
+    '/': { prerender: true },
+    '/about': { prerender: true },
+    '/contact': { prerender: true },
+    '/privacy': { prerender: true },
+    '/terms': { prerender: true },
+    '/optimizer': { prerender: true },
+    // Search reads ?q/&type/&page in onMounted, so one static shell serves all queries.
+    '/search': { prerender: true },
+    '/tools': { prerender: true },
+    '/tools/add-text-to-gif': { prerender: true },
+    '/tools/compress': { prerender: true },
+    '/tools/crop': { prerender: true },
+    '/tools/gif-maker': { prerender: true },
+    '/tools/gif-to-mp4': { prerender: true },
+    '/tools/gif-to-png': { prerender: true },
+    '/tools/loop': { prerender: true },
+    '/tools/resize': { prerender: true },
+    '/tools/reverse': { prerender: true },
+    '/tools/rotate': { prerender: true },
+    '/tools/speed': { prerender: true },
+    '/tools/trim': { prerender: true },
+    '/tools/video-to-gif': { prerender: true },
+    '/gifs/**': { swr: 60 * 60 * 24 * 7 },
+    '/stickers/**': { swr: 60 * 60 * 24 * 7 },
   },
 
   // Exclude @ffmpeg/ffmpeg and @ffmpeg/util from Vite's dep optimizer.

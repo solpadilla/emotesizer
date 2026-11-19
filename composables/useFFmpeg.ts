@@ -14,9 +14,13 @@ export interface ConvertToMp4Options {
   crf: number  // 18 (best), 23 (better), or 28 (good)
 }
 
-// Maximum time (ms) to wait for FFmpeg WASM core to initialize.
-// With local files this should be fast, but keep a safety net for edge cases.
-const LOAD_TIMEOUT_MS = 30_000
+// Maximum time (ms) to download and initialize the FFmpeg WASM core.
+// Covers the ~32 MB CDN download, so it allows for slower connections.
+const LOAD_TIMEOUT_MS = 60_000
+
+// Must match the installed @ffmpeg/core version (package-lock.json).
+// ESM build, because /ffmpeg/worker.js runs as a module worker.
+const FFMPEG_CORE_CDN = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.9/dist/esm'
 
 /**
  * Composable for managing FFmpeg.wasm lifecycle, conversion, and cleanup.
@@ -88,10 +92,21 @@ export function useFFmpeg() {
         progressListenerAttached = true
       }
 
-      // Load FFmpeg core from local public/ directory instead of a CDN.
-      // Files are served from the same origin, so there are no CORS issues
-      // and no dependency on external CDN availability or speed.
-      //
+      // Load the FFmpeg core (~32 MB WASM) from jsDelivr rather than our own
+      // host, so the download doesn't count against our hosting bandwidth.
+      // toBlobURL fetches each file (CORS-enabled on jsDelivr) and returns a
+      // same-origin blob: URL, which sidesteps cross-origin module import and
+      // COEP restrictions inside the worker. The version is pinned to match
+      // the installed @ffmpeg/core so the JS glue and WASM always agree.
+      const { toBlobURL } = await import('@ffmpeg/util')
+      const [coreURL, wasmURL] = await Promise.race([
+        Promise.all([
+          toBlobURL(`${FFMPEG_CORE_CDN}/ffmpeg-core.js`, 'text/javascript'),
+          toBlobURL(`${FFMPEG_CORE_CDN}/ffmpeg-core.wasm`, 'application/wasm'),
+        ]),
+        timeout.promise,
+      ])
+
       // classWorkerURL overrides the default worker created inside FFmpeg's
       // load(). The library uses `new Worker(new URL("./worker.js", import.meta.url), { type: "module" })`,
       // but Vite cannot resolve the worker's relative ES imports (./const.js,
@@ -99,8 +114,8 @@ export function useFFmpeg() {
       // Our self-contained /ffmpeg/worker.js inlines those dependencies.
       await Promise.race([
         ffmpeg.load({
-          coreURL: '/ffmpeg/ffmpeg-core.js',
-          wasmURL: '/ffmpeg/ffmpeg-core.wasm',
+          coreURL,
+          wasmURL,
           classWorkerURL: '/ffmpeg/worker.js',
         }),
         timeout.promise,
